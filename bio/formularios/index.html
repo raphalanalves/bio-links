@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagnóstico gratuito | Malvora Hub</title>
+<meta name="description" content="Conte sobre a sua operação e receba um diagnóstico gratuito de automação da Malvora Hub.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#05060a;
+    --surface:#0e1117;
+    --surface-2:#171b24;
+    --line: rgba(238,241,245,0.10);
+    --teal:#2ee6a6;
+    --blue:#3fa0f0;
+    --violet:#8b5cf6;
+    --violet-soft: rgba(139,92,246,0.14);
+    --teal-soft: rgba(46,230,166,0.14);
+    --danger:#f36b6b;
+    --text:#eef1f5;
+    --subtext:#8891a0;
+    --font-display:'Cormorant Garamond', serif;
+    --font-body:'Manrope', -apple-system, sans-serif;
+    --font-mono:'JetBrains Mono', monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background:var(--ink); color:var(--text); font-family:var(--font-body);
+    min-height:100vh; position:relative; overflow-x:hidden; -webkit-font-smoothing:antialiased;
+    padding:0 0 60px;
+  }
+  .blobs{ position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none; }
+  .blob{ position:absolute; width:50vmax; height:50vmax; border-radius:50%; filter:blur(100px); opacity:0.16; }
+  .blob.b1{ background:var(--teal); top:-20%; left:-22%; animation:float1 30s ease-in-out infinite; }
+  .blob.b2{ background:var(--violet); bottom:-24%; right:-20%; animation:float2 34s ease-in-out infinite; }
+  @keyframes float1{ 0%,100%{transform:translate(0,0) scale(1);} 50%{transform:translate(5%,6%) scale(1.08);} }
+  @keyframes float2{ 0%,100%{transform:translate(0,0) scale(1);} 50%{transform:translate(-5%,-5%) scale(1.06);} }
+
+  a{ color:var(--teal); }
+  :focus-visible{ outline:2px solid var(--teal); outline-offset:3px; border-radius:4px; }
+
+  .shell{ position:relative; z-index:1; max-width:560px; margin:0 auto; padding:44px 20px 0; }
+
+  .brand{ text-align:center; margin-bottom:26px; }
+  .brand-mark{ font-family:var(--font-display); font-weight:700; font-size:1.5rem; }
+  .brand-mark em{
+    font-style:italic;
+    background-image:linear-gradient(100deg, var(--teal), var(--blue) 60%, var(--violet));
+    background-clip:text; -webkit-background-clip:text; color:transparent;
+  }
+  .brand-eyebrow{ font-family:var(--font-mono); font-size:0.65rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--teal); margin-top:6px; }
+
+  h1.page-title{ font-family:var(--font-display); font-weight:700; font-size:1.7rem; text-align:center; margin:18px 0 6px; line-height:1.25; }
+  p.page-sub{ color:var(--subtext); font-size:0.88rem; text-align:center; max-width:420px; margin:0 auto 30px; line-height:1.55; }
+
+  /* progress */
+  .progress{ display:flex; align-items:center; gap:8px; margin-bottom:30px; }
+  .progress-step{ flex:1; height:3px; border-radius:3px; background:var(--line); overflow:hidden; }
+  .progress-step .fill{ height:100%; width:0%; background:linear-gradient(90deg, var(--teal), var(--blue)); transition:width .35s ease; }
+  .progress-labels{ display:flex; justify-content:space-between; font-family:var(--font-mono); font-size:0.62rem; text-transform:uppercase; letter-spacing:.05em; color:var(--subtext); margin-bottom:8px; }
+  .progress-labels span.active{ color:var(--teal); }
+
+  form{ background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:26px 22px 24px; }
+
+  .step{ display:none; }
+  .step.active{ display:block; animation:stepIn .35s ease; }
+  @keyframes stepIn{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
+
+  .step-title{ font-family:var(--font-display); font-weight:700; font-size:1.25rem; margin-bottom:4px; }
+  .step-hint{ color:var(--subtext); font-size:0.8rem; margin-bottom:20px; }
+
+  .field{ margin-bottom:20px; }
+  .field label{ display:block; font-size:0.82rem; font-weight:600; margin-bottom:8px; }
+  .field label .opt{ font-weight:500; color:var(--subtext); font-size:0.72rem; }
+  .field input[type=text], .field input[type=email], .field input[type=tel], .field input[type=number], .field input[type=url], .field textarea, .field select{
+    width:100%; background:var(--surface-2); border:1px solid var(--line); border-radius:10px;
+    padding:11px 13px; color:var(--text); font-family:var(--font-body); font-size:0.88rem;
+    transition:border-color .2s;
+  }
+  .field textarea{ resize:vertical; min-height:80px; }
+  .field input:focus, .field select:focus, .field textarea:focus{ outline:none; border-color:var(--teal-soft); }
+  .field .num-wrap{ position:relative; }
+  .field .num-wrap span{ position:absolute; right:14px; top:50%; transform:translateY(-50%); color:var(--subtext); font-family:var(--font-mono); font-size:0.8rem; pointer-events:none; }
+  .field select{ appearance:none; background-image:linear-gradient(45deg, transparent 50%, var(--subtext) 50%), linear-gradient(135deg, var(--subtext) 50%, transparent 50%); background-position:calc(100% - 18px) center, calc(100% - 13px) center; background-size:5px 5px, 5px 5px; background-repeat:no-repeat; }
+  .field-error{ color:var(--danger); font-size:0.72rem; margin-top:6px; display:none; }
+  .field.invalid input, .field.invalid select, .field.invalid textarea{ border-color:var(--danger); }
+  .field.invalid .field-error{ display:block; }
+
+  /* card-style radio groups (segmento + step2 dynamic) */
+  .card-grid{ display:grid; grid-template-columns:1fr 1fr; gap:9px; }
+  .card-grid.single{ grid-template-columns:1fr; }
+  .opt-card{ position:relative; }
+  .opt-card input{ position:absolute; opacity:0; inset:0; cursor:pointer; }
+  .opt-card .box{
+    border:1px solid var(--line); border-radius:12px; padding:12px 13px;
+    font-size:0.79rem; font-weight:600; line-height:1.35; background:var(--surface-2);
+    transition:border-color .18s, background .18s;
+    display:flex; align-items:center; min-height:46px;
+  }
+  .opt-card input:checked + .box{ border-color:var(--teal); background:linear-gradient(160deg, rgba(46,230,166,0.10), rgba(139,92,246,0.06)); }
+  .opt-card input:focus-visible + .box{ outline:2px solid var(--teal); outline-offset:2px; }
+
+  .outro-field{ margin-top:10px; display:none; }
+  .outro-field.show{ display:block; }
+
+  .checkbox-row{ display:flex; align-items:flex-start; gap:10px; padding:14px; background:var(--surface-2); border:1px solid var(--line); border-radius:12px; }
+  .checkbox-row input{ margin-top:3px; width:16px; height:16px; accent-color:var(--teal); flex-shrink:0; }
+  .checkbox-row label{ font-size:0.78rem; color:var(--subtext); line-height:1.5; }
+
+  /* honeypot - visually hidden but present in DOM */
+  .hp-field{ position:absolute; left:-9999px; top:-9999px; width:1px; height:1px; overflow:hidden; }
+
+  .nav-row{ display:flex; gap:10px; margin-top:8px; }
+  .btn{ flex:1; border:none; border-radius:12px; padding:14px; font-family:var(--font-body); font-weight:700; font-size:0.88rem; cursor:pointer; transition:transform .15s ease, opacity .15s ease; }
+  .btn:active{ transform:scale(.98); }
+  .btn-primary{ background:linear-gradient(135deg, var(--teal), var(--blue) 60%, var(--violet)); color:#04120c; }
+  .btn-secondary{ background:var(--surface-2); color:var(--text); border:1px solid var(--line); flex:0 0 110px; }
+  .btn:disabled{ opacity:0.55; cursor:not-allowed; }
+  .btn .spinner{ display:inline-block; width:13px; height:13px; border:2px solid rgba(4,18,12,0.35); border-top-color:#04120c; border-radius:50%; animation:spin .7s linear infinite; margin-right:6px; vertical-align:-2px; }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+
+  .alert{ display:none; background:rgba(243,107,107,0.1); border:1px solid rgba(243,107,107,0.35); color:#ffb3b3; font-size:0.8rem; padding:11px 13px; border-radius:10px; margin-bottom:16px; }
+  .alert.show{ display:block; }
+
+  /* success screen */
+  #success-screen{ display:none; text-align:center; padding:20px 4px 4px; }
+  #success-screen.show{ display:block; }
+  .success-icon{ width:56px; height:56px; margin:0 auto 18px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, var(--teal), var(--blue)); }
+  .success-icon svg{ width:26px; height:26px; stroke:#04120c; }
+  #success-screen h2{ font-family:var(--font-display); font-weight:700; font-size:1.5rem; margin-bottom:10px; }
+  #success-screen p{ color:var(--subtext); font-size:0.86rem; line-height:1.6; max-width:380px; margin:0 auto; }
+
+  footer.page-footer{ text-align:center; margin-top:22px; }
+  .copyright{ font-family:var(--font-mono); font-size:0.62rem; color:var(--subtext); }
+
+  @media (max-width:420px){
+    .card-grid{ grid-template-columns:1fr; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="blobs"><span class="blob b1"></span><span class="blob b2"></span></div>
+
+<div class="shell">
+
+  <div class="brand">
+    <div class="brand-mark">Malvora <em>Hub</em></div>
+    <div class="brand-eyebrow">Diagnóstico gratuito de automação</div>
+  </div>
+
+  <h1 class="page-title">Conte sobre a sua operação</h1>
+  <p class="page-sub">Leva menos de 3 minutos. Com base nas respostas, nossa equipe monta um diagnóstico com as automações que fariam mais diferença no seu negócio agora.</p>
+
+  <div class="progress-labels">
+    <span data-label-step="1">Empresa</span>
+    <span data-label-step="2">Sua operação</span>
+    <span data-label-step="3">Contato</span>
+  </div>
+  <div class="progress">
+    <div class="progress-step"><div class="fill" id="fill-1"></div></div>
+    <div class="progress-step"><div class="fill" id="fill-2"></div></div>
+    <div class="progress-step"><div class="fill" id="fill-3"></div></div>
+  </div>
+
+  <div class="alert" id="form-alert"></div>
+
+  <form id="onboarding-form" novalidate>
+
+    <!-- honeypot: visível apenas para bots que preenchem tudo automaticamente -->
+    <div class="hp-field" aria-hidden="true">
+      <label for="website_forms">Não preencha este campo</label>
+      <input type="text" id="website_forms" name="website_forms" tabindex="-1" autocomplete="off">
+    </div>
+
+    <!-- ===================== STEP 1 ===================== -->
+    <div class="step active" data-step="1">
+      <div class="step-title">Sua empresa</div>
+      <div class="step-hint">Pra começar, quem é você e em que área atua.</div>
+
+      <div class="field" data-field="nome_empresa">
+        <label for="nome_empresa">Nome da empresa</label>
+        <input type="text" id="nome_empresa" required>
+        <div class="field-error">Preencha o nome da empresa.</div>
+      </div>
+
+      <div class="field" data-field="segmento">
+        <label>Segmento</label>
+        <div class="card-grid" id="segmento-grid"></div>
+        <div class="field-error">Selecione um segmento.</div>
+      </div>
+
+      <div class="field outro-field" id="segmento-outros-wrap" data-field="segmento_outros_descricao">
+        <label for="segmento_outros_descricao">Descreva seu segmento</label>
+        <input type="text" id="segmento_outros_descricao" placeholder="Ex: estúdio de tatuagem, escola de idiomas...">
+        <div class="field-error">Descreva rapidamente o seu segmento.</div>
+      </div>
+
+      <div class="nav-row">
+        <button type="button" class="btn btn-primary" data-next>Continuar</button>
+      </div>
+    </div>
+
+    <!-- ===================== STEP 2 (dinâmico) ===================== -->
+    <div class="step" data-step="2">
+      <div class="step-title">Sua operação</div>
+      <div class="step-hint" id="step2-hint">Perguntas específicas pro seu segmento.</div>
+      <div id="step2-dynamic"></div>
+      <div class="nav-row">
+        <button type="button" class="btn btn-secondary" data-back>Voltar</button>
+        <button type="button" class="btn btn-primary" data-next>Continuar</button>
+      </div>
+    </div>
+
+    <!-- ===================== STEP 3 ===================== -->
+    <div class="step" data-step="3">
+      <div class="step-title">Contato e tecnologia</div>
+      <div class="step-hint">Pra te enviar o diagnóstico e entender o que já está em uso.</div>
+
+      <div class="field" data-field="equipe_qtd">
+        <label>Tamanho da equipe</label>
+        <select id="equipe_qtd" required>
+          <option value="">Selecione...</option>
+          <option value="1-4">1 a 4 pessoas</option>
+          <option value="5-10">5 a 10 pessoas</option>
+          <option value="11-20">11 a 20 pessoas</option>
+          <option value="21-50">21 a 50 pessoas</option>
+          <option value="50+">Mais de 50 pessoas</option>
+        </select>
+        <div class="field-error">Selecione o tamanho da equipe.</div>
+      </div>
+
+      <div class="field" data-field="responsavel_nome">
+        <label for="responsavel_nome">Seu nome</label>
+        <input type="text" id="responsavel_nome" required>
+        <div class="field-error">Preencha seu nome.</div>
+      </div>
+
+      <div class="field" data-field="responsavel_email">
+        <label for="responsavel_email">Seu e-mail</label>
+        <input type="email" id="responsavel_email" required>
+        <div class="field-error">Preencha um e-mail válido.</div>
+      </div>
+
+      <div class="field" data-field="responsavel_whatsapp">
+        <label for="responsavel_whatsapp">Seu WhatsApp <span class="opt">com DDD</span></label>
+        <input type="tel" id="responsavel_whatsapp" placeholder="(11) 91234-5678" required>
+        <div class="field-error">Preencha um número de WhatsApp válido.</div>
+      </div>
+
+      <div class="field" data-field="responsavel_cargo">
+        <label for="responsavel_cargo">Seu cargo</label>
+        <select id="responsavel_cargo" required>
+          <option value="">Selecione...</option>
+          <option value="socio-diretor">Sócio / Diretor</option>
+          <option value="gerente">Gerente</option>
+          <option value="coordenador">Coordenador</option>
+          <option value="analista">Analista</option>
+          <option value="outro">Outro</option>
+        </select>
+        <div class="field-error">Selecione seu cargo.</div>
+      </div>
+      <div class="field outro-field" id="cargo-outro-wrap" data-field="responsavel_cargo_outro">
+        <label for="responsavel_cargo_outro">Qual?</label>
+        <input type="text" id="responsavel_cargo_outro">
+      </div>
+
+      <div class="field" data-field="whatsapp_tipo">
+        <label>Como vocês usam o WhatsApp hoje?</label>
+        <div class="card-grid single">
+          <label class="opt-card"><input type="radio" name="whatsapp_tipo" value="whatsapp-pessoal" required><span class="box">WhatsApp pessoal</span></label>
+          <label class="opt-card"><input type="radio" name="whatsapp_tipo" value="whatsapp-business"><span class="box">WhatsApp Business</span></label>
+          <label class="opt-card"><input type="radio" name="whatsapp_tipo" value="sistema-integrado"><span class="box">Sistema integrado / CRM</span></label>
+        </div>
+        <div class="field-error">Selecione uma opção.</div>
+      </div>
+
+      <div class="field" data-field="sistema_financeiro">
+        <label for="sistema_financeiro">Sistema financeiro</label>
+        <select id="sistema_financeiro" required>
+          <option value="">Selecione...</option>
+          <option value="conta-azul">Conta Azul</option>
+          <option value="omie">Omie</option>
+          <option value="bling">Bling</option>
+          <option value="nibo">Nibo</option>
+          <option value="planilha-manual">Planilha manual</option>
+          <option value="outro">Outro</option>
+        </select>
+        <div class="field-error">Selecione uma opção.</div>
+      </div>
+      <div class="field outro-field" id="sistema-financeiro-outro-wrap" data-field="sistema_financeiro_outro">
+        <label for="sistema_financeiro_outro">Qual?</label>
+        <input type="text" id="sistema_financeiro_outro">
+      </div>
+
+      <div class="field" data-field="banco_recebimento">
+        <label for="banco_recebimento">Banco / meio de recebimento principal</label>
+        <select id="banco_recebimento" required>
+          <option value="">Selecione...</option>
+          <option value="asaas">Asaas</option>
+          <option value="mercado-pago">Mercado Pago</option>
+          <option value="stone">Stone</option>
+          <option value="pagseguro">PagSeguro</option>
+          <option value="stripe">Stripe</option>
+          <option value="banco-tradicional">Banco tradicional</option>
+          <option value="outro">Outro</option>
+        </select>
+        <div class="field-error">Selecione uma opção.</div>
+      </div>
+      <div class="field outro-field" id="banco-recebimento-outro-wrap" data-field="banco_recebimento_outro">
+        <label for="banco_recebimento_outro">Qual?</label>
+        <input type="text" id="banco_recebimento_outro">
+      </div>
+
+      <div class="field" data-field="instagram_handle">
+        <label for="instagram_handle">Instagram <span class="opt">opcional</span></label>
+        <input type="text" id="instagram_handle" placeholder="@suaempresa">
+      </div>
+
+      <div class="field" data-field="site_url">
+        <label for="site_url">Site <span class="opt">opcional</span></label>
+        <input type="url" id="site_url" placeholder="https://">
+      </div>
+
+      <div class="field" data-field="gargalo_principal">
+        <label for="gargalo_principal">No dia a dia, o que mais trava a operação?</label>
+        <textarea id="gargalo_principal" required></textarea>
+        <div class="field-error">Conte rapidamente qual é o gargalo.</div>
+      </div>
+
+      <div class="field" data-field="lgpd">
+        <div class="checkbox-row">
+          <input type="checkbox" id="lgpd_consent" required>
+          <label for="lgpd_consent">Li e concordo com a <a href="https://malvora.com.br/politica-de-privacidade" target="_blank" rel="noopener">Política de Privacidade</a>, autorizando o processamento dos meus dados para geração do diagnóstico e o contato da equipe Malvora Hub.</label>
+        </div>
+        <div class="field-error">É preciso aceitar a política de privacidade pra continuar.</div>
+      </div>
+
+      <div class="nav-row">
+        <button type="button" class="btn btn-secondary" data-back>Voltar</button>
+        <button type="submit" class="btn btn-primary" id="btn-submit">Enviar diagnóstico</button>
+      </div>
+    </div>
+
+  </form>
+
+  <div id="success-screen">
+    <div class="success-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 6"/></svg></div>
+    <h2>Recebemos suas respostas</h2>
+    <p>Nosso time vai analisar sua operação e entrar em contato pelo WhatsApp com o diagnóstico gratuito. Fique de olho na sua caixa de mensagens.</p>
+  </div>
+
+  <footer class="page-footer">
+    <div class="copyright">&copy; 2026 Malvora &middot; malvora.com.br</div>
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  const WEBHOOK_URL = 'https://n8n.malvora.com.br/webhook/onboarding-intake';
+  const WEBHOOK_SIGNATURE = '1R7s6TgGBIub5OQtEzOEwi-0KYhMgnqXTGE_Y1ax6no';
+  const REQUEST_TIMEOUT_MS = 10000;
+
+  function generateId(){
+    if (window.crypto && typeof crypto.randomUUID === 'function') return crypto.randomUUID();
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c){
+      const r = Math.random()*16|0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
+  }
+
+  // ---- Estado (encapsulado, não polui window) ----
+  const state = {
+    idempotencyKey: generateId(),
+    currentStep: 1,
+    totalSteps: 3
+  };
+
+  // ---- Configuração dos segmentos ----
+  const SEGMENTOS = [
+    { value:'clinica-estetica', label:'Clínica de Estética' },
+    { value:'odontologia',      label:'Odontologia' },
+    { value:'advocacia',        label:'Advocacia' },
+    { value:'barbearia',        label:'Barbearia / Salão' },
+    { value:'coworking',        label:'Coworking' },
+    { value:'petshop',          label:'Petshop / Veterinária' },
+    { value:'papelaria',        label:'Papelaria / Gráfica' },
+    { value:'outros',           label:'Outro' }
+  ];
+
+  const CLINICA_STEP2 = [
+    { key:'taxa_no_show', type:'number', suffix:'%', question:'Qual a taxa estimada de faltas (no-show)?' },
+    { key:'sistema_agendamento', type:'radio', question:'Qual sistema de agendamento vocês utilizam?', options:[
+      {value:'trinks', label:'Trinks'}, {value:'simples-dental', label:'Simples Dental'},
+      {value:'booksy', label:'Booksy'}, {value:'google-agenda', label:'Google Agenda'},
+      {value:'planilha-manual', label:'Planilha manual'}, {value:'outro', label:'Outro'}
+    ]},
+    { key:'confirmacao_automatica', type:'radio', question:'A confirmação de consultas é automática ou manual?', options:[
+      {value:'automatica', label:'Automática'}, {value:'manual', label:'Manual'}
+    ]}
+  ];
+
+  const STEP2_CONFIG = {
+    'clinica-estetica': CLINICA_STEP2,
+    'odontologia': CLINICA_STEP2,
+    'advocacia': [
+      { key:'area_atuacao', type:'radio', question:'Qual é a principal área de atuação do escritório?', options:[
+        {value:'civel-familia', label:'Advocacia Cível / Família'},
+        {value:'trabalhista-previdenciario', label:'Trabalhista / Previdenciário'},
+        {value:'empresarial-tributario', label:'Empresarial / Tributário'},
+        {value:'criminal-penal', label:'Criminal / Penal'},
+        {value:'full-service', label:'Full Service (múltiplas áreas)'}
+      ]},
+      { key:'controle_prazos', type:'radio', question:'Como é feito o acompanhamento de prazos e intimações atualmente?', options:[
+        {value:'planilha-manual', label:'Planilhas / Controle manual no Excel'},
+        {value:'sistema-gestao-juridica', label:'Sistema de gestão jurídica (Astrea, Legal One, ProJuris...)'},
+        {value:'sistema-tribunal', label:'Diretamente pelo sistema do tribunal (PJe, e-SAJ)'},
+        {value:'sem-processo', label:'Não temos um processo padronizado'}
+      ]},
+      { key:'gargalo_atendimento', type:'radio', question:'Qual é o maior gargalo no atendimento e captação de clientes?', options:[
+        {value:'demora-resposta-whatsapp', label:'Demora para responder novos contatos no WhatsApp'},
+        {value:'qualificacao-leads', label:'Qualificação de leads (muita gente sem perfil de contrato)'},
+        {value:'coleta-documentos', label:'Coleta manual de documentos e dados iniciais'},
+        {value:'envio-cobranca-honorarios', label:'Envio e cobrança de propostas/honorários'}
+      ]}
+    ],
+    'barbearia': [
+      { key:'modelo_atendimento', type:'radio', question:'Qual é o modelo principal de atendimento do estabelecimento?', options:[
+        {value:'agendado', label:'Somente com horário agendado'},
+        {value:'ordem-chegada', label:'Somente por ordem de chegada'},
+        {value:'hibrido', label:'Híbrido (agendamento + ordem de chegada)'}
+      ]},
+      { key:'canal_agendamento', type:'radio', question:'Qual canal ou sistema é utilizado para agendamentos hoje?', options:[
+        {value:'whatsapp-manual', label:'WhatsApp manual (recepção/barbeiros respondem)'},
+        {value:'app-sistema', label:'Aplicativo/Sistema de agendamento (Trinks, Booksy, Avec...)'},
+        {value:'link-instagram', label:'Link de agendamento próprio no Instagram'},
+        {value:'sem-sistema', label:'Nenhum sistema estruturado'}
+      ]},
+      { key:'desafio_gestao', type:'radio', question:'Qual é o maior desafio na gestão de clientes?', options:[
+        {value:'no-show', label:'Altas taxas de no-show (faltas sem avisar)'},
+        {value:'baixa-recorrencia', label:'Baixa frequência de retorno dos clientes'},
+        {value:'lembretes-manuais', label:'Lembretes manuais ocupam muito tempo'},
+        {value:'venda-produtos', label:'Dificuldade de vender produtos adicionais'}
+      ]}
+    ],
+    'coworking': [
+      { key:'receita_principal', type:'radio', question:'Quais tipos de espaço geram a maior parte da sua receita?', options:[
+        {value:'estacoes-rotativas', label:'Estações rotativas (hot desks)'},
+        {value:'salas-privativas', label:'Salas privativas corporativas'},
+        {value:'salas-reuniao-hora', label:'Salas de reunião por hora'},
+        {value:'endereco-fiscal', label:'Endereço fiscal / Escritório virtual'}
+      ]},
+      { key:'controle_acesso', type:'radio', question:'Como é gerido o controle de acesso e reservas de salas?', options:[
+        {value:'sistema-proprio', label:'Sistema próprio de gestão (Nexudus, BeerOrCoffee...)'},
+        {value:'agenda-google-outlook', label:'Agenda do Google / Outlook pela recepção'},
+        {value:'planilha-manual', label:'Planilha manual de ocupação'},
+        {value:'controle-fisico', label:'Controle físico em prancheta/papel'}
+      ]},
+      { key:'gargalo_operacao', type:'radio', question:'Qual é o maior gargalo na operação diária?', options:[
+        {value:'cobranca-renovacao', label:'Cobrança e renovação manual de contratos'},
+        {value:'agendamento-visitas', label:'Agendamento de visitas de potenciais clientes'},
+        {value:'faturamento-horas-extras', label:'Faturamento/cobrança de horas extras de salas'},
+        {value:'gestao-encomendas', label:'Gestão de encomendas e correspondências'}
+      ]}
+    ],
+    'petshop': [
+      { key:'foco_servicos', type:'radio', question:'Quais serviços representam o foco principal do negócio?', options:[
+        {value:'banho-tosa', label:'Apenas Banho & Tosa'},
+        {value:'banho-tosa-loja', label:'Banho & Tosa + Loja/Venda de produtos'},
+        {value:'clinica-banho-loja', label:'Clínica Veterinária + Banho & Tosa + Loja'},
+        {value:'hotelzinho-creche', label:'Hotelzinho / Creche pet (daycare)'}
+      ]},
+      { key:'rotina_agendamento', type:'radio', question:'Como funciona a rotina de agendamento de serviços?', options:[
+        {value:'whatsapp-manual', label:'Atendimento e confirmação manual via WhatsApp'},
+        {value:'sistema-petshop', label:'Sistema de gestão para petshops (SimplesVet, Petz, Vetus...)'},
+        {value:'planos-recorrentes-automaticos', label:'Agendamentos recorrentes automáticos (planos mensais)'},
+        {value:'caderno-papel', label:'Caderno/Agenda de papel'}
+      ]},
+      { key:'problema_operacional', type:'radio', question:'Qual é o maior problema operacional enfrentado hoje?', options:[
+        {value:'confirmacao-cancelamento', label:'Falhas na confirmação e cancelamentos de última hora'},
+        {value:'controle-planos-mensais', label:'Dificuldade em controlar planos/pacotes mensais'},
+        {value:'historico-atendimento', label:'Falta de histórico de atendimento do pet acessível'},
+        {value:'demora-aviso-tutor', label:'Demora para avisar o tutor quando o pet está pronto'}
+      ]}
+    ],
+    'papelaria': [
+      { key:'perfil_produtos', type:'radio', question:'Qual é o perfil principal dos seus produtos e serviços?', options:[
+        {value:'material-escolar-escritorio', label:'Venda de material escolar e de escritório (Varejo)'},
+        {value:'grafica-rapida', label:'Gráfica rápida, impressões e encadernações'},
+        {value:'personalizacao-brindes', label:'Personalização de brindes e produtos sob encomenda'},
+        {value:'misto', label:'Misto (Varejo + Gráfica Rápida)'}
+      ]},
+      { key:'recebimento_orcamento', type:'radio', question:'Como são recebidos e orçados os pedidos sob encomenda?', options:[
+        {value:'balcao-presencial', label:'Balcão presencial'},
+        {value:'whatsapp-email-manual', label:'Envio de arquivos via WhatsApp/E-mail p/ orçamento manual'},
+        {value:'loja-virtual', label:'Loja virtual / E-commerce próprio'},
+        {value:'catalogo-sem-orcamento', label:'Catálogo digital sem orçamento automático'}
+      ]},
+      { key:'gargalo_atendimento', type:'radio', question:'Qual é o principal gargalo no atendimento e vendas?', options:[
+        {value:'calculo-orcamento-manual', label:'Perda de tempo calculando orçamentos manuais'},
+        {value:'envio-repetitivo-catalogo', label:'Envio repetitivo do catálogo/tabela de preços'},
+        {value:'aviso-retirada', label:'Dificuldade em avisar sobre a retirada do produto'},
+        {value:'controle-estoque', label:'Controle de estoque e variedade de itens'}
+      ]}
+    ]
+  };
+
+  // ---- Referências DOM ----
+  const form = document.getElementById('onboarding-form');
+  const successScreen = document.getElementById('success-screen');
+  const alertBox = document.getElementById('form-alert');
+  const btnSubmit = document.getElementById('btn-submit');
+  const segmentoGrid = document.getElementById('segmento-grid');
+  const step2Container = document.getElementById('step2-dynamic');
+  const segmentoOutrosWrap = document.getElementById('segmento-outros-wrap');
+
+  // ---- Render Step 1: opções de segmento ----
+  SEGMENTOS.forEach(function(seg){
+    const wrap = document.createElement('label');
+    wrap.className = 'opt-card';
+    wrap.innerHTML = '<input type="radio" name="segmento" value="' + seg.value + '"><span class="box">' + seg.label + '</span>';
+    segmentoGrid.appendChild(wrap);
+  });
+
+  segmentoGrid.addEventListener('change', function(e){
+    if (e.target.name !== 'segmento') return;
+    segmentoOutrosWrap.classList.toggle('show', e.target.value === 'outros');
+    document.getElementById('segmento_outros_descricao').required = (e.target.value === 'outros');
+  });
+
+  // ---- Render Step 2 dinâmico ----
+  function renderStep2(segmento){
+    step2Container.innerHTML = '';
+    const config = STEP2_CONFIG[segmento];
+    document.getElementById('step2-hint').textContent = config
+      ? 'Perguntas específicas pro seu segmento.'
+      : 'Sem perguntas extras aqui — vamos direto pro próximo passo.';
+
+    if (!config) return;
+
+    config.forEach(function(fieldDef){
+      const field = document.createElement('div');
+      field.className = 'field';
+      field.dataset.field = fieldDef.key;
+      field.dataset.dynamic = 'true';
+
+      const label = document.createElement('label');
+      label.textContent = fieldDef.question;
+      field.appendChild(label);
+
+      if (fieldDef.type === 'number'){
+        const wrap = document.createElement('div');
+        wrap.className = 'num-wrap';
+        const input = document.createElement('input');
+        input.type = 'number'; input.min = '0'; input.max = '100'; input.step = '0.1';
+        input.id = 'dyn_' + fieldDef.key; input.required = true;
+        wrap.appendChild(input);
+        if (fieldDef.suffix){
+          const suf = document.createElement('span'); suf.textContent = fieldDef.suffix; wrap.appendChild(suf);
+        }
+        field.appendChild(wrap);
+      } else if (fieldDef.type === 'radio'){
+        const grid = document.createElement('div');
+        grid.className = 'card-grid single';
+        fieldDef.options.forEach(function(opt){
+          const optWrap = document.createElement('label');
+          optWrap.className = 'opt-card';
+          optWrap.innerHTML = '<input type="radio" name="dyn_' + fieldDef.key + '" value="' + opt.value + '" required><span class="box">' + opt.label + '</span>';
+          grid.appendChild(optWrap);
+        });
+        field.appendChild(grid);
+
+        // campo "outro" condicional
+        if (fieldDef.options.some(function(o){ return o.value === 'outro'; })){
+          const outroField = document.createElement('div');
+          outroField.className = 'field outro-field';
+          outroField.id = 'dyn_' + fieldDef.key + '_outro_wrap';
+          outroField.innerHTML = '<label for="dyn_' + fieldDef.key + '_outro">Qual?</label><input type="text" id="dyn_' + fieldDef.key + '_outro">';
+          field.appendChild(outroField);
+        }
+      }
+
+      const err = document.createElement('div');
+      err.className = 'field-error';
+      err.textContent = 'Selecione uma opção.';
+      field.appendChild(err);
+
+      step2Container.appendChild(field);
+    });
+  }
+
+  step2Container.addEventListener('change', function(e){
+    if (e.target.type !== 'radio') return;
+    const key = e.target.name.replace('dyn_', '');
+    const outroWrap = document.getElementById('dyn_' + key + '_outro_wrap');
+    if (outroWrap) outroWrap.classList.toggle('show', e.target.value === 'outro');
+  });
+
+  // campos "outro" fixos do Step 3
+  document.getElementById('responsavel_cargo').addEventListener('change', function(e){
+    document.getElementById('cargo-outro-wrap').classList.toggle('show', e.target.value === 'outro');
+  });
+  document.getElementById('sistema_financeiro').addEventListener('change', function(e){
+    document.getElementById('sistema-financeiro-outro-wrap').classList.toggle('show', e.target.value === 'outro');
+  });
+  document.getElementById('banco_recebimento').addEventListener('change', function(e){
+    document.getElementById('banco-recebimento-outro-wrap').classList.toggle('show', e.target.value === 'outro');
+  });
+
+  // ---- Navegação entre steps ----
+  function getSegmentoSelecionado(){
+    const el = form.querySelector('input[name="segmento"]:checked');
+    return el ? el.value : null;
+  }
+
+  function updateProgress(){
+    [1,2,3].forEach(function(n){
+      document.getElementById('fill-' + n).style.width = (n <= state.currentStep) ? '100%' : '0%';
+      const label = document.querySelector('[data-label-step="' + n + '"]');
+      label.classList.toggle('active', n === state.currentStep);
+    });
+  }
+
+  function goToStep(n){
+    form.querySelectorAll('.step').forEach(function(s){
+      s.classList.toggle('active', Number(s.dataset.step) === n);
+    });
+    state.currentStep = n;
+    updateProgress();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function validateStep(n){
+    let valid = true;
+    const stepEl = form.querySelector('.step[data-step="' + n + '"]');
+    stepEl.querySelectorAll('.field').forEach(function(field){ field.classList.remove('invalid'); });
+
+    stepEl.querySelectorAll('[required]').forEach(function(input){
+      let filled = true;
+      if (input.type === 'radio'){
+        if (!form.querySelector('input[name="' + input.name + '"]:checked')) filled = false;
+      } else if (input.type === 'checkbox'){
+        filled = input.checked;
+      } else {
+        filled = input.value.trim() !== '';
+      }
+      if (!filled){
+        valid = false;
+        const fieldWrap = input.closest('.field');
+        if (fieldWrap) fieldWrap.classList.add('invalid');
+      }
+    });
+    return valid;
+  }
+
+  form.addEventListener('click', function(e){
+    if (e.target.matches('[data-next]')){
+      if (!validateStep(state.currentStep)) return;
+
+      if (state.currentStep === 1){
+        const segmento = getSegmentoSelecionado();
+        renderStep2(segmento);
+        // segmentos sem Step 2 configurado (ex: "outros") pulam direto pro Step 3
+        goToStep(STEP2_CONFIG[segmento] ? 2 : 3);
+        return;
+      }
+      goToStep(state.currentStep + 1);
+    }
+
+    if (e.target.matches('[data-back]')){
+      if (state.currentStep === 3 && !STEP2_CONFIG[getSegmentoSelecionado()]){
+        goToStep(1);
+        return;
+      }
+      goToStep(state.currentStep - 1);
+    }
+  });
+
+  updateProgress();
+
+  // ---- Montagem do payload ----
+  function buildPayload(){
+    const segmento = getSegmentoSelecionado();
+    const especifico = {};
+
+    const config = STEP2_CONFIG[segmento];
+    if (config){
+      config.forEach(function(fieldDef){
+        if (fieldDef.type === 'number'){
+          const val = document.getElementById('dyn_' + fieldDef.key).value;
+          especifico[fieldDef.key] = val === '' ? null : Number(val);
+        } else {
+          const checked = form.querySelector('input[name="dyn_' + fieldDef.key + '"]:checked');
+          especifico[fieldDef.key] = checked ? checked.value : null;
+          if (checked && checked.value === 'outro'){
+            const outroInput = document.getElementById('dyn_' + fieldDef.key + '_outro');
+            especifico[fieldDef.key + '_outro'] = outroInput ? outroInput.value.trim() : null;
+          }
+        }
+      });
+    }
+
+    const whatsappTipoEl = form.querySelector('input[name="whatsapp_tipo"]:checked');
+
+    return {
+      timestamp: new Date().toISOString(),
+      idempotency_key: state.idempotencyKey,
+      meta: {
+        origem: 'landing_page_onboarding',
+        version: '1.1',
+        user_agent: navigator.userAgent
+      },
+      website_forms: document.getElementById('website_forms').value, // honeypot
+      empresa: {
+        nome: document.getElementById('nome_empresa').value.trim(),
+        segmento: segmento,
+        segmento_outros_descricao: segmento === 'outros' ? document.getElementById('segmento_outros_descricao').value.trim() : null,
+        equipe_qtd: document.getElementById('equipe_qtd').value
+      },
+      responsavel: {
+        nome: document.getElementById('responsavel_nome').value.trim(),
+        email: document.getElementById('responsavel_email').value.trim(),
+        whatsapp_contato: document.getElementById('responsavel_whatsapp').value.trim(),
+        cargo: document.getElementById('responsavel_cargo').value,
+        cargo_outro: document.getElementById('responsavel_cargo').value === 'outro' ? document.getElementById('responsavel_cargo_outro').value.trim() : null
+      },
+      especifico_segmento: especifico,
+      tecnologia_operacao: {
+        whatsapp_tipo: whatsappTipoEl ? whatsappTipoEl.value : null,
+        instagram_handle: document.getElementById('instagram_handle').value.trim(),
+        site_url: document.getElementById('site_url').value.trim(),
+        sistema_financeiro: document.getElementById('sistema_financeiro').value,
+        sistema_financeiro_outro: document.getElementById('sistema_financeiro').value === 'outro' ? document.getElementById('sistema_financeiro_outro').value.trim() : null,
+        banco_recebimento: document.getElementById('banco_recebimento').value,
+        banco_recebimento_outro: document.getElementById('banco_recebimento').value === 'outro' ? document.getElementById('banco_recebimento_outro').value.trim() : null,
+        gargalo_principal: document.getElementById('gargalo_principal').value.trim()
+      },
+      lgpd: {
+        consentimento_aceito: document.getElementById('lgpd_consent').checked,
+        data_hora_consentimento: new Date().toISOString(),
+        versao_termos: 'v1.0-2026'
+      }
+    };
+  }
+
+  // ---- Envio ----
+  function showAlert(msg){
+    alertBox.textContent = msg;
+    alertBox.classList.add('show');
+  }
+  function hideAlert(){ alertBox.classList.remove('show'); }
+
+  form.addEventListener('submit', async function(e){
+    e.preventDefault();
+    if (!validateStep(3)) return;
+    hideAlert();
+
+    btnSubmit.disabled = true;
+    btnSubmit.innerHTML = '<span class="spinner"></span> Enviando...';
+
+    const payload = buildPayload();
+    const controller = new AbortController();
+    const timeoutId = setTimeout(function(){ controller.abort(); }, REQUEST_TIMEOUT_MS);
+
+    try {
+      const response = await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'X-Malvora-Signature': WEBHOOK_SIGNATURE
+        },
+        body: JSON.stringify(payload),
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
+
+      if (response.status === 400){
+        let msg = 'Alguns dados não passaram na validação. Confira o formulário e tente novamente.';
+        try { const data = await response.json(); if (data.error) msg = data.error; } catch(_){}
+        showAlert(msg);
+        btnSubmit.disabled = false;
+        btnSubmit.textContent = 'Enviar diagnóstico';
+        return;
+      }
+
+      if (!response.ok){
+        throw new Error('Erro na API: ' + response.status);
+      }
+
+      form.style.display = 'none';
+      document.querySelector('.progress').style.display = 'none';
+      document.querySelector('.progress-labels').style.display = 'none';
+      successScreen.classList.add('show');
+
+    } catch (err) {
+      clearTimeout(timeoutId);
+      btnSubmit.disabled = false;
+      btnSubmit.textContent = 'Tentar novamente';
+      if (err.name === 'AbortError'){
+        showAlert('A conexão demorou demais. Verifique sua internet e tente novamente — não se preocupe, suas respostas não serão duplicadas.');
+      } else {
+        showAlert('Não foi possível enviar agora. Verifique sua conexão e tente novamente.');
+      }
+    }
+  });
+
+})();
+</script>
+</body>
+</html>
