@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Setup do Assistente Virtual | Malvora Hub</title>
+<meta name="description" content="Configure o assistente virtual da sua barbearia.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#05060a; --surface:#0e1117; --surface-2:#171b24; --line: rgba(238,241,245,0.10);
+    --teal:#2ee6a6; --blue:#3fa0f0; --violet:#8b5cf6;
+    --violet-soft: rgba(139,92,246,0.14); --teal-soft: rgba(46,230,166,0.14);
+    --danger:#f36b6b; --text:#eef1f5; --subtext:#8891a0;
+    --font-display:'Cormorant Garamond', serif; --font-body:'Manrope', -apple-system, sans-serif; --font-mono:'JetBrains Mono', monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{ background:var(--ink); color:var(--text); font-family:var(--font-body); min-height:100vh; position:relative; overflow-x:hidden; -webkit-font-smoothing:antialiased; padding:0 0 60px; }
+  .blobs{ position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none; }
+  .blob{ position:absolute; width:50vmax; height:50vmax; border-radius:50%; filter:blur(100px); opacity:0.16; }
+  .blob.b1{ background:var(--teal); top:-20%; left:-22%; animation:float1 30s ease-in-out infinite; }
+  .blob.b2{ background:var(--violet); bottom:-24%; right:-20%; animation:float2 34s ease-in-out infinite; }
+  @keyframes float1{ 0%,100%{transform:translate(0,0) scale(1);} 50%{transform:translate(5%,6%) scale(1.08);} }
+  @keyframes float2{ 0%,100%{transform:translate(0,0) scale(1);} 50%{transform:translate(-5%,-5%) scale(1.06);} }
+  a{ color:var(--teal); }
+  :focus-visible{ outline:2px solid var(--teal); outline-offset:3px; border-radius:4px; }
+  .shell{ position:relative; z-index:1; max-width:600px; margin:0 auto; padding:44px 20px 0; }
+  .brand{ text-align:center; margin-bottom:22px; }
+  .brand-mark{ font-family:var(--font-display); font-weight:700; font-size:1.5rem; }
+  .brand-mark em{ font-style:italic; background-image:linear-gradient(100deg, var(--teal), var(--blue) 60%, var(--violet)); background-clip:text; -webkit-background-clip:text; color:transparent; }
+  .brand-eyebrow{ font-family:var(--font-mono); font-size:0.65rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--teal); margin-top:6px; }
+  h1.page-title{ font-family:var(--font-display); font-weight:700; font-size:1.6rem; text-align:center; margin:16px 0 6px; line-height:1.25; }
+  p.page-sub{ color:var(--subtext); font-size:0.86rem; text-align:center; max-width:440px; margin:0 auto 26px; line-height:1.55; }
+
+  .progress{ display:flex; align-items:center; gap:8px; margin-bottom:26px; }
+  .progress-step{ flex:1; height:3px; border-radius:3px; background:var(--line); overflow:hidden; }
+  .progress-step .fill{ height:100%; width:0%; background:linear-gradient(90deg, var(--teal), var(--blue)); transition:width .35s ease; }
+  .progress-labels{ display:flex; justify-content:space-between; font-family:var(--font-mono); font-size:0.6rem; text-transform:uppercase; letter-spacing:.05em; color:var(--subtext); margin-bottom:8px; }
+  .progress-labels span.active{ color:var(--teal); }
+
+  form{ background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:26px 22px 24px; }
+  .step{ display:none; }
+  .step.active{ display:block; animation:stepIn .35s ease; }
+  @keyframes stepIn{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
+  .step-title{ font-family:var(--font-display); font-weight:700; font-size:1.2rem; margin-bottom:4px; }
+  .step-hint{ color:var(--subtext); font-size:0.78rem; margin-bottom:18px; }
+
+  .field{ margin-bottom:18px; }
+  .field label{ display:block; font-size:0.8rem; font-weight:600; margin-bottom:8px; }
+  .field label .opt{ font-weight:500; color:var(--subtext); font-size:0.7rem; }
+  .field input[type=text], .field input[type=email], .field input[type=tel], .field input[type=url], .field textarea{
+    width:100%; background:var(--surface-2); border:1px solid var(--line); border-radius:10px; padding:11px 13px;
+    color:var(--text); font-family:var(--font-body); font-size:0.86rem; transition:border-color .2s;
+  }
+  .field textarea{ resize:vertical; min-height:70px; }
+  .field input:focus, .field textarea:focus{ outline:none; border-color:var(--teal-soft); }
+  .field-error{ color:var(--danger); font-size:0.7rem; margin-top:6px; display:none; }
+  .field.invalid input, .field.invalid textarea{ border-color:var(--danger); }
+  .field.invalid .field-error{ display:block; }
+  .field-note{ color:var(--subtext); font-size:0.68rem; margin-top:6px; font-style:italic; }
+
+  .card-grid{ display:grid; grid-template-columns:1fr 1fr; gap:9px; }
+  .card-grid.single{ grid-template-columns:1fr; }
+  .card-grid.three{ grid-template-columns:1fr 1fr 1fr; }
+  .opt-card{ position:relative; }
+  .opt-card input{ position:absolute; opacity:0; inset:0; cursor:pointer; }
+  .opt-card .box{ border:1px solid var(--line); border-radius:12px; padding:11px 12px; font-size:0.77rem; font-weight:600; line-height:1.3; background:var(--surface-2); transition:border-color .18s, background .18s; display:flex; align-items:center; justify-content:center; text-align:center; min-height:44px; }
+  .opt-card input:checked + .box{ border-color:var(--teal); background:linear-gradient(160deg, rgba(46,230,166,0.10), rgba(139,92,246,0.06)); }
+  .opt-card input:focus-visible + .box{ outline:2px solid var(--teal); outline-offset:2px; }
+
+  .outro-field{ margin-top:10px; display:none; }
+  .outro-field.show{ display:block; }
+
+  .checkbox-row{ display:flex; align-items:flex-start; gap:10px; padding:14px; background:var(--surface-2); border:1px solid var(--line); border-radius:12px; }
+  .checkbox-row input{ margin-top:3px; width:16px; height:16px; accent-color:var(--teal); flex-shrink:0; }
+  .checkbox-row label{ font-size:0.75rem; color:var(--subtext); line-height:1.5; }
+
+  .hp-field{ position:absolute; left:-9999px; top:-9999px; width:1px; height:1px; overflow:hidden; }
+
+  .nav-row{ display:flex; gap:10px; margin-top:8px; }
+  .btn{ flex:1; border:none; border-radius:12px; padding:14px; font-family:var(--font-body); font-weight:700; font-size:0.86rem; cursor:pointer; transition:transform .15s ease, opacity .15s ease; }
+  .btn:active{ transform:scale(.98); }
+  .btn-primary{ background:linear-gradient(135deg, var(--teal), var(--blue) 60%, var(--violet)); color:#04120c; }
+  .btn-secondary{ background:var(--surface-2); color:var(--text); border:1px solid var(--line); flex:0 0 100px; }
+  .btn-ghost{ background:transparent; color:var(--subtext); border:1px dashed var(--line); flex:0 0 auto; padding:9px 14px; font-size:0.76rem; }
+  .btn:disabled{ opacity:0.55; cursor:not-allowed; }
+  .btn .spinner{ display:inline-block; width:13px; height:13px; border:2px solid rgba(4,18,12,0.35); border-top-color:#04120c; border-radius:50%; animation:spin .7s linear infinite; margin-right:6px; vertical-align:-2px; }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+
+  .alert{ display:none; background:rgba(243,107,107,0.1); border:1px solid rgba(243,107,107,0.35); color:#ffb3b3; font-size:0.78rem; padding:11px 13px; border-radius:10px; margin-bottom:16px; }
+  .alert.show{ display:block; }
+  .draft-banner{ display:none; background:var(--violet-soft); border:1px solid rgba(139,92,246,0.35); color:#c9b8ff; font-size:0.74rem; padding:10px 13px; border-radius:10px; margin-bottom:16px; }
+  .draft-banner.show{ display:block; }
+
+  .responsavel-card{ background:var(--surface-2); border:1px solid var(--line); border-radius:12px; padding:14px 14px 6px; margin-bottom:12px; position:relative; }
+  .responsavel-card .resp-title{ font-family:var(--font-mono); font-size:0.65rem; text-transform:uppercase; letter-spacing:.05em; color:var(--teal); margin-bottom:10px; }
+  .responsavel-card .btn-remove{ position:absolute; top:12px; right:12px; background:none; border:none; color:var(--subtext); font-size:0.7rem; cursor:pointer; text-decoration:underline; }
+
+  #loading-screen{ text-align:center; padding:80px 20px; }
+  #loading-screen .spin-big{ width:36px; height:36px; border:3px solid var(--line); border-top-color:var(--teal); border-radius:50%; margin:0 auto 18px; animation:spin 0.9s linear infinite; }
+  #loading-screen p{ color:var(--subtext); font-size:0.86rem; }
+
+  #invalid-screen{ display:none; text-align:center; padding:60px 20px; }
+  #invalid-screen.show{ display:block; }
+  #invalid-screen h2{ font-family:var(--font-display); font-weight:700; font-size:1.4rem; margin-bottom:10px; }
+  #invalid-screen p{ color:var(--subtext); font-size:0.86rem; max-width:360px; margin:0 auto; line-height:1.6; }
+
+  #success-screen{ display:none; text-align:center; padding:20px 4px 4px; }
+  #success-screen.show{ display:block; }
+  .success-icon{ width:56px; height:56px; margin:0 auto 18px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, var(--teal), var(--blue)); }
+  .success-icon svg{ width:26px; height:26px; stroke:#04120c; }
+  #success-screen h2{ font-family:var(--font-display); font-weight:700; font-size:1.5rem; margin-bottom:10px; }
+  #success-screen p{ color:var(--subtext); font-size:0.86rem; line-height:1.6; max-width:380px; margin:0 auto; }
+
+  footer.page-footer{ text-align:center; margin-top:22px; }
+  .copyright{ font-family:var(--font-mono); font-size:0.6rem; color:var(--subtext); }
+
+  @media (max-width:420px){ .card-grid{ grid-template-columns:1fr; } .card-grid.three{ grid-template-columns:1fr; } }
+  @media (prefers-reduced-motion: reduce){ *{ animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; } }
+</style>
+</head>
+<body>
+
+<div class="blobs"><span class="blob b1"></span><span class="blob b2"></span></div>
+
+<div class="shell">
+
+  <div class="brand">
+    <div class="brand-mark">Malvora <em>Hub</em></div>
+    <div class="brand-eyebrow">Setup do assistente virtual</div>
+  </div>
+
+  <div id="loading-screen">
+    <div class="spin-big"></div>
+    <p>Carregando o seu formulário...</p>
+  </div>
+
+  <div id="invalid-screen">
+    <h2>Link inválido</h2>
+    <p id="invalid-message">Esse link não foi encontrado ou não é mais válido. Fale com a equipe Malvora pra receber um novo link de acesso.</p>
+  </div>
+
+  <div id="main-content" style="display:none;">
+
+    <h1 class="page-title">Configure o assistente da sua barbearia</h1>
+    <p class="page-sub">Essas informações treinam a IA que vai atender seus clientes no WhatsApp. Você pode reabrir este mesmo link a qualquer momento pra editar.</p>
+
+    <div class="progress-labels">
+      <span data-label-step="1">Identidade</span>
+      <span data-label-step="2">Contatos</span>
+      <span data-label-step="3">Local &amp; diferenciais</span>
+    </div>
+    <div class="progress">
+      <div class="progress-step"><div class="fill" id="fill-1"></div></div>
+      <div class="progress-step"><div class="fill" id="fill-2"></div></div>
+      <div class="progress-step"><div class="fill" id="fill-3"></div></div>
+    </div>
+
+    <div class="draft-banner" id="draft-banner">Recuperamos um rascunho salvo automaticamente no seu navegador.</div>
+    <div class="alert" id="form-alert"></div>
+
+    <form id="setup-form" novalidate>
+
+      <div class="hp-field" aria-hidden="true">
+        <label for="website_forms">Não preencha este campo</label>
+        <input type="text" id="website_forms" name="website_forms" tabindex="-1" autocomplete="off">
+      </div>
+
+      <!-- ===================== STEP 1 ===================== -->
+      <div class="step active" data-step="1">
+        <div class="step-title">Identidade &amp; bot</div>
+        <div class="step-hint">Como sua barbearia e o assistente vão aparecer nas conversas.</div>
+
+        <div class="field" data-field="nome_barbearia">
+          <label for="nome_barbearia">Nome comercial da barbearia</label>
+          <input type="text" id="nome_barbearia" required>
+          <div class="field-error">Preencha o nome da barbearia.</div>
+        </div>
+
+        <div class="field" data-field="nome_bot">
+          <label for="nome_bot">Nome do assistente virtual <span class="opt">ex: BarbaBot, Toninho</span></label>
+          <input type="text" id="nome_bot" required>
+          <div class="field-error">Dê um nome pro assistente.</div>
+        </div>
+
+        <div class="field" data-field="appbarber_link">
+          <label for="appbarber_link">Link do App Barber (agendamento)</label>
+          <input type="url" id="appbarber_link" placeholder="https://" required>
+          <div class="field-error">Preencha o link do App Barber.</div>
+        </div>
+
+        <div class="field" data-field="instagram_link">
+          <label for="instagram_link">Instagram <span class="opt">opcional</span></label>
+          <input type="text" id="instagram_link" placeholder="https://instagram.com/suabarbearia">
+        </div>
+
+        <div class="field" data-field="site_url">
+          <label for="site_url">Site <span class="opt">opcional</span></label>
+          <input type="url" id="site_url" placeholder="https://">
+        </div>
+
+        <div class="field" data-field="tom_de_voz">
+          <label>Tom de voz do assistente</label>
+          <div class="card-grid single">
+            <label class="opt-card"><input type="radio" name="tom_de_voz" value="descontraido-jovem" required><span class="box">Descontraído / Jovem</span></label>
+            <label class="opt-card"><input type="radio" name="tom_de_voz" value="formal-elegante"><span class="box">Formal / Elegante</span></label>
+            <label class="opt-card"><input type="radio" name="tom_de_voz" value="direto-tradicional"><span class="box">Direto / Tradicional</span></label>
+          </div>
+          <div class="field-error">Escolha um tom de voz.</div>
+        </div>
+
+        <div class="nav-row">
+          <button type="button" class="btn btn-primary" data-next>Continuar</button>
+        </div>
+      </div>
+
+      <!-- ===================== STEP 2 ===================== -->
+      <div class="step" data-step="2">
+        <div class="step-title">Responsáveis &amp; contato</div>
+        <div class="step-hint">Quem administra a barbearia e um contato de emergência.</div>
+
+        <div id="responsaveis-container"></div>
+        <button type="button" class="btn btn-ghost" id="btn-add-responsavel">+ Adicionar responsável</button>
+
+        <div class="field" data-field="contato_emergencia_nome" style="margin-top:18px;">
+          <label for="contato_emergencia_nome">Contato de emergência - nome <span class="opt">opcional</span></label>
+          <input type="text" id="contato_emergencia_nome">
+        </div>
+        <div class="field" data-field="contato_emergencia_telefone">
+          <label for="contato_emergencia_telefone">Contato de emergência - telefone <span class="opt">opcional</span></label>
+          <input type="tel" id="contato_emergencia_telefone" placeholder="(11) 91234-5678">
+        </div>
+
+        <div class="nav-row">
+          <button type="button" class="btn btn-secondary" data-back>Voltar</button>
+          <button type="button" class="btn btn-primary" data-next>Continuar</button>
+        </div>
+      </div>
+
+      <!-- ===================== STEP 3 ===================== -->
+      <div class="step" data-step="3">
+        <div class="step-title">Local &amp; diferenciais</div>
+        <div class="step-hint">O que a IA precisa saber sobre o espaço físico e o sistema.</div>
+
+        <div class="field" data-field="endereco_completo">
+          <label for="endereco_completo">Endereço completo</label>
+          <textarea id="endereco_completo" required placeholder="Rua, número, bairro, cidade, CEP"></textarea>
+          <div class="field-error">Preencha o endereço.</div>
+        </div>
+
+        <div class="field" data-field="link_google_maps">
+          <label for="link_google_maps">Link do Google Maps <span class="opt">opcional</span></label>
+          <input type="url" id="link_google_maps" placeholder="https://maps.app.goo.gl/...">
+        </div>
+
+        <div class="field" data-field="amenities_estruturais">
+          <label>Comodidades presentes</label>
+          <div class="card-grid" id="amenities-grid"></div>
+        </div>
+
+        <div class="field outro-field" id="wifi-wrap" data-field="wifi_credenciais">
+          <label for="wifi_credenciais">Rede e senha do Wi-Fi (para clientes)</label>
+          <input type="text" id="wifi_credenciais" placeholder="Rede: ... / Senha: ...">
+        </div>
+
+        <div class="field" data-field="possui_geladeira">
+          <label>Possui geladeira/bebidas para clientes?</label>
+          <div class="card-grid single">
+            <label class="opt-card"><input type="radio" name="possui_geladeira" value="sim"><span class="box">Sim</span></label>
+            <label class="opt-card"><input type="radio" name="possui_geladeira" value="nao"><span class="box">Não</span></label>
+          </div>
+        </div>
+        <div class="field outro-field" id="geladeira-wrap" data-field="geladeira_produtos">
+          <label for="geladeira_produtos">Liste os produtos e se são pagos ou cortesia</label>
+          <textarea id="geladeira_produtos" placeholder="Ex: Cerveja Heineken (paga), Água/Café (cortesia)"></textarea>
+        </div>
+
+        <div class="field" data-field="possui_jogos">
+          <label>Possui jogos para os clientes?</label>
+          <div class="card-grid single">
+            <label class="opt-card"><input type="radio" name="possui_jogos" value="sim"><span class="box">Sim</span></label>
+            <label class="opt-card"><input type="radio" name="possui_jogos" value="nao"><span class="box">Não</span></label>
+          </div>
+        </div>
+        <div class="field outro-field" id="jogos-wrap" data-field="jogos_especificar">
+          <label for="jogos_especificar">Quais jogos estão disponíveis?</label>
+          <input type="text" id="jogos_especificar" placeholder="Ex: Sinuca, PS5, Arqueria">
+        </div>
+
+        <div class="field" data-field="diferencial_outro">
+          <label for="diferencial_outro">Outro diferencial que vale destacar <span class="opt">opcional</span></label>
+          <textarea id="diferencial_outro"></textarea>
+        </div>
+
+        <div class="field" data-field="horario_referencia">
+          <label for="horario_referencia">Horário de atendimento <span class="opt">informativo</span></label>
+          <input type="text" id="horario_referencia" placeholder="Ex: Ter-Sáb 09h às 20h">
+          <div class="field-note">O App Barber é a fonte oficial de horários - isso aqui é só uma referência rápida pro assistente.</div>
+        </div>
+
+        <div class="field" data-field="appbarber_pagamento">
+          <label>O App Barber processa pagamento online?</label>
+          <div class="card-grid single">
+            <label class="opt-card"><input type="radio" name="appbarber_pagamento" value="sim"><span class="box">Sim</span></label>
+            <label class="opt-card"><input type="radio" name="appbarber_pagamento" value="nao"><span class="box">Não</span></label>
+          </div>
+        </div>
+
+        <div class="field" data-field="appbarber_disparo_msg">
+          <label>O sistema dispara mensagem automática (confirmação/lembrete)?</label>
+          <div class="card-grid single">
+            <label class="opt-card"><input type="radio" name="appbarber_disparo_msg" value="sim"><span class="box">Sim</span></label>
+            <label class="opt-card"><input type="radio" name="appbarber_disparo_msg" value="nao"><span class="box">Não</span></label>
+          </div>
+        </div>
+
+        <div class="field" data-field="appbarber_disparo_email">
+          <label>O sistema dispara e-mail automático?</label>
+          <div class="card-grid single">
+            <label class="opt-card"><input type="radio" name="appbarber_disparo_email" value="sim"><span class="box">Sim</span></label>
+            <label class="opt-card"><input type="radio" name="appbarber_disparo_email" value="nao"><span class="box">Não</span></label>
+          </div>
+        </div>
+
+        <p class="field-note" style="margin:14px 0 18px;">Os dados coletados neste formulário destinam-se exclusivamente à parametrização do seu assistente virtual e integrações do seu sistema, conforme previsto em contrato de prestação de serviços.</p>
+
+        <div class="nav-row">
+          <button type="button" class="btn btn-secondary" data-back>Voltar</button>
+          <button type="submit" class="btn btn-primary" id="btn-submit">Salvar configuração</button>
+        </div>
+      </div>
+
+    </form>
+
+    <div id="success-screen">
+      <div class="success-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 6"/></svg></div>
+      <h2>Configuração salva</h2>
+      <p>Recebemos as informações da sua barbearia. Você pode reabrir este link a qualquer momento pra atualizar algo.</p>
+    </div>
+
+  </div>
+
+  <footer class="page-footer">
+    <div class="copyright">&copy; 2026 Malvora &middot; malvora.com.br</div>
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  const LOAD_URL = 'https://n8n.malvora.com.br/webhook/barbearia-setup/load';
+  const SAVE_URL = 'https://n8n.malvora.com.br/webhook/barbearia-setup/save';
+  const WEBHOOK_SIGNATURE = '1R7s6TgGBIub5OQtEzOEwi-0KYhMgnqXTGE_Y1ax6no';
+  const REQUEST_TIMEOUT_MS = 10000;
+  const AMENITIES = [
+    {value:'ar-condicionado', label:'Ar condicionado'},
+    {value:'wifi', label:'Wi-Fi'},
+    {value:'lounge', label:'Sala de espera / Lounge'},
+    {value:'tv', label:'TV / Canais de esporte'},
+    {value:'musica-ambiente', label:'Música ambiente'}
+  ];
+
+  function generateId(){
+    if (window.crypto && typeof crypto.randomUUID === 'function') return crypto.randomUUID();
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c){
+      const r = Math.random()*16|0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  const token = params.get('token');
+  const draftKey = token ? ('draft_setup_' + token) : null;
+
+  const loadingScreen = document.getElementById('loading-screen');
+  const invalidScreen = document.getElementById('invalid-screen');
+  const invalidMessage = document.getElementById('invalid-message');
+  const mainContent = document.getElementById('main-content');
+  const form = document.getElementById('setup-form');
+  const successScreen = document.getElementById('success-screen');
+  const alertBox = document.getElementById('form-alert');
+  const draftBanner = document.getElementById('draft-banner');
+  const btnSubmit = document.getElementById('btn-submit');
+  const responsaveisContainer = document.getElementById('responsaveis-container');
+  const amenitiesGrid = document.getElementById('amenities-grid');
+
+  const state = { currentStep: 1, idempotencyKey: null, responsavelCount: 0 };
+
+  function showInvalid(msg){
+    loadingScreen.style.display = 'none';
+    if (msg) invalidMessage.textContent = msg;
+    invalidScreen.classList.add('show');
+  }
+
+  if (!token){
+    showInvalid('Este link não tem um token de acesso. Peça o link correto pra equipe Malvora.');
+    return;
+  }
+
+  // ---- Repeater de responsáveis ----
+  function addResponsavelRow(data){
+    data = data || {};
+    const idx = state.responsavelCount++;
+    const isFirst = idx === 0;
+    const card = document.createElement('div');
+    card.className = 'responsavel-card';
+    card.dataset.idx = idx;
+    card.innerHTML =
+      '<div class="resp-title">Responsável ' + (idx + 1) + '</div>' +
+      (isFirst ? '' : '<button type="button" class="btn-remove" data-remove-responsavel>remover</button>') +
+      '<div class="field"><label>Nome</label><input type="text" data-resp-nome required></div>' +
+      '<div class="field"><label>Telefone</label><input type="tel" data-resp-telefone placeholder="(11) 91234-5678" required></div>' +
+      '<div class="field"><label>E-mail' + (isFirst ? ' <span class="opt">usado pra confirmação</span>' : ' <span class="opt">opcional</span>') + '</label><input type="email" data-resp-email' + (isFirst ? ' required' : '') + '></div>';
+    responsaveisContainer.appendChild(card);
+    if (data.nome) card.querySelector('[data-resp-nome]').value = data.nome;
+    if (data.telefone) card.querySelector('[data-resp-telefone]').value = data.telefone;
+    if (data.email) card.querySelector('[data-resp-email]').value = data.email;
+  }
+
+  responsaveisContainer.addEventListener('click', function(e){
+    if (e.target.matches('[data-remove-responsavel]')){
+      e.target.closest('.responsavel-card').remove();
+    }
+  });
+  document.getElementById('btn-add-responsavel').addEventListener('click', function(){
+    addResponsavelRow();
+  });
+
+  // ---- Amenities checkboxes ----
+  AMENITIES.forEach(function(a){
+    const wrap = document.createElement('label');
+    wrap.className = 'opt-card';
+    wrap.innerHTML = '<input type="checkbox" name="amenities" value="' + a.value + '"><span class="box">' + a.label + '</span>';
+    amenitiesGrid.appendChild(wrap);
+  });
+  amenitiesGrid.addEventListener('change', function(e){
+    if (e.target.name !== 'amenities') return;
+    if (e.target.value === 'wifi'){
+      document.getElementById('wifi-wrap').classList.toggle('show', e.target.checked);
+    }
+  });
+
+  document.querySelectorAll('input[name="possui_geladeira"]').forEach(function(el){
+    el.addEventListener('change', function(){
+      document.getElementById('geladeira-wrap').classList.toggle('show', el.value === 'sim' && el.checked);
+    });
+  });
+  document.querySelectorAll('input[name="possui_jogos"]').forEach(function(el){
+    el.addEventListener('change', function(){
+      document.getElementById('jogos-wrap').classList.toggle('show', el.value === 'sim' && el.checked);
+    });
+  });
+
+  // ---- Navegação ----
+  function updateProgress(){
+    [1,2,3].forEach(function(n){
+      document.getElementById('fill-' + n).style.width = (n <= state.currentStep) ? '100%' : '0%';
+      document.querySelector('[data-label-step="' + n + '"]').classList.toggle('active', n === state.currentStep);
+    });
+  }
+  function goToStep(n){
+    form.querySelectorAll('.step').forEach(function(s){ s.classList.toggle('active', Number(s.dataset.step) === n); });
+    state.currentStep = n;
+    updateProgress();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  function validateStep(n){
+    let valid = true;
+    const stepEl = form.querySelector('.step[data-step="' + n + '"]');
+    stepEl.querySelectorAll('.field').forEach(function(f){ f.classList.remove('invalid'); });
+    stepEl.querySelectorAll('[required]').forEach(function(input){
+      let filled = true;
+      if (input.type === 'radio'){
+        if (!form.querySelector('input[name="' + input.name + '"]:checked')) filled = false;
+      } else {
+        filled = input.value.trim() !== '';
+      }
+      if (!filled){
+        valid = false;
+        const fieldWrap = input.closest('.field');
+        if (fieldWrap) fieldWrap.classList.add('invalid');
+      }
+    });
+    if (n === 2){
+      responsaveisContainer.querySelectorAll('.responsavel-card').forEach(function(card){
+        ['[data-resp-nome]','[data-resp-telefone]'].forEach(function(sel){
+          const input = card.querySelector(sel);
+          if (input.value.trim() === ''){ valid = false; input.style.borderColor = 'var(--danger)'; }
+          else { input.style.borderColor = ''; }
+        });
+        const emailInput = card.querySelector('[data-resp-email]');
+        if (emailInput.required && emailInput.value.trim() === ''){ valid = false; emailInput.style.borderColor = 'var(--danger)'; }
+        else { emailInput.style.borderColor = ''; }
+      });
+    }
+    return valid;
+  }
+  form.addEventListener('click', function(e){
+    if (e.target.matches('[data-next]')){
+      if (!validateStep(state.currentStep)) return;
+      goToStep(state.currentStep + 1);
+    }
+    if (e.target.matches('[data-back]')){
+      goToStep(state.currentStep - 1);
+    }
+  });
+
+  // ---- Auto-save (draft) ----
+  function collectFormState(){
+    const responsaveis = [];
+    responsaveisContainer.querySelectorAll('.responsavel-card').forEach(function(card){
+      responsaveis.push({
+        nome: card.querySelector('[data-resp-nome]').value.trim(),
+        telefone: card.querySelector('[data-resp-telefone]').value.trim(),
+        email: card.querySelector('[data-resp-email]').value.trim()
+      });
+    });
+    const amenities = [];
+    amenitiesGrid.querySelectorAll('input[name="amenities"]:checked').forEach(function(el){ amenities.push(el.value); });
+
+    function radioVal(name){ const el = form.querySelector('input[name="' + name + '"]:checked'); return el ? el.value : null; }
+
+    return {
+      idempotency_key: state.idempotencyKey,
+      nome_barbearia: val('nome_barbearia'),
+      nome_bot: val('nome_bot'),
+      appbarber_link: val('appbarber_link'),
+      instagram_link: val('instagram_link'),
+      site_url: val('site_url'),
+      tom_de_voz: radioVal('tom_de_voz'),
+      responsaveis: responsaveis,
+      contato_emergencia_nome: val('contato_emergencia_nome'),
+      contato_emergencia_telefone: val('contato_emergencia_telefone'),
+      endereco_completo: val('endereco_completo'),
+      link_google_maps: val('link_google_maps'),
+      amenities_estruturais: amenities,
+      wifi_credenciais: val('wifi_credenciais'),
+      possui_geladeira: radioVal('possui_geladeira'),
+      geladeira_produtos: val('geladeira_produtos'),
+      possui_jogos: radioVal('possui_jogos'),
+      jogos_especificar: val('jogos_especificar'),
+      diferencial_outro: val('diferencial_outro'),
+      horario_referencia: val('horario_referencia'),
+      appbarber_pagamento: radioVal('appbarber_pagamento'),
+      appbarber_disparo_msg: radioVal('appbarber_disparo_msg'),
+      appbarber_disparo_email: radioVal('appbarber_disparo_email')
+    };
+  }
+  function val(id){ const el = document.getElementById(id); return el ? el.value : ''; }
+
+  let saveTimeout = null;
+  function scheduleSave(){
+    clearTimeout(saveTimeout);
+    saveTimeout = setTimeout(function(){
+      try { localStorage.setItem(draftKey, JSON.stringify(collectFormState())); } catch(e){ /* storage indisponivel - segue sem draft */ }
+    }, 400);
+  }
+  form.addEventListener('input', scheduleSave);
+  form.addEventListener('change', scheduleSave);
+
+  function applyDataToForm(data){
+    if (!data) return;
+    if (data.nome_barbearia) document.getElementById('nome_barbearia').value = data.nome_barbearia;
+    if (data.nome_bot) document.getElementById('nome_bot').value = data.nome_bot;
+    if (data.appbarber_link) document.getElementById('appbarber_link').value = data.appbarber_link;
+    if (data.instagram_link) document.getElementById('instagram_link').value = data.instagram_link;
+    if (data.site_url) document.getElementById('site_url').value = data.site_url;
+    if (data.tom_de_voz){
+      const el = form.querySelector('input[name="tom_de_voz"][value="' + data.tom_de_voz + '"]');
+      if (el) el.checked = true;
+    }
+    if (data.contato_emergencia_nome) document.getElementById('contato_emergencia_nome').value = data.contato_emergencia_nome;
+    if (data.contato_emergencia_telefone) document.getElementById('contato_emergencia_telefone').value = data.contato_emergencia_telefone;
+    if (data.endereco_completo) document.getElementById('endereco_completo').value = data.endereco_completo;
+    if (data.link_google_maps) document.getElementById('link_google_maps').value = data.link_google_maps;
+    if (data.wifi_credenciais) document.getElementById('wifi_credenciais').value = data.wifi_credenciais;
+    if (data.geladeira_produtos) document.getElementById('geladeira_produtos').value = data.geladeira_produtos;
+    if (data.jogos_especificar) document.getElementById('jogos_especificar').value = data.jogos_especificar;
+    if (data.diferencial_outro) document.getElementById('diferencial_outro').value = data.diferencial_outro;
+    if (data.horario_referencia) document.getElementById('horario_referencia').value = data.horario_referencia;
+
+    let amenities = data.amenities_estruturais;
+    if (typeof amenities === 'string'){ try { amenities = JSON.parse(amenities); } catch(e){ amenities = []; } }
+    if (Array.isArray(amenities)){
+      amenities.forEach(function(a){
+        const el = amenitiesGrid.querySelector('input[value="' + a + '"]');
+        if (el){ el.checked = true; if (a === 'wifi') document.getElementById('wifi-wrap').classList.add('show'); }
+      });
+    }
+
+    function setRadioBool(name, boolVal, wrapId){
+      if (boolVal === null || boolVal === undefined) return;
+      const value = boolVal === true || boolVal === 'sim' ? 'sim' : 'nao';
+      const el = form.querySelector('input[name="' + name + '"][value="' + value + '"]');
+      if (el) el.checked = true;
+      if (wrapId) document.getElementById(wrapId).classList.toggle('show', value === 'sim');
+    }
+    setRadioBool('possui_geladeira', data.possui_geladeira, 'geladeira-wrap');
+    setRadioBool('possui_jogos', data.possui_jogos, 'jogos-wrap');
+    setRadioBool('appbarber_pagamento', data.appbarber_pagamento);
+    setRadioBool('appbarber_disparo_msg', data.appbarber_disparo_msg);
+    setRadioBool('appbarber_disparo_email', data.appbarber_disparo_email);
+
+    let responsaveis = data.responsaveis;
+    if (typeof responsaveis === 'string'){ try { responsaveis = JSON.parse(responsaveis); } catch(e){ responsaveis = []; } }
+    responsaveisContainer.innerHTML = '';
+    state.responsavelCount = 0;
+    if (Array.isArray(responsaveis) && responsaveis.length > 0){
+      responsaveis.forEach(function(r){ addResponsavelRow(r); });
+    } else {
+      addResponsavelRow();
+    }
+  }
+
+  // ---- Carregamento inicial ----
+  function init(){
+    const controller = new AbortController();
+    const timeoutId = setTimeout(function(){ controller.abort(); }, REQUEST_TIMEOUT_MS);
+
+    fetch(LOAD_URL + '?token=' + encodeURIComponent(token), {
+      method: 'GET',
+      headers: { 'Accept': 'application/json', 'X-Malvora-Signature': WEBHOOK_SIGNATURE },
+      signal: controller.signal
+    }).then(function(response){
+      clearTimeout(timeoutId);
+      if (!response.ok){
+        showInvalid('Este link não é válido ou expirou. Fale com a equipe Malvora pra receber um novo.');
+        return null;
+      }
+      return response.json();
+    }).then(function(result){
+      if (!result) return;
+
+      let draft = null;
+      try { draft = JSON.parse(localStorage.getItem(draftKey)); } catch(e){ draft = null; }
+
+      if (draft){
+        state.idempotencyKey = draft.idempotency_key || generateId();
+        applyDataToForm(draft);
+        draftBanner.classList.add('show');
+      } else {
+        state.idempotencyKey = generateId();
+        applyDataToForm(result.data);
+      }
+
+      loadingScreen.style.display = 'none';
+      mainContent.style.display = 'block';
+      updateProgress();
+    }).catch(function(err){
+      clearTimeout(timeoutId);
+      if (err.name === 'AbortError'){
+        showInvalid('A conexão demorou demais pra carregar seus dados. Recarregue a página pra tentar de novo.');
+      } else {
+        showInvalid('Não foi possível carregar o formulário agora. Verifique sua conexão e recarregue a página.');
+      }
+    });
+  }
+  init();
+
+  // ---- Envio ----
+  function showAlert(msg){ alertBox.textContent = msg; alertBox.classList.add('show'); }
+  function hideAlert(){ alertBox.classList.remove('show'); }
+
+  form.addEventListener('submit', async function(e){
+    e.preventDefault();
+    if (!validateStep(3)) return;
+    hideAlert();
+
+    btnSubmit.disabled = true;
+    btnSubmit.innerHTML = '<span class="spinner"></span> Salvando...';
+
+    const s = collectFormState();
+    const payload = {
+      onboarding_id: token,
+      idempotency_key: state.idempotencyKey,
+      website_forms: document.getElementById('website_forms').value,
+      nome_barbearia: s.nome_barbearia,
+      nome_bot: s.nome_bot,
+      appbarber_link: s.appbarber_link,
+      instagram_link: s.instagram_link,
+      site_url: s.site_url,
+      tom_de_voz: s.tom_de_voz,
+      responsaveis: s.responsaveis,
+      contato_emergencia_nome: s.contato_emergencia_nome,
+      contato_emergencia_telefone: s.contato_emergencia_telefone,
+      endereco_completo: s.endereco_completo,
+      link_google_maps: s.link_google_maps,
+      amenities_estruturais: s.amenities_estruturais,
+      wifi_credenciais: s.wifi_credenciais,
+      possui_geladeira: s.possui_geladeira === 'sim',
+      geladeira_produtos: s.geladeira_produtos,
+      possui_jogos: s.possui_jogos === 'sim',
+      jogos_especificar: s.jogos_especificar,
+      diferencial_outro: s.diferencial_outro,
+      horario_referencia: s.horario_referencia,
+      appbarber_pagamento: s.appbarber_pagamento === 'sim',
+      appbarber_disparo_msg: s.appbarber_disparo_msg === 'sim',
+      appbarber_disparo_email: s.appbarber_disparo_email === 'sim'
+    };
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(function(){ controller.abort(); }, REQUEST_TIMEOUT_MS);
+
+    try {
+      const response = await fetch(SAVE_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-Malvora-Signature': WEBHOOK_SIGNATURE },
+        body: JSON.stringify(payload),
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
+
+      if (response.status === 400){
+        let msg = 'Alguns dados não passaram na validação. Confira o formulário e tente novamente.';
+        try { const data = await response.json(); if (data.error) msg = data.error; } catch(_){}
+        showAlert(msg);
+        btnSubmit.disabled = false;
+        btnSubmit.textContent = 'Salvar configuração';
+        return;
+      }
+      if (response.status === 403){
+        showInvalid('Este link não é mais válido. Fale com a equipe Malvora pra receber um novo.');
+        mainContent.style.display = 'none';
+        return;
+      }
+      if (!response.ok) throw new Error('Erro na API: ' + response.status);
+
+      try { localStorage.removeItem(draftKey); } catch(e){}
+      form.style.display = 'none';
+      document.querySelector('.progress').style.display = 'none';
+      document.querySelector('.progress-labels').style.display = 'none';
+      draftBanner.classList.remove('show');
+      successScreen.classList.add('show');
+
+    } catch (err) {
+      clearTimeout(timeoutId);
+      btnSubmit.disabled = false;
+      btnSubmit.textContent = 'Tentar novamente';
+      if (err.name === 'AbortError'){
+        showAlert('A conexão demorou demais. Verifique sua internet e tente novamente - suas respostas não serão duplicadas.');
+      } else {
+        showAlert('Não foi possível salvar agora. Verifique sua conexão e tente novamente.');
+      }
+    }
+  });
+
+})();
+</script>
+</body>
+</html>
