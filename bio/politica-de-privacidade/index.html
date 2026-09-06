@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Política de Privacidade — Malvora Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #120A1F;
+    --panel: #1B1030;
+    --panel-2: #221338;
+    --line: rgba(255,255,255,0.09);
+    --ink: #F3EEFA;
+    --ink-muted: #AB9BC4;
+    --ink-dim: #7B6C93;
+    --violet: #8B5CF6;
+    --cyan: #2FE0C9;
+    --gold: #D8B26B;
+    --radius: 14px;
+    --content-w: 700px;
+  }
+
+  *{ box-sizing: border-box; }
+
+  html{ scroll-behavior: smooth; }
+
+  body{
+    margin:0;
+    background:
+      radial-gradient(1200px 600px at 15% -10%, rgba(139,92,246,0.16), transparent 60%),
+      radial-gradient(900px 500px at 100% 10%, rgba(47,224,201,0.10), transparent 55%),
+      var(--bg);
+    color: var(--ink);
+    font-family: 'IBM Plex Sans', sans-serif;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a{ color: var(--cyan); text-decoration: none; }
+  a:hover{ text-decoration: underline; }
+  a:focus-visible, button:focus-visible, summary:focus-visible{
+    outline: 2px solid var(--cyan);
+    outline-offset: 3px;
+  }
+
+  h1,h2,h3{
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    color: #FFFFFF;
+    letter-spacing: -0.01em;
+  }
+
+  /* ---------- Top bar ---------- */
+  .topbar{
+    position: sticky; top:0; z-index: 40;
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 16px 24px;
+    background: rgba(18,10,31,0.82);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .brand{ display:flex; align-items:center; gap:10px; }
+  .brand-mark{
+    width:30px; height:30px; border-radius: 9px;
+    background: conic-gradient(from 200deg, var(--violet), var(--cyan), var(--violet));
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Fraunces', serif; font-weight:600; font-size:15px; color:#0E0819;
+  }
+  .brand-name{ font-family:'Fraunces', serif; font-size:17px; color:#fff; }
+  .brand-name span{ color: var(--ink-muted); font-family:'IBM Plex Sans', sans-serif; font-size:13px; }
+  .toc-toggle{
+    display:none;
+    background: var(--panel); color: var(--ink);
+    border:1px solid var(--line); border-radius: 9px;
+    padding: 8px 14px; font-size: 13px; font-family:'IBM Plex Sans', sans-serif;
+    cursor:pointer;
+  }
+
+  /* ---------- Layout ---------- */
+  .shell{
+    max-width: 1180px; margin: 0 auto;
+    display:grid; grid-template-columns: 240px 1fr; gap: 56px;
+    padding: 48px 24px 100px;
+  }
+  nav.side{
+    position: sticky; top: 84px; align-self:start;
+    max-height: calc(100vh - 110px); overflow-y:auto;
+  }
+  nav.side ol{
+    list-style:none; margin:0; padding:0;
+    border-left: 1px solid var(--line);
+  }
+  nav.side li{ margin:0; }
+  nav.side a{
+    display:block; color: var(--ink-dim); font-size: 13.5px;
+    padding: 7px 0 7px 16px; border-left: 2px solid transparent; margin-left:-1px;
+    text-decoration:none; transition: color .15s ease, border-color .15s ease;
+  }
+  nav.side a:hover{ color: var(--ink); }
+  nav.side a.active{ color: var(--cyan); border-left-color: var(--cyan); }
+
+  main{ max-width: var(--content-w); }
+
+  /* ---------- Hero ---------- */
+  .hero{ margin-bottom: 40px; }
+  .eyebrow-badge{
+    display:inline-flex; align-items:center; gap:8px;
+    font-size: 12.5px; color: var(--ink-muted);
+    background: var(--panel); border:1px solid var(--line);
+    padding: 5px 12px; border-radius: 999px; margin-bottom: 22px;
+  }
+  .eyebrow-badge .dot{ width:6px; height:6px; border-radius:50%; background: var(--cyan); }
+  h1.title{ font-size: clamp(32px, 5vw, 44px); line-height: 1.12; margin: 0 0 16px; }
+  .lede{ color: var(--ink-muted); font-size: 16.5px; max-width: 58ch; }
+
+  .quicklinks{
+    display:grid; grid-template-columns: repeat(2, 1fr); gap: 10px;
+    margin-top: 28px;
+  }
+  .quicklinks a{
+    display:block; text-decoration:none; color: var(--ink);
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 14px 16px;
+    font-size: 13.5px; transition: border-color .15s ease, transform .15s ease;
+  }
+  .quicklinks a:hover{ border-color: rgba(139,92,246,0.55); transform: translateY(-1px); }
+  .quicklinks strong{ display:block; color:#fff; font-size: 14px; margin-bottom: 3px; font-weight:600; }
+
+  /* ---------- Sections ---------- */
+  section{ padding-top: 52px; scroll-margin-top: 90px; border-top: 1px solid var(--line); }
+  section:first-of-type{ border-top: none; }
+  .sec-num{
+    font-family:'IBM Plex Mono', monospace; font-size: 12.5px;
+    color: var(--gold); letter-spacing: 0.04em; display:block; margin-bottom: 8px;
+  }
+  h2{ font-size: 24px; margin: 0 0 16px; }
+  h3{ font-size: 16.5px; color: var(--ink); font-family:'IBM Plex Sans',sans-serif; font-weight:600; margin: 22px 0 8px; }
+  p{ color: #D9D0EA; margin: 0 0 14px; }
+  ul, ol.plain{ margin: 0 0 16px; padding-left: 20px; color:#D9D0EA; }
+  li{ margin-bottom: 7px; }
+  strong{ color:#fff; font-weight:600; }
+
+  .callout{
+    background: var(--panel); border: 1px solid var(--line);
+    border-left: 3px solid var(--violet);
+    border-radius: 10px; padding: 16px 18px; margin: 18px 0;
+    font-size: 14.5px; color: var(--ink-muted);
+  }
+  .callout strong{ color: var(--ink); }
+
+  table.rights{
+    width:100%; border-collapse: collapse; margin: 12px 0 20px; font-size: 14px;
+  }
+  table.rights th, table.rights td{
+    text-align:left; padding: 10px 12px; border-bottom: 1px solid var(--line);
+    color: #D9D0EA; vertical-align: top;
+  }
+  table.rights th{ color: var(--ink-dim); font-weight:500; font-size:12.5px; text-transform:none; }
+
+  .pill-row{ display:flex; flex-wrap:wrap; gap:8px; margin: 14px 0 20px; }
+  .pill{
+    font-size:12.5px; padding: 5px 11px; border-radius: 999px;
+    background: var(--panel-2); border:1px solid var(--line); color: var(--ink-muted);
+  }
+
+  /* ---------- FAQ accordion ---------- */
+  .faq-item{ border-bottom: 1px solid var(--line); }
+  .faq-item summary{
+    cursor:pointer; list-style:none; padding: 16px 0;
+    display:flex; align-items:center; justify-content:space-between; gap: 16px;
+    font-size: 15px; color:#fff; font-weight:500;
+  }
+  .faq-item summary::-webkit-details-marker{ display:none; }
+  .faq-item summary::after{
+    content:"+"; font-family:'IBM Plex Mono',monospace; font-size:18px; color: var(--cyan);
+    flex-shrink:0; transition: transform .2s ease;
+  }
+  .faq-item[open] summary::after{ transform: rotate(45deg); }
+  .faq-item .faq-a{ padding: 0 0 18px; color: var(--ink-muted); font-size: 14.5px; max-width: 62ch; }
+
+  /* ---------- Footer ---------- */
+  footer{
+    margin-top: 60px; padding-top: 28px; border-top: 1px solid var(--line);
+    font-size: 13px; color: var(--ink-dim);
+  }
+  footer .meta-row{ display:flex; flex-wrap:wrap; gap: 18px; margin-bottom: 14px; }
+  .to-top{
+    position: fixed; right: 26px; bottom: 26px;
+    width: 42px; height:42px; border-radius: 50%;
+    background: var(--panel); border: 1px solid var(--line); color: var(--cyan);
+    display:flex; align-items:center; justify-content:center; cursor:pointer;
+    opacity:0; pointer-events:none; transition: opacity .2s ease, transform .2s ease;
+  }
+  .to-top.show{ opacity:1; pointer-events:auto; }
+  .to-top:hover{ transform: translateY(-2px); }
+
+  /* ---------- Mobile ---------- */
+  @media (max-width: 880px){
+    .shell{ grid-template-columns: 1fr; padding-top: 28px; }
+    nav.side{
+      position: static; max-height:none; display:none;
+      background: var(--panel); border:1px solid var(--line); border-radius: var(--radius);
+      padding: 8px 16px; margin-bottom: 8px;
+    }
+    nav.side.open{ display:block; }
+    nav.side ol{ border-left:none; }
+    nav.side a{ border-left:none; padding: 9px 0; }
+    .toc-toggle{ display:inline-block; }
+    .quicklinks{ grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <div class="brand-mark">M</div>
+    <div class="brand-name">Malvora Hub <span>· Política de Privacidade</span></div>
+  </div>
+  <button class="toc-toggle" id="tocToggle" aria-expanded="false">Sumário</button>
+</div>
+
+<div class="shell">
+  <nav class="side" id="sideNav" aria-label="Sumário da política">
+    <ol id="tocList">
+      <li><a href="#quem-somos">1. Quem somos</a></li>
+      <li><a href="#dados-coletados">2. Dados que coletamos</a></li>
+      <li><a href="#como-coletamos">3. Como coletamos</a></li>
+      <li><a href="#finalidade">4. Para que usamos os dados</a></li>
+      <li><a href="#ia">5. Uso de Inteligência Artificial</a></li>
+      <li><a href="#bases-legais">6. Bases legais (LGPD)</a></li>
+      <li><a href="#compartilhamento">7. Compartilhamento de dados</a></li>
+      <li><a href="#retencao">8. Retenção e eliminação</a></li>
+      <li><a href="#imagem">9. Uso de imagem e depoimentos</a></li>
+      <li><a href="#cookies">10. Cookies e rastreamento</a></li>
+      <li><a href="#seguranca">11. Segurança da informação</a></li>
+      <li><a href="#direitos">12. Seus direitos</a></li>
+      <li><a href="#internacional">13. Transferência internacional</a></li>
+      <li><a href="#menores">14. Menores de idade</a></li>
+      <li><a href="#alteracoes">15. Alterações desta política</a></li>
+      <li><a href="#lei">16. Legislação e foro</a></li>
+      <li><a href="#contato">17. Contato e encarregado</a></li>
+      <li><a href="#faq">Perguntas rápidas</a></li>
+    </ol>
+  </nav>
+
+  <main>
+    <div class="hero">
+      <span class="eyebrow-badge"><span class="dot"></span>Válida para todos os ambientes digitais da Malvora Hub</span>
+      <h1 class="title">Política de Privacidade e Proteção de Dados</h1>
+      <p class="lede">Este documento explica, em detalhes e em linguagem clara, como a <strong>Malvora Hub</strong> coleta, usa, armazena e protege os dados de clientes, leads e visitantes em nosso site, formulários, ferramentas de IA e canais de atendimento — em conformidade com a Lei Geral de Proteção de Dados (Lei nº 13.709/2018).</p>
+
+      <div class="quicklinks">
+        <a href="#dados-coletados"><strong>Quais dados coletamos</strong>Nome, contato, dados da operação e mais</a>
+        <a href="#ia"><strong>Uso de IA</strong>Como nossa IA própria processa seus dados</a>
+        <a href="#retencao"><strong>Por quanto tempo guardamos</strong>Prazo de retenção de 2 anos</a>
+        <a href="#direitos"><strong>Seus direitos</strong>Como pedir acesso, correção ou exclusão</a>
+      </div>
+    </div>
+
+    <section id="quem-somos">
+      <span class="sec-num">01</span>
+      <h2>Quem somos</h2>
+      <p>Esta política é publicada por <strong>MALVORA HUB LTDA</strong>, inscrita no CNPJ sob o nº <strong>67.840.416/0001-99</strong> ("Malvora Hub", "nós"), controladora dos dados pessoais tratados através do site <strong>malvora.com.br</strong>, de nossos formulários de diagnóstico, ferramentas internas de inteligência artificial e canais de atendimento, incluindo WhatsApp.</p>
+      <p>Ela se aplica a qualquer pessoa física ou representante de pessoa jurídica que interaja com nossos formulários, campanhas de anúncio, canais de atendimento ou plataformas ("você", "titular").</p>
+      <div class="callout"><strong>Escopo único, uso múltiplo.</strong> Este documento foi escrito para ser o padrão de privacidade da Malvora Hub — pode ser referenciado a partir de qualquer ferramenta, formulário, landing page ou produto da empresa, sem necessidade de recriação a cada novo ambiente.</div>
+    </section>
+
+    <section id="dados-coletados">
+      <span class="sec-num">02</span>
+      <h2>Dados que coletamos</h2>
+      <p>Coletamos os dados que você mesmo nos fornece e, em alguns casos, dados sobre terceiros que você opte por compartilhar conosco (por exemplo, sócios ou colaboradores mencionados em um diagnóstico). Isso pode incluir, sem se limitar a:</p>
+      <ul>
+        <li><strong>Dados de identificação e contato:</strong> nome, e-mail, telefone/WhatsApp.</li>
+        <li><strong>Dados da sua operação:</strong> nome da empresa, segmento, faturamento, processos internos, metas e demais informações fornecidas para elaboração do diagnóstico.</li>
+        <li><strong>Dados financeiros:</strong> informações de faturamento e outros indicadores de negócio necessários à análise solicitada.</li>
+        <li><strong>Documentos e arquivos</strong> enviados por você para complementar uma análise ou solicitação.</li>
+        <li><strong>Imagens e vídeos</strong>, quando enviados por você ou capturados em reuniões, atendimentos, cases e depoimentos.</li>
+        <li><strong>Dados de terceiros</strong> eventualmente mencionados por você no contexto de sua operação.</li>
+        <li><strong>Dados de navegação e interação</strong> com nossos anúncios e site, coletados via Meta Ads e Google Ads (ex.: cliques, conversões, dispositivo).</li>
+      </ul>
+      <p>Sempre que possível, indicamos nos próprios formulários quais campos são obrigatórios e para qual finalidade específica são usados.</p>
+    </section>
+
+    <section id="como-coletamos">
+      <span class="sec-num">03</span>
+      <h2>Como coletamos seus dados</h2>
+      <div class="pill-row">
+        <span class="pill">Formulários no site</span>
+        <span class="pill">Meta Ads (Instagram/Facebook)</span>
+        <span class="pill">Google Ads</span>
+        <span class="pill">WhatsApp</span>
+        <span class="pill">Atendimento comercial</span>
+      </div>
+      <p>Os dados chegam até nós principalmente quando você preenche um formulário (como o de diagnóstico de operação), interage com nossos anúncios nas plataformas Meta e Google, ou entra em contato pelo WhatsApp. Também podemos registrar dados durante reuniões, calls e atendimentos, quando relevante para a prestação do serviço.</p>
+    </section>
+
+    <section id="finalidade">
+      <span class="sec-num">04</span>
+      <h2>Para que usamos seus dados</h2>
+      <ul>
+        <li>Elaborar o diagnóstico da sua operação e recomendações associadas;</li>
+        <li>Entrar em contato para fins comerciais, suporte e atendimento;</li>
+        <li>Personalizar e mensurar o desempenho de campanhas em Meta Ads e Google Ads;</li>
+        <li>Aprimorar nossos produtos, ferramentas e metodologias internas;</li>
+        <li>Produzir cases e depoimentos de clientes, mediante autorização específica (veja a seção 9);</li>
+        <li>Cumprir obrigações legais, regulatórias ou requisições de autoridades competentes.</li>
+      </ul>
+      <p>Não vendemos seus dados pessoais a terceiros em nenhuma hipótese.</p>
+    </section>
+
+    <section id="ia">
+      <span class="sec-num">05</span>
+      <h2>Uso de Inteligência Artificial</h2>
+      <p>A Malvora Hub utiliza <strong>inteligência artificial própria</strong> para processar e analisar os dados fornecidos nos formulários de diagnóstico, com o objetivo de identificar padrões, gerar recomendações e acelerar a produção de análises sobre a sua operação.</p>
+      <p>Esse processamento é feito com base nas informações que você mesmo declara. Resultados gerados por IA são revisados por nossa equipe antes de qualquer entrega comercial relevante — não tomamos decisões que produzam efeitos jurídicos ou impactos significativos sobre você de forma exclusivamente automatizada.</p>
+      <p>Adotamos controles técnicos e organizacionais para restringir o acesso a esses dados apenas às pessoas e sistemas necessários à finalidade descrita nesta política.</p>
+    </section>
+
+    <section id="bases-legais">
+      <span class="sec-num">06</span>
+      <h2>Bases legais que utilizamos (LGPD)</h2>
+      <p>Tratamos seus dados pessoais com fundamento em uma ou mais das seguintes bases legais previstas no art. 7º da LGPD, a depender do contexto:</p>
+      <table class="rights">
+        <tr><th>Base legal</th><th>Quando se aplica</th></tr>
+        <tr><td>Consentimento</td><td>Ao aceitar esta política e enviar um formulário, ou autorizar uso de imagem/depoimento.</td></tr>
+        <tr><td>Execução de contrato ou procedimentos preliminares</td><td>Para elaborar o diagnóstico e prestar os serviços contratados ou solicitados.</td></tr>
+        <tr><td>Legítimo interesse</td><td>Para melhoria de produtos, comunicação comercial e mensuração de campanhas, sempre de forma proporcional.</td></tr>
+        <tr><td>Cumprimento de obrigação legal ou regulatória</td><td>Quando exigido por lei, por exemplo em obrigações fiscais e contábeis.</td></tr>
+      </table>
+    </section>
+
+    <section id="compartilhamento">
+      <span class="sec-num">07</span>
+      <h2>Compartilhamento de dados</h2>
+      <p>Podemos compartilhar dados pessoais nas seguintes situações:</p>
+      <ul>
+        <li><strong>Empresas parceiras:</strong> quando necessário para viabilizar uma entrega, indicação ou serviço complementar solicitado por você — esse compartilhamento não é automático nem ocorre em todos os casos.</li>
+        <li><strong>Fornecedores de tecnologia:</strong> hospedagem, ferramentas internas e infraestrutura usada para operar nossos sistemas e nossa IA.</li>
+        <li><strong>Plataformas de anúncio:</strong> Meta e Google, na qualidade de operadoras, para fins de mensuração e otimização de campanhas.</li>
+        <li><strong>Autoridades públicas:</strong> quando exigido por lei, ordem judicial ou requisição de órgão competente.</li>
+      </ul>
+      <p>Exigimos de terceiros que tratam dados em nosso nome o compromisso com padrões de segurança e confidencialidade compatíveis com esta política.</p>
+    </section>
+
+    <section id="retencao">
+      <span class="sec-num">08</span>
+      <h2>Por quanto tempo guardamos seus dados</h2>
+      <p>Mantemos seus dados pessoais armazenados pelo período de <strong>2 (dois) anos</strong>, contados a partir da coleta ou do último contato, o que for mais recente. Encerrado esse prazo, os dados são eliminados ou anonimizados, exceto quando devamos mantê-los por mais tempo para cumprir obrigação legal, regulatória, ou para exercício regular de direitos em processo judicial, administrativo ou arbitral.</p>
+    </section>
+
+    <section id="imagem">
+      <span class="sec-num">09</span>
+      <h2>Uso de imagem, vídeo e depoimentos</h2>
+      <p>Fotos, vídeos ou falas registradas em atendimentos, reuniões ou entrevistas só são utilizados publicamente (como em cases, depoimentos e materiais de divulgação) mediante <strong>autorização específica do cliente</strong>, concedida antes da publicação. Você pode revogar essa autorização a qualquer momento entrando em contato pelos canais da seção 17, sem prejuízo da legalidade do uso realizado anteriormente à revogação.</p>
+    </section>
+
+    <section id="cookies">
+      <span class="sec-num">10</span>
+      <h2>Cookies e tecnologias de rastreamento</h2>
+      <p>Utilizamos pixels e tags de mensuração do <strong>Meta Ads</strong> e <strong>Google Ads</strong> em nosso site e formulários, que podem registrar cookies e identificadores para entender a origem de um acesso, medir conversões e otimizar campanhas. Você pode gerenciar ou bloquear cookies diretamente nas configurações do seu navegador; isso pode afetar a exibição personalizada de conteúdo, mas não impede o uso do site.</p>
+    </section>
+
+    <section id="seguranca">
+      <span class="sec-num">11</span>
+      <h2>Segurança da informação</h2>
+      <p>Adotamos medidas técnicas e administrativas razoáveis para proteger seus dados contra acessos não autorizados, perda, alteração ou vazamento, incluindo controle de acesso, boas práticas de armazenamento e revisão periódica de nossos processos. Nenhum sistema é inteiramente livre de risco; caso identifiquemos um incidente de segurança relevante, comunicaremos os titulares afetados e a Autoridade Nacional de Proteção de Dados (ANPD), quando aplicável, nos termos da LGPD.</p>
+    </section>
+
+    <section id="direitos">
+      <span class="sec-num">12</span>
+      <h2>Seus direitos como titular</h2>
+      <p>Nos termos do art. 18 da LGPD, você pode solicitar a qualquer momento:</p>
+      <ul>
+        <li>Confirmação da existência de tratamento de dados;</li>
+        <li>Acesso aos seus dados;</li>
+        <li>Correção de dados incompletos, inexatos ou desatualizados;</li>
+        <li>Anonimização, bloqueio ou eliminação de dados desnecessários ou excessivos;</li>
+        <li>Portabilidade dos dados a outro fornecedor de serviço;</li>
+        <li>Eliminação dos dados tratados com base no seu consentimento;</li>
+        <li>Informação sobre entidades com as quais compartilhamos dados;</li>
+        <li>Revogação do consentimento, a qualquer momento.</li>
+      </ul>
+      <p>Para exercer qualquer um desses direitos, envie sua solicitação para <a href="mailto:contato@malvora.com.br">contato@malvora.com.br</a>. Buscamos responder em até 15 dias úteis.</p>
+    </section>
+
+    <section id="internacional">
+      <span class="sec-num">13</span>
+      <h2>Transferência internacional de dados</h2>
+      <p>Algumas ferramentas e fornecedores que utilizamos (incluindo plataformas de anúncio e infraestrutura de tecnologia) podem processar dados em servidores localizados fora do Brasil. Nesses casos, buscamos trabalhar com fornecedores que adotem padrões contratuais e de segurança compatíveis com a LGPD para garantir um nível de proteção adequado aos seus dados.</p>
+    </section>
+
+    <section id="menores">
+      <span class="sec-num">14</span>
+      <h2>Menores de idade</h2>
+      <p>Nossos serviços são direcionados a empresas e profissionais maiores de 18 anos. Não coletamos intencionalmente dados de crianças ou adolescentes sem o devido consentimento específico de um responsável legal.</p>
+    </section>
+
+    <section id="alteracoes">
+      <span class="sec-num">15</span>
+      <h2>Alterações desta política</h2>
+      <p>Podemos atualizar esta política periodicamente para refletir mudanças em nossas práticas, ferramentas ou exigências legais. A versão vigente estará sempre disponível em nosso site, com a data da última atualização indicada no rodapé.</p>
+    </section>
+
+    <section id="lei">
+      <span class="sec-num">16</span>
+      <h2>Legislação aplicável e foro</h2>
+      <p>Esta política é regida pelas leis da República Federativa do Brasil, em especial pela Lei nº 13.709/2018 (LGPD). Eventuais controvérsias serão submetidas ao foro do domicílio da Malvora Hub, salvo disposição legal em contrário.</p>
+    </section>
+
+    <section id="contato">
+      <span class="sec-num">17</span>
+      <h2>Contato e encarregado de dados</h2>
+      <p>Para dúvidas sobre esta política, exercício de direitos ou qualquer assunto relacionado à proteção de dados, fale com a gente:</p>
+      <ul>
+        <li><strong>Empresa:</strong> Malvora Hub Ltda</li>
+        <li><strong>CNPJ:</strong> 67.840.416/0001-99</li>
+        <li><strong>Site:</strong> <a href="https://malvora.com.br" target="_blank" rel="noopener">malvora.com.br</a></li>
+        <li><strong>E-mail para assuntos de privacidade:</strong> <a href="mailto:contato@malvora.com.br">contato@malvora.com.br</a></li>
+      </ul>
+    </section>
+
+    <section id="faq">
+      <span class="sec-num">·</span>
+      <h2>Perguntas rápidas</h2>
+      <details class="faq-item" open>
+        <summary>Vocês vendem meus dados?</summary>
+        <div class="faq-a">Não. Seus dados são usados para gerar seu diagnóstico, para contato comercial e para melhorar nossos serviços — nunca são vendidos a terceiros.</div>
+      </details>
+      <details class="faq-item">
+        <summary>Como peço a exclusão dos meus dados?</summary>
+        <div class="faq-a">Basta enviar um e-mail para contato@malvora.com.br solicitando a exclusão. Respondemos em até 15 dias úteis.</div>
+      </details>
+      <details class="faq-item">
+        <summary>Uma IA lê meus dados financeiros?</summary>
+        <div class="faq-a">Sim, nossa IA própria processa os dados que você informa (incluindo dados financeiros) para gerar o diagnóstico da sua operação. Resultados relevantes passam por revisão humana antes de qualquer entrega.</div>
+      </details>
+      <details class="faq-item">
+        <summary>Minha foto ou depoimento pode aparecer em um anúncio?</summary>
+        <div class="faq-a">Só com sua autorização específica, dada antes da publicação. Você pode revogar essa autorização a qualquer momento.</div>
+      </details>
+      <details class="faq-item">
+        <summary>Por quanto tempo meus dados ficam guardados?</summary>
+        <div class="faq-a">Por até 2 anos a partir da coleta ou do último contato, salvo obrigação legal que exija prazo diferente.</div>
+      </details>
+    </section>
+
+    <footer>
+      <div class="meta-row">
+        <span>Última atualização: 06 de setembro de 2026</span>
+        <span>Vigência: imediata</span>
+      </div>
+      <p style="max-width:62ch; color:var(--ink-dim);">Este documento foi elaborado com base na Lei Geral de Proteção de Dados (Lei nº 13.709/2018) e em boas práticas de mercado. Ele não substitui aconselhamento jurídico — recomendamos revisão por um advogado especializado antes da publicação oficial em todos os ambientes da empresa.</p>
+    </footer>
+  </main>
+</div>
+
+<button class="to-top" id="toTop" aria-label="Voltar ao topo">↑</button>
+
+<script>
+  // Mobile TOC toggle
+  const tocToggle = document.getElementById('tocToggle');
+  const sideNav = document.getElementById('sideNav');
+  tocToggle.addEventListener('click', () => {
+    const isOpen = sideNav.classList.toggle('open');
+    tocToggle.setAttribute('aria-expanded', isOpen);
+  });
+  sideNav.addEventListener('click', (e) => {
+    if (e.target.tagName === 'A' && window.innerWidth <= 880) {
+      sideNav.classList.remove('open');
+      tocToggle.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  // Scrollspy
+  const links = Array.from(document.querySelectorAll('#tocList a'));
+  const sections = links
+    .map(a => document.querySelector(a.getAttribute('href')))
+    .filter(Boolean);
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      const id = '#' + entry.target.id;
+      const link = links.find(a => a.getAttribute('href') === id);
+      if (!link) return;
+      if (entry.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-15% 0px -70% 0px', threshold: 0 });
+
+  sections.forEach(sec => observer.observe(sec));
+
+  // Back to top
+  const toTop = document.getElementById('toTop');
+  window.addEventListener('scroll', () => {
+    toTop.classList.toggle('show', window.scrollY > 500);
+  });
+  toTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+</script>
+
+</body>
+</html>
