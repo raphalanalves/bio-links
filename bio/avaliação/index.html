@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Avalie nosso serviço | Malvora</title>
+<meta name="description" content="Conte como foi sua experiência com a Malvora.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#05060a; --surface:#0e1117; --surface-2:#171b24; --line: rgba(238,241,245,0.10);
+    --teal:#2ee6a6; --blue:#3fa0f0; --violet:#8b5cf6;
+    --violet-soft: rgba(139,92,246,0.16); --teal-soft: rgba(46,230,166,0.14);
+    --amber:#f5c451;
+    --danger:#f36b6b; --text:#eef1f5; --subtext:#8891a0;
+    --font-display:'Cormorant Garamond', serif; --font-body:'Manrope', -apple-system, sans-serif; --font-mono:'JetBrains Mono', monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background:var(--ink); color:var(--text); font-family:var(--font-body);
+    min-height:100vh; position:relative; overflow-x:hidden; -webkit-font-smoothing:antialiased;
+    display:flex; align-items:center; justify-content:center; padding:40px 16px;
+  }
+
+  /* ---------- ambient background (same language as bio.malvora.com.br) ---------- */
+  .blobs{ position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none; }
+  .blob{ position:absolute; width:50vmax; height:50vmax; border-radius:50%; filter:blur(100px); opacity:0.18; }
+  .blob.b1{ background:var(--teal); top:-20%; left:-22%; animation:float1 26s ease-in-out infinite; }
+  .blob.b2{ background:var(--violet); bottom:-24%; right:-20%; animation:float2 30s ease-in-out infinite; }
+  @keyframes float1{ 0%,100%{transform:translate(0,0) scale(1);} 50%{transform:translate(5%,6%) scale(1.08);} }
+  @keyframes float2{ 0%,100%{transform:translate(0,0) scale(1);} 50%{transform:translate(-5%,-5%) scale(1.06);} }
+  #spotlight{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background: radial-gradient(560px circle at var(--mx,50%) var(--my,30%),
+      rgba(46,230,166,0.10), rgba(63,160,240,0.06) 35%, transparent 65%);
+  }
+  #sigils{ position:fixed; inset:0; z-index:0; opacity:0.5; pointer-events:none; }
+
+  a{ color:var(--teal); }
+  :focus-visible{ outline:2px solid var(--teal); outline-offset:3px; border-radius:4px; }
+
+  /* ---------- card ---------- */
+  .card-wrap{
+    position:relative; z-index:1; width:100%; max-width:460px;
+    border-radius:24px; padding:1.5px;
+    background:linear-gradient(150deg, rgba(46,230,166,0.35), rgba(63,160,240,0.18) 45%, rgba(139,92,246,0.35));
+  }
+  .card{
+    background:var(--surface); border-radius:22px; padding:38px 30px 32px;
+    opacity:0; transform:translateY(14px); animation:cardIn .6s ease .05s forwards;
+  }
+  @keyframes cardIn{ to{ opacity:1; transform:translateY(0); } }
+
+  .brand{ text-align:center; margin-bottom:22px; }
+  .brand-mark{ font-family:var(--font-display); font-weight:700; font-size:1.4rem; }
+  .brand-mark em{ font-style:italic; background-image:linear-gradient(100deg, var(--teal), var(--blue) 60%, var(--violet)); background-clip:text; -webkit-background-clip:text; color:transparent; }
+  .brand-eyebrow{ font-family:var(--font-mono); font-size:0.62rem; letter-spacing:0.16em; text-transform:uppercase; color:var(--teal); margin-top:6px; }
+
+  h1{
+    font-family:var(--font-display); font-weight:700; font-size:1.6rem; line-height:1.25;
+    text-align:center; margin:20px 0 10px;
+  }
+
+  /* fixed intro copy */
+  .intro{ color:var(--subtext); font-size:0.87rem; line-height:1.6; text-align:center; max-width:360px; margin:0 auto 20px; }
+
+  /* variable service field */
+  .service-chip{
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    background:var(--surface-2); border:1px solid var(--line); border-radius:999px;
+    padding:9px 18px; margin:0 auto 30px; width:fit-content; max-width:100%;
+  }
+  .service-chip .dot{ width:6px; height:6px; border-radius:50%; background:var(--teal); box-shadow:0 0 8px var(--teal); flex-shrink:0; }
+  .service-chip span.label{ font-family:var(--font-mono); font-size:0.68rem; text-transform:uppercase; letter-spacing:.05em; color:var(--subtext); }
+  .service-chip strong{ font-size:0.82rem; font-weight:700; color:var(--text); }
+
+  /* ---------- stars ---------- */
+  .stars-block{ text-align:center; margin-bottom:8px; }
+  .stars{ display:inline-flex; gap:8px; direction:ltr; }
+  .star-btn{
+    background:none; border:none; cursor:pointer; padding:4px;
+    color:var(--line); transition:transform .18s cubic-bezier(.34,1.6,.64,1), color .18s ease, filter .18s ease;
+  }
+  .star-btn svg{ width:38px; height:38px; display:block; }
+  .star-btn:hover, .star-btn:focus-visible{ transform:scale(1.14) rotate(-4deg); }
+  .star-btn.hover-fill, .star-btn.selected{
+    color:var(--amber);
+    filter:drop-shadow(0 0 10px rgba(245,196,81,0.55));
+  }
+  .star-btn.selected{ transform:scale(1.05); }
+
+  .stars-label{
+    height:20px; margin-top:12px;
+    font-family:var(--font-mono); font-size:0.72rem; letter-spacing:.03em; color:var(--subtext);
+    transition:color .2s ease;
+  }
+  .stars-label.filled{ color:var(--amber); }
+
+  /* ---------- comment ---------- */
+  .field{ margin-top:24px; }
+  .field label{ display:block; font-size:0.8rem; font-weight:600; margin-bottom:8px; }
+  .field label .opt{ font-weight:500; color:var(--subtext); font-size:0.7rem; }
+  .field textarea{
+    width:100%; background:var(--surface-2); border:1px solid var(--line); border-radius:12px;
+    padding:12px 14px; color:var(--text); font-family:var(--font-body); font-size:0.86rem;
+    resize:vertical; min-height:96px; transition:border-color .2s;
+  }
+  .field textarea:focus{ outline:none; border-color:var(--teal-soft); }
+  .char-count{ text-align:right; font-family:var(--font-mono); font-size:0.62rem; color:var(--subtext); margin-top:6px; }
+
+  /* ---------- submit ---------- */
+  .btn-submit{
+    width:100%; margin-top:26px; border:none; border-radius:12px; padding:15px;
+    font-family:var(--font-body); font-weight:700; font-size:0.9rem; cursor:pointer;
+    background:linear-gradient(135deg, var(--teal), var(--blue) 60%, var(--violet)); color:#04120c;
+    transition:transform .15s ease, opacity .15s ease, box-shadow .2s ease;
+    box-shadow:0 10px 24px -10px rgba(46,230,166,0.35);
+  }
+  .btn-submit:hover:not(:disabled){ transform:translateY(-2px); box-shadow:0 14px 28px -10px rgba(46,230,166,0.5); }
+  .btn-submit:active:not(:disabled){ transform:translateY(0) scale(.99); }
+  .btn-submit:disabled{ opacity:0.4; cursor:not-allowed; box-shadow:none; }
+  .btn-submit .spinner{ display:inline-block; width:13px; height:13px; border:2px solid rgba(4,18,12,0.35); border-top-color:#04120c; border-radius:50%; animation:spin .7s linear infinite; margin-right:6px; vertical-align:-2px; }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+
+  .privacy-note{ text-align:center; font-size:0.66rem; color:var(--subtext); margin-top:16px; line-height:1.5; }
+
+  /* ---------- success state ---------- */
+  #success-view{ display:none; text-align:center; padding:14px 4px 4px; }
+  #success-view.show{ display:block; }
+  #form-view.hide{ display:none; }
+  .success-icon{
+    width:60px; height:60px; margin:0 auto 20px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    background:linear-gradient(135deg, var(--teal), var(--blue));
+    animation:pop .5s cubic-bezier(.34,1.6,.64,1);
+  }
+  @keyframes pop{ from{ transform:scale(0.4); opacity:0; } to{ transform:scale(1); opacity:1; } }
+  .success-icon svg{ width:28px; height:28px; stroke:#04120c; }
+  #success-view h2{ font-family:var(--font-display); font-weight:700; font-size:1.4rem; margin-bottom:10px; }
+  #success-view p{ color:var(--subtext); font-size:0.85rem; line-height:1.6; max-width:320px; margin:0 auto; }
+  .success-stars{ display:flex; justify-content:center; gap:5px; margin:18px 0; }
+  .success-stars svg{ width:20px; height:20px; color:var(--amber); }
+
+  footer{ text-align:center; margin-top:22px; }
+  .copyright{ font-family:var(--font-mono); font-size:0.6rem; color:var(--subtext); }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="blobs"><span class="blob b1"></span><span class="blob b2"></span></div>
+<div id="spotlight"></div>
+<canvas id="sigils"></canvas>
+
+<div>
+  <div class="card-wrap">
+    <div class="card">
+
+      <div class="brand">
+        <div class="brand-mark">Malvora <em>Hub</em></div>
+        <div class="brand-eyebrow">Avaliação de serviço</div>
+      </div>
+
+      <div id="form-view">
+
+        <h1>Como foi sua experiência?</h1>
+
+        <!-- texto fixo padrão, explica do que se trata a avaliação -->
+        <p class="intro">Sua opinião nos ajuda a evoluir. Leva menos de um minuto e é só isto: uma nota e, se quiser, um comentário.</p>
+
+        <!-- ===== CAMPO VARIÁVEL — troque o texto dentro de <strong> pelo serviço prestado ===== -->
+        <!-- Também pode ser preenchido via URL: ?servico=Nome%20do%20Servi%C3%A7o -->
+        <div class="service-chip">
+          <span class="dot"></span>
+          <span class="label">Você está avaliando</span>
+          <strong id="service-name">Setup do Assistente Virtual</strong>
+        </div>
+        <!-- ===== FIM DO CAMPO VARIÁVEL ===== -->
+
+        <form id="review-form" novalidate>
+          <div class="hp-field" aria-hidden="true" style="position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;overflow:hidden;">
+            <label for="website_forms">Nao preencha este campo</label>
+            <input type="text" id="website_forms" name="website_forms" tabindex="-1" autocomplete="off">
+          </div>
+          <div class="stars-block">
+            <div class="stars" id="stars" role="radiogroup" aria-label="Nota de 1 a 5 estrelas">
+              <!-- 5 estrelas geradas via JS -->
+            </div>
+            <div class="stars-label" id="stars-label">Toque para avaliar</div>
+          </div>
+
+          <div class="field">
+            <label for="comentario">Comentário <span class="opt">opcional</span></label>
+            <textarea id="comentario" maxlength="500" placeholder="Conte o que mais gostou ou o que podemos melhorar..."></textarea>
+            <div class="char-count"><span id="char-count">0</span>/500</div>
+          </div>
+
+          <button type="submit" class="btn-submit" id="btn-submit" disabled>Enviar avaliação</button>
+          <p class="privacy-note">Sua avaliação pode ser usada, de forma anônima, em materiais de divulgação da Malvora.</p>
+        </form>
+
+      </div>
+
+      <div id="success-view">
+        <div class="success-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 6"/></svg></div>
+        <h2>Obrigado pela avaliação!</h2>
+        <div class="success-stars" id="success-stars"></div>
+        <p>Seu retorno chegou até a gente e ajuda a Malvora a melhorar cada vez mais.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <footer>
+    <div class="copyright">&copy; 2026 Malvora &middot; malvora.com.br</div>
+  </footer>
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  /* ---------- campos variáveis: lê ?servico=, ?origem= e ?ref= da URL ---------- */
+  var WEBHOOK_URL = 'https://n8n.malvora.com.br/webhook/avaliacao/save';
+  var WEBHOOK_SIGNATURE = '1R7s6TgGBIub5OQtEzOEwi-0KYhMgnqXTGE_Y1ax6no';
+  var REQUEST_TIMEOUT_MS = 10000;
+
+  var params = new URLSearchParams(window.location.search);
+  var servicoParam = params.get('servico');
+  var origemParam = params.get('origem');
+  var refParam = params.get('ref');
+  if (servicoParam){
+    document.getElementById('service-name').textContent = servicoParam;
+  }
+
+  function generateId(){
+    if (window.crypto && typeof crypto.randomUUID === 'function') return crypto.randomUUID();
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c){
+      var r = Math.random()*16|0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
+  }
+  var idempotencyKey = generateId();
+
+  /* ---------- estrelas ---------- */
+  var STAR_PATH = 'M12 2.5l2.9 6.24 6.6.66-5 4.62 1.46 6.98L12 17.77 6.04 21l1.46-6.98-5-4.62 6.6-.66z';
+  var LABELS = ['', 'Deixou a desejar', 'Poderia ser melhor', 'Boa experiência', 'Muito boa!', 'Excepcional!'];
+
+  var starsWrap = document.getElementById('stars');
+  var starsLabel = document.getElementById('stars-label');
+  var btnSubmit = document.getElementById('btn-submit');
+  var selected = 0;
+  var buttons = [];
+
+  for (var i = 1; i <= 5; i++){
+    (function(value){
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'star-btn';
+      btn.setAttribute('role', 'radio');
+      btn.setAttribute('aria-checked', 'false');
+      btn.setAttribute('aria-label', value + ' de 5 estrelas');
+      btn.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="' + STAR_PATH + '"/></svg>';
+
+      btn.addEventListener('mouseenter', function(){ paint(value); });
+      btn.addEventListener('focus', function(){ paint(value); });
+      btn.addEventListener('click', function(){
+        selected = value;
+        paint(value);
+        buttons.forEach(function(b, idx){ b.setAttribute('aria-checked', (idx + 1 === selected) ? 'true' : 'false'); });
+        btnSubmit.disabled = false;
+      });
+
+      starsWrap.appendChild(btn);
+      buttons.push(btn);
+    })(i);
+  }
+
+  starsWrap.addEventListener('mouseleave', function(){ paint(selected); });
+
+  function paint(count){
+    buttons.forEach(function(b, idx){
+      var active = idx < count;
+      b.classList.toggle('hover-fill', active && count !== selected);
+      b.classList.toggle('selected', active && count === selected);
+      if (!active){ b.classList.remove('hover-fill'); b.classList.remove('selected'); }
+    });
+    starsLabel.textContent = count ? LABELS[count] : 'Toque para avaliar';
+    starsLabel.classList.toggle('filled', count > 0);
+  }
+
+  /* ---------- contador de caracteres ---------- */
+  var textarea = document.getElementById('comentario');
+  var charCount = document.getElementById('char-count');
+  textarea.addEventListener('input', function(){
+    charCount.textContent = textarea.value.length;
+  });
+
+  /* ---------- envio (layout apenas — troque pelo endpoint real quando integrar) ---------- */
+  var form = document.getElementById('review-form');
+  var formView = document.getElementById('form-view');
+  var successView = document.getElementById('success-view');
+  var successStars = document.getElementById('success-stars');
+
+  var alertBox = document.createElement('div');
+  alertBox.style.cssText = 'display:none;background:rgba(243,107,107,0.1);border:1px solid rgba(243,107,107,0.35);color:#ffb3b3;font-size:0.78rem;padding:11px 13px;border-radius:10px;margin-bottom:16px;';
+  form.insertBefore(alertBox, form.firstChild);
+  function showAlert(msg){ alertBox.textContent = msg; alertBox.style.display = 'block'; }
+  function hideAlert(){ alertBox.style.display = 'none'; }
+
+  form.addEventListener('submit', async function(e){
+    e.preventDefault();
+    if (!selected) return;
+    hideAlert();
+
+    btnSubmit.disabled = true;
+    btnSubmit.innerHTML = '<span class="spinner"></span> Enviando...';
+
+    var payload = {
+      idempotency_key: idempotencyKey,
+      website_forms: document.getElementById('website_forms').value,
+      origem: origemParam || 'nao_informado',
+      ref: refParam || 'nao_informado',
+      servico: document.getElementById('service-name').textContent,
+      nota: selected,
+      comentario: textarea.value.trim()
+    };
+
+    var controller = new AbortController();
+    var timeoutId = setTimeout(function(){ controller.abort(); }, REQUEST_TIMEOUT_MS);
+
+    try {
+      var response = await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-Malvora-Signature': WEBHOOK_SIGNATURE },
+        body: JSON.stringify(payload),
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
+
+      if (response.status === 400){
+        var msg = 'Alguns dados nao passaram na validacao. Tente novamente.';
+        try { var data = await response.json(); if (data.error) msg = data.error; } catch(_){}
+        showAlert(msg);
+        btnSubmit.disabled = false;
+        btnSubmit.textContent = 'Enviar avaliação';
+        return;
+      }
+      if (!response.ok) throw new Error('Erro na API: ' + response.status);
+
+      var starsHtml = '';
+      for (var i = 0; i < selected; i++){
+        starsHtml += '<svg viewBox="0 0 24 24" fill="currentColor"><path d="' + STAR_PATH + '"/></svg>';
+      }
+      successStars.innerHTML = starsHtml;
+      formView.classList.add('hide');
+      successView.classList.add('show');
+
+    } catch (err) {
+      clearTimeout(timeoutId);
+      btnSubmit.disabled = false;
+      btnSubmit.textContent = 'Tentar novamente';
+      if (err.name === 'AbortError'){
+        showAlert('A conexao demorou demais. Verifique sua internet e tente novamente.');
+      } else {
+        showAlert('Nao foi possivel enviar agora. Verifique sua conexao e tente novamente.');
+      }
+    }
+  });
+
+  /* ---------- spotlight seguindo o cursor (mesma lógica da bio) ---------- */
+  var spotlight = document.getElementById('spotlight');
+  var hasFinePointer = window.matchMedia('(pointer: fine)').matches;
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (hasFinePointer){
+    window.addEventListener('pointermove', function(e){
+      spotlight.style.setProperty('--mx', e.clientX + 'px');
+      spotlight.style.setProperty('--my', e.clientY + 'px');
+    }, { passive: true });
+  } else if (!reduce) {
+    var t = 0;
+    (function drift(){
+      t += 0.006;
+      spotlight.style.setProperty('--mx', ((Math.sin(t) * 0.5 + 0.5) * window.innerWidth) + 'px');
+      spotlight.style.setProperty('--my', ((Math.cos(t * 0.7) * 0.5 + 0.5) * window.innerHeight) + 'px');
+      requestAnimationFrame(drift);
+    })();
+  }
+
+  /* ---------- rede de partículas ambiente (mesma da bio) ---------- */
+  (function(){
+    var canvas = document.getElementById('sigils');
+    var ctx = canvas.getContext('2d');
+    var w, h, particles = [];
+    var colors = ['46,230,166', '63,160,240', '139,92,246'];
+
+    function resize(){ w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
+    window.addEventListener('resize', resize);
+    resize();
+
+    var COUNT = Math.min(36, Math.floor(w / 30));
+    for (var i = 0; i < COUNT; i++){
+      particles.push({
+        x: Math.random() * w, y: Math.random() * h,
+        vx: (Math.random() - 0.5) * 0.14, vy: (Math.random() - 0.5) * 0.14,
+        r: Math.random() * 1.4 + 0.4, c: colors[i % colors.length]
+      });
+    }
+
+    function step(){
+      ctx.clearRect(0, 0, w, h);
+      for (var i = 0; i < particles.length; i++){
+        var p = particles[i];
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < 0 || p.x > w) p.vx *= -1;
+        if (p.y < 0 || p.y > h) p.vy *= -1;
+      }
+      for (var i = 0; i < particles.length; i++){
+        for (var j = i + 1; j < particles.length; j++){
+          var a = particles[i], b = particles[j];
+          var d = Math.hypot(a.x - b.x, a.y - b.y);
+          if (d < 120){
+            ctx.strokeStyle = 'rgba(' + a.c + ',' + (0.08 * (1 - d / 120)) + ')';
+            ctx.lineWidth = 0.6;
+            ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+          }
+        }
+        ctx.fillStyle = 'rgba(' + particles[i].c + ',0.35)';
+        ctx.beginPath(); ctx.arc(particles[i].x, particles[i].y, particles[i].r, 0, Math.PI * 2); ctx.fill();
+      }
+      if (!reduce) requestAnimationFrame(step);
+    }
+    step();
+  })();
+
+})();
+</script>
+</body>
+</html>
