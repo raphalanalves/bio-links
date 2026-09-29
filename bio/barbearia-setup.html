@@ -50,6 +50,7 @@
   .field{ margin-bottom:18px; }
   .field label{ display:block; font-size:0.8rem; font-weight:600; margin-bottom:8px; }
   .field label .opt{ font-weight:500; color:var(--subtext); font-size:0.7rem; }
+  .req{ color:var(--teal); font-weight:700; margin-left:2px; }
   .field input[type=text], .field input[type=email], .field input[type=tel], .field input[type=url], .field textarea{
     width:100%; background:var(--surface-2); border:1px solid var(--line); border-radius:10px; padding:11px 13px;
     color:var(--text); font-family:var(--font-body); font-size:0.86rem; transition:border-color .2s;
@@ -174,19 +175,19 @@
         <div class="step-hint">Como sua barbearia e o assistente vão aparecer nas conversas.</div>
 
         <div class="field" data-field="nome_barbearia">
-          <label for="nome_barbearia">Nome comercial da barbearia</label>
+          <label for="nome_barbearia">Nome comercial da barbearia <span class="req">*</span></label>
           <input type="text" id="nome_barbearia" required>
           <div class="field-error">Preencha o nome da barbearia.</div>
         </div>
 
         <div class="field" data-field="nome_bot">
-          <label for="nome_bot">Nome do assistente virtual <span class="opt">ex: BarbaBot, Toninho</span></label>
+          <label for="nome_bot">Nome do assistente virtual <span class="req">*</span> <span class="opt">ex: BarbaBot, Toninho</span></label>
           <input type="text" id="nome_bot" required>
           <div class="field-error">Dê um nome pro assistente.</div>
         </div>
 
         <div class="field" data-field="possui_appbarber">
-          <label>Sua barbearia usa o App Barber?</label>
+          <label>Sua barbearia usa o App Barber? <span class="req">*</span></label>
           <div class="card-grid single">
             <label class="opt-card"><input type="radio" name="possui_appbarber" value="sim" required><span class="box">Sim</span></label>
             <label class="opt-card"><input type="radio" name="possui_appbarber" value="nao"><span class="box">Não</span></label>
@@ -196,35 +197,44 @@
 
         <div class="outro-field" id="appbarber-wrap">
           <div class="field" data-field="appbarber_link">
-            <label for="appbarber_link">Link do App Barber (agendamento)</label>
+            <label for="appbarber_link">Link do App Barber (agendamento) <span class="req">*</span></label>
             <input type="url" id="appbarber_link" placeholder="https://">
-            <div class="field-error">Preencha o link do App Barber.</div>
+            <div class="field-error">Preencha um link válido do App Barber (começando com http:// ou https://).</div>
           </div>
 
           <div class="field" data-field="appbarber_usuario">
-            <label for="appbarber_usuario">Usuário do App Barber <span class="opt">para a integração</span></label>
-            <input type="text" id="appbarber_usuario">
-            <div class="field-note">Crie um usuário novo e exclusivo dentro do App Barber pra integração da Malvora - não use seu login pessoal. Assim fica fácil revogar esse acesso no futuro, se precisar, sem afetar seu próprio login.</div>
+            <label for="appbarber_usuario">E-mail do usuário do App Barber <span class="req">*</span></label>
+            <input type="email" id="appbarber_usuario">
+            <div class="field-error">Informe um e-mail válido.</div>
+            <div class="field-note">Crie um e-mail novo e exclusivo pra cadastrar como usuário do App Barber, destinado a essa integração - não use seu e-mail pessoal/principal. Assim fica fácil revogar esse acesso no futuro, se precisar, sem afetar seu próprio login.</div>
+          </div>
+
+          <div class="field" data-field="appbarber_usuario_confirmacao">
+            <label for="appbarber_usuario_confirmacao">Confirme o e-mail <span class="req">*</span></label>
+            <input type="email" id="appbarber_usuario_confirmacao" autocomplete="off">
+            <div class="field-error">Confirme o e-mail.</div>
           </div>
 
           <div class="field" data-field="appbarber_senha">
-            <label for="appbarber_senha">Senha desse usuário</label>
+            <label for="appbarber_senha">Senha desse usuário <span class="req">*</span></label>
             <input type="text" id="appbarber_senha">
           </div>
         </div>
 
         <div class="field" data-field="instagram_link">
           <label for="instagram_link">Instagram <span class="opt">opcional</span></label>
-          <input type="text" id="instagram_link" placeholder="https://instagram.com/suabarbearia">
+          <input type="url" id="instagram_link" placeholder="https://instagram.com/suabarbearia">
+          <div class="field-error">Informe um link válido (começando com http:// ou https://).</div>
         </div>
 
         <div class="field" data-field="site_url">
           <label for="site_url">Site <span class="opt">opcional</span></label>
           <input type="url" id="site_url" placeholder="https://">
+          <div class="field-error">Informe um link válido (começando com http:// ou https://).</div>
         </div>
 
         <div class="field" data-field="tom_de_voz">
-          <label>Tom de voz do assistente</label>
+          <label>Tom de voz do assistente <span class="req">*</span></label>
           <div class="card-grid single">
             <label class="opt-card"><input type="radio" name="tom_de_voz" value="Descontraído, jovem e direto, com leveza e uma gíria ocasional, sempre eficiente." required><span class="box">Descontraído / Jovem</span></label>
             <label class="opt-card"><input type="radio" name="tom_de_voz" value="Formal e elegante, sempre educado e cuidadoso com a linguagem."><span class="box">Formal / Elegante</span></label>
@@ -249,10 +259,12 @@
         <div class="field" data-field="contato_emergencia_nome" style="margin-top:18px;">
           <label for="contato_emergencia_nome">Contato de emergência - nome <span class="opt">opcional</span></label>
           <input type="text" id="contato_emergencia_nome">
+          <div class="field-error">Informe nome completo (nome e sobrenome).</div>
         </div>
         <div class="field" data-field="contato_emergencia_telefone">
           <label for="contato_emergencia_telefone">Contato de emergência - telefone <span class="opt">opcional</span></label>
           <input type="tel" id="contato_emergencia_telefone" placeholder="(11) 91234-5678">
+          <div class="field-error">Informe um telefone válido, ex: (11) 91234-5678.</div>
         </div>
 
         <div class="nav-row">
@@ -267,7 +279,7 @@
         <div class="step-hint">O que a IA precisa saber sobre o espaço físico e o sistema.</div>
 
         <div class="field" data-field="endereco_completo">
-          <label for="endereco_completo">Endereço completo</label>
+          <label for="endereco_completo">Endereço completo <span class="req">*</span></label>
           <textarea id="endereco_completo" required placeholder="Rua, número, bairro, cidade, CEP"></textarea>
           <div class="field-error">Preencha o endereço.</div>
         </div>
@@ -275,6 +287,7 @@
         <div class="field" data-field="link_google_maps">
           <label for="link_google_maps">Link do Google Maps <span class="opt">opcional</span></label>
           <input type="url" id="link_google_maps" placeholder="https://maps.app.goo.gl/...">
+          <div class="field-error">Informe um link válido (começando com http:// ou https://).</div>
         </div>
 
         <div class="field" data-field="amenities_estruturais">
@@ -412,6 +425,31 @@
 
   const state = { currentStep: 1, idempotencyKey: null, responsavelCount: 0 };
 
+  const REGEX = {
+    telefone: /^\(?\d{2}\)?\s?9?\d{4}-?\d{4}$/,
+    nomeCompleto: /^[A-Za-zÀ-ÖØ-öø-ÿ]+(?:\s+[A-Za-zÀ-ÖØ-öø-ÿ]+)+$/,
+    email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+    url: /^https?:\/\/\S+\.\S+/
+  };
+
+  const FORMAT_RULES = [
+    {id: 'appbarber_link', regex: REGEX.url},
+    {id: 'appbarber_usuario', regex: REGEX.email},
+    {id: 'instagram_link', regex: REGEX.url},
+    {id: 'site_url', regex: REGEX.url},
+    {id: 'link_google_maps', regex: REGEX.url},
+    {id: 'contato_emergencia_nome', regex: REGEX.nomeCompleto},
+    {id: 'contato_emergencia_telefone', regex: REGEX.telefone}
+  ];
+
+  const pasteBlockEl = document.getElementById('appbarber_usuario_confirmacao');
+  if (pasteBlockEl){
+    ['paste', 'drop'].forEach(function(evt){
+      pasteBlockEl.addEventListener(evt, function(e){ e.preventDefault(); });
+    });
+    pasteBlockEl.addEventListener('contextmenu', function(e){ e.preventDefault(); });
+  }
+
   function showInvalid(msg){
     loadingScreen.style.display = 'none';
     if (msg) invalidMessage.textContent = msg;
@@ -434,9 +472,9 @@
     card.innerHTML =
       '<div class="resp-title">Responsável ' + (idx + 1) + '</div>' +
       (isFirst ? '' : '<button type="button" class="btn-remove" data-remove-responsavel>remover</button>') +
-      '<div class="field"><label>Nome</label><input type="text" data-resp-nome required></div>' +
-      '<div class="field"><label>Telefone</label><input type="tel" data-resp-telefone placeholder="(11) 91234-5678" required></div>' +
-      '<div class="field"><label>E-mail' + (isFirst ? ' <span class="opt">usado pra confirmação</span>' : ' <span class="opt">opcional</span>') + '</label><input type="email" data-resp-email' + (isFirst ? ' required' : '') + '></div>';
+      '<div class="field"><label>Nome <span class="req">*</span></label><input type="text" data-resp-nome required></div>' +
+      '<div class="field"><label>Telefone <span class="req">*</span></label><input type="tel" data-resp-telefone placeholder="(11) 91234-5678" required></div>' +
+      '<div class="field"><label>E-mail' + (isFirst ? ' <span class="req">*</span> <span class="opt">usado pra confirmação</span>' : ' <span class="opt">opcional</span>') + '</label><input type="email" data-resp-email' + (isFirst ? ' required' : '') + '></div>';
     responsaveisContainer.appendChild(card);
     if (data.nome) card.querySelector('[data-resp-nome]').value = data.nome;
     if (data.telefone) card.querySelector('[data-resp-telefone]').value = data.telefone;
@@ -468,7 +506,13 @@
 
   document.querySelectorAll('input[name="possui_appbarber"]').forEach(function(el){
     el.addEventListener('change', function(){
-      document.getElementById('appbarber-wrap').classList.toggle('show', el.value === 'sim' && el.checked);
+      const show = el.value === 'sim' && el.checked;
+      document.getElementById('appbarber-wrap').classList.toggle('show', show);
+      ['appbarber_link', 'appbarber_usuario', 'appbarber_usuario_confirmacao', 'appbarber_senha'].forEach(function(id){
+        const input = document.getElementById(id);
+        if (show) input.setAttribute('required', 'required');
+        else input.removeAttribute('required');
+      });
     });
   });
   document.querySelectorAll('input[name="possui_geladeira"]').forEach(function(el){
@@ -499,6 +543,10 @@
     let valid = true;
     const stepEl = form.querySelector('.step[data-step="' + n + '"]');
     stepEl.querySelectorAll('.field').forEach(function(f){ f.classList.remove('invalid'); });
+    stepEl.querySelectorAll('.field-error').forEach(function(el){
+      if (el.dataset.default === undefined) el.dataset.default = el.textContent;
+      else el.textContent = el.dataset.default;
+    });
     stepEl.querySelectorAll('[required]').forEach(function(input){
       let filled = true;
       if (input.type === 'radio'){
@@ -512,15 +560,48 @@
         if (fieldWrap) fieldWrap.classList.add('invalid');
       }
     });
+    FORMAT_RULES.forEach(function(rule){
+      const el = document.getElementById(rule.id);
+      if (!el || !stepEl.contains(el)) return;
+      const val = el.value.trim();
+      if (val !== '' && !rule.regex.test(val)){
+        valid = false;
+        const fieldWrap = el.closest('.field');
+        if (fieldWrap) fieldWrap.classList.add('invalid');
+      }
+    });
+    const emailField = document.getElementById('appbarber_usuario');
+    const emailConfirmField = document.getElementById('appbarber_usuario_confirmacao');
+    if (emailField && emailConfirmField && stepEl.contains(emailConfirmField)){
+      const emailVal = emailField.value.trim();
+      const emailConfirmVal = emailConfirmField.value.trim();
+      if (emailVal !== '' && emailConfirmVal !== '' && emailVal !== emailConfirmVal){
+        valid = false;
+        const fieldWrap = emailConfirmField.closest('.field');
+        if (fieldWrap){
+          fieldWrap.classList.add('invalid');
+          const err = fieldWrap.querySelector('.field-error');
+          if (err) err.textContent = 'Os e-mails informados não são iguais.';
+        }
+      }
+    }
     if (n === 2){
       responsaveisContainer.querySelectorAll('.responsavel-card').forEach(function(card){
-        ['[data-resp-nome]','[data-resp-telefone]'].forEach(function(sel){
-          const input = card.querySelector(sel);
-          if (input.value.trim() === ''){ valid = false; input.style.borderColor = 'var(--danger)'; }
-          else { input.style.borderColor = ''; }
-        });
+        const nomeInput = card.querySelector('[data-resp-nome]');
+        const telInput = card.querySelector('[data-resp-telefone]');
         const emailInput = card.querySelector('[data-resp-email]');
-        if (emailInput.required && emailInput.value.trim() === ''){ valid = false; emailInput.style.borderColor = 'var(--danger)'; }
+
+        const nomeVal = nomeInput.value.trim();
+        if (nomeVal === '' || !REGEX.nomeCompleto.test(nomeVal)){ valid = false; nomeInput.style.borderColor = 'var(--danger)'; }
+        else { nomeInput.style.borderColor = ''; }
+
+        const telVal = telInput.value.trim();
+        if (telVal === '' || !REGEX.telefone.test(telVal)){ valid = false; telInput.style.borderColor = 'var(--danger)'; }
+        else { telInput.style.borderColor = ''; }
+
+        const emailVal = emailInput.value.trim();
+        if (emailInput.required && emailVal === ''){ valid = false; emailInput.style.borderColor = 'var(--danger)'; }
+        else if (emailVal !== '' && !REGEX.email.test(emailVal)){ valid = false; emailInput.style.borderColor = 'var(--danger)'; }
         else { emailInput.style.borderColor = ''; }
       });
     }
@@ -630,6 +711,13 @@
       const el = form.querySelector('input[name="' + name + '"][value="' + value + '"]');
       if (el) el.checked = true;
       if (wrapId) document.getElementById(wrapId).classList.toggle('show', value === 'sim');
+      if (name === 'possui_appbarber'){
+        ['appbarber_link', 'appbarber_usuario', 'appbarber_usuario_confirmacao', 'appbarber_senha'].forEach(function(id){
+          const input = document.getElementById(id);
+          if (value === 'sim') input.setAttribute('required', 'required');
+          else input.removeAttribute('required');
+        });
+      }
     }
     setRadioBool('possui_appbarber', data.possui_appbarber, 'appbarber-wrap');
     setRadioBool('possui_geladeira', data.possui_geladeira, 'geladeira-wrap');
