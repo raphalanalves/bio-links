@@ -185,10 +185,32 @@
           <div class="field-error">Dê um nome pro assistente.</div>
         </div>
 
-        <div class="field" data-field="appbarber_link">
-          <label for="appbarber_link">Link do App Barber (agendamento)</label>
-          <input type="url" id="appbarber_link" placeholder="https://" required>
-          <div class="field-error">Preencha o link do App Barber.</div>
+        <div class="field" data-field="possui_appbarber">
+          <label>Sua barbearia usa o App Barber?</label>
+          <div class="card-grid single">
+            <label class="opt-card"><input type="radio" name="possui_appbarber" value="sim" required><span class="box">Sim</span></label>
+            <label class="opt-card"><input type="radio" name="possui_appbarber" value="nao"><span class="box">Não</span></label>
+          </div>
+          <div class="field-error">Selecione uma opção.</div>
+        </div>
+
+        <div class="outro-field" id="appbarber-wrap">
+          <div class="field" data-field="appbarber_link">
+            <label for="appbarber_link">Link do App Barber (agendamento)</label>
+            <input type="url" id="appbarber_link" placeholder="https://">
+            <div class="field-error">Preencha o link do App Barber.</div>
+          </div>
+
+          <div class="field" data-field="appbarber_usuario">
+            <label for="appbarber_usuario">Usuário do App Barber <span class="opt">para a integração</span></label>
+            <input type="text" id="appbarber_usuario">
+            <div class="field-note">Crie um usuário novo e exclusivo dentro do App Barber pra integração da Malvora - não use seu login pessoal. Assim fica fácil revogar esse acesso no futuro, se precisar, sem afetar seu próprio login.</div>
+          </div>
+
+          <div class="field" data-field="appbarber_senha">
+            <label for="appbarber_senha">Senha desse usuário</label>
+            <input type="text" id="appbarber_senha">
+          </div>
         </div>
 
         <div class="field" data-field="instagram_link">
@@ -444,6 +466,11 @@
     }
   });
 
+  document.querySelectorAll('input[name="possui_appbarber"]').forEach(function(el){
+    el.addEventListener('change', function(){
+      document.getElementById('appbarber-wrap').classList.toggle('show', el.value === 'sim' && el.checked);
+    });
+  });
   document.querySelectorAll('input[name="possui_geladeira"]').forEach(function(el){
     el.addEventListener('change', function(){
       document.getElementById('geladeira-wrap').classList.toggle('show', el.value === 'sim' && el.checked);
@@ -528,7 +555,10 @@
       idempotency_key: state.idempotencyKey,
       nome_barbearia: val('nome_barbearia'),
       nome_bot: val('nome_bot'),
+      possui_appbarber: radioVal('possui_appbarber'),
       appbarber_link: val('appbarber_link'),
+      appbarber_usuario: val('appbarber_usuario'),
+      appbarber_senha: val('appbarber_senha'),
       instagram_link: val('instagram_link'),
       site_url: val('site_url'),
       tom_de_voz: radioVal('tom_de_voz'),
@@ -567,6 +597,8 @@
     if (data.nome_barbearia) document.getElementById('nome_barbearia').value = data.nome_barbearia;
     if (data.nome_bot) document.getElementById('nome_bot').value = data.nome_bot;
     if (data.appbarber_link) document.getElementById('appbarber_link').value = data.appbarber_link;
+    if (data.appbarber_usuario) document.getElementById('appbarber_usuario').value = data.appbarber_usuario;
+    if (data.appbarber_senha) document.getElementById('appbarber_senha').value = data.appbarber_senha;
     if (data.instagram_link) document.getElementById('instagram_link').value = data.instagram_link;
     if (data.site_url) document.getElementById('site_url').value = data.site_url;
     if (data.tom_de_voz){
@@ -599,6 +631,7 @@
       if (el) el.checked = true;
       if (wrapId) document.getElementById(wrapId).classList.toggle('show', value === 'sim');
     }
+    setRadioBool('possui_appbarber', data.possui_appbarber, 'appbarber-wrap');
     setRadioBool('possui_geladeira', data.possui_geladeira, 'geladeira-wrap');
     setRadioBool('possui_jogos', data.possui_jogos, 'jogos-wrap');
     setRadioBool('appbarber_pagamento', data.appbarber_pagamento);
@@ -680,7 +713,10 @@
       website_forms: document.getElementById('website_forms').value,
       nome_barbearia: s.nome_barbearia,
       nome_bot: s.nome_bot,
+      possui_appbarber: s.possui_appbarber === 'sim',
       appbarber_link: s.appbarber_link,
+      appbarber_usuario: s.appbarber_usuario,
+      appbarber_senha: s.appbarber_senha,
       instagram_link: s.instagram_link,
       site_url: s.site_url,
       tom_de_voz: s.tom_de_voz,
