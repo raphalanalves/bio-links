@@ -24,9 +24,20 @@
   .blob.b2{ background:var(--violet); bottom:-24%; right:-20%; animation:float2 34s ease-in-out infinite; }
   @keyframes float1{ 0%,100%{transform:translate(0,0) scale(1);} 50%{transform:translate(5%,6%) scale(1.08);} }
   @keyframes float2{ 0%,100%{transform:translate(0,0) scale(1);} 50%{transform:translate(-5%,-5%) scale(1.06);} }
+
+  .tech-grid{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background-image:
+      linear-gradient(rgba(46,230,166,0.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(46,230,166,0.07) 1px, transparent 1px);
+    background-size:42px 42px;
+    mask-image:radial-gradient(ellipse 85% 70% at 50% 30%, #000 40%, transparent 85%);
+    -webkit-mask-image:radial-gradient(ellipse 85% 70% at 50% 30%, #000 40%, transparent 85%);
+  }
   a{ color:var(--teal); }
   :focus-visible{ outline:2px solid var(--teal); outline-offset:3px; border-radius:4px; }
-  .shell{ position:relative; z-index:1; max-width:600px; margin:0 auto; padding:44px 20px 0; }
+  .shell{ position:relative; z-index:1; max-width:640px; margin:0 auto; padding:44px 20px 0; }
+  .shell.wide{ max-width:760px; }
   .brand{ text-align:center; margin-bottom:22px; }
   .brand-mark{ font-family:var(--font-display); font-weight:700; font-size:1.5rem; }
   .brand-mark em{ font-style:italic; background-image:linear-gradient(100deg, var(--teal), var(--blue) 60%, var(--violet)); background-clip:text; -webkit-background-clip:text; color:transparent; }
@@ -34,18 +45,51 @@
   h1.page-title{ font-family:var(--font-display); font-weight:700; font-size:1.6rem; text-align:center; margin:16px 0 6px; line-height:1.25; }
   p.page-sub{ color:var(--subtext); font-size:0.86rem; text-align:center; max-width:440px; margin:0 auto 26px; line-height:1.55; }
 
-  .progress{ display:flex; align-items:center; gap:8px; margin-bottom:26px; }
-  .progress-step{ flex:1; height:3px; border-radius:3px; background:var(--line); overflow:hidden; }
-  .progress-step .fill{ height:100%; width:0%; background:linear-gradient(90deg, var(--teal), var(--blue)); transition:width .35s ease; }
-  .progress-labels{ display:flex; justify-content:space-between; font-family:var(--font-mono); font-size:0.6rem; text-transform:uppercase; letter-spacing:.05em; color:var(--subtext); margin-bottom:8px; }
-  .progress-labels span.active{ color:var(--teal); }
+  .deck-legend{ display:flex; justify-content:center; gap:18px; margin-bottom:18px; flex-wrap:wrap; }
+  .deck-legend .item{ display:flex; align-items:center; gap:6px; font-family:var(--font-mono); font-size:0.62rem; text-transform:uppercase; letter-spacing:.04em; color:var(--subtext); }
+  .deck-legend .dot{ width:8px; height:8px; border-radius:50%; }
+  .deck-legend .dot.default{ background:var(--line); }
+  .deck-legend .dot.active{ background:var(--violet); box-shadow:0 0 8px var(--violet); }
+  .deck-legend .dot.complete{ background:var(--teal); box-shadow:0 0 8px var(--teal); }
 
-  form{ background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:26px 22px 24px; }
-  .step{ display:none; }
-  .step.active{ display:block; animation:stepIn .35s ease; }
-  @keyframes stepIn{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
-  .step-title{ font-family:var(--font-display); font-weight:700; font-size:1.2rem; margin-bottom:4px; }
+  .stage{ position:relative; min-height:640px; margin-bottom:16px; }
+  @media (max-width:560px){ .stage{ min-height:600px; } }
+
+  form{ position:static; background:transparent; border:none; padding:0; }
+
+  .step{
+    position:absolute; top:0; left:50%; width:100%; max-width:480px;
+    background:rgba(14,17,23,0.72); backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
+    border:1px solid var(--line); border-radius:22px; padding:24px 22px 22px;
+    box-shadow:0 20px 50px rgba(0,0,0,0.45);
+    transition:box-shadow .3s ease, border-color .3s ease, opacity .3s ease;
+    cursor:pointer;
+  }
+  .step[data-step="1"]{ transform:translate(-50%,0) rotate(-2.5deg); z-index:1; }
+  .step[data-step="2"]{ transform:translate(-50%,10px) rotate(1.8deg); z-index:2; }
+  .step[data-step="3"]{ transform:translate(-50%,20px) rotate(-1.2deg); z-index:3; }
+  .step.stacked{ max-height:86px; overflow:hidden; opacity:0.68; }
+  .step.stacked:hover{ opacity:0.9; }
+  .step.active{
+    z-index:10; opacity:1; max-height:none; overflow:visible;
+    box-shadow:0 30px 80px rgba(0,0,0,0.6);
+    cursor:default;
+  }
+  .step.dragging{ transition:none; cursor:grabbing; }
+
+  .step.state-default{ border-color:var(--line); }
+  .step.state-active-editing{ border-color:rgba(139,92,246,0.65); box-shadow:0 0 0 1px rgba(139,92,246,0.3), 0 20px 50px rgba(139,92,246,0.18); animation:pulseViolet 2.2s ease-in-out infinite; }
+  .step.state-complete{ border-color:rgba(46,230,166,0.6); box-shadow:0 0 0 1px rgba(46,230,166,0.28), 0 20px 50px rgba(46,230,166,0.16); }
+  @keyframes pulseViolet{ 0%,100%{ box-shadow:0 0 0 1px rgba(139,92,246,0.3), 0 20px 50px rgba(139,92,246,0.14);} 50%{ box-shadow:0 0 0 1px rgba(139,92,246,0.55), 0 20px 60px rgba(139,92,246,0.3);} }
+
+  .step-title{ font-family:var(--font-display); font-weight:700; font-size:1.2rem; margin-bottom:4px; cursor:grab; user-select:none; display:flex; align-items:center; gap:8px; }
+  .step-title:active{ cursor:grabbing; }
+  .step-title .drag-dots{ color:var(--subtext); font-size:0.8rem; letter-spacing:2px; opacity:0.6; }
+  .step-title .state-chip{ margin-left:auto; width:9px; height:9px; border-radius:50%; flex-shrink:0; background:var(--line); }
+  .step.state-active-editing .state-chip{ background:var(--violet); box-shadow:0 0 8px var(--violet); }
+  .step.state-complete .state-chip{ background:var(--teal); box-shadow:0 0 8px var(--teal); }
   .step-hint{ color:var(--subtext); font-size:0.78rem; margin-bottom:18px; }
+  .step.stacked .step-hint, .step.stacked .field, .step.stacked .nav-row{ display:none; }
 
   .field{ margin-bottom:18px; }
   .field label{ display:block; font-size:0.8rem; font-weight:600; margin-bottom:8px; }
@@ -164,6 +208,18 @@
 
   #locked-screen{ display:none; }
   #locked-screen.show{ display:block; }
+
+  .submit-loading{
+    display:none; position:fixed; inset:0; z-index:100;
+    background:rgba(5,6,10,0.92); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+    align-items:center; justify-content:center; flex-direction:column; text-align:center; padding:20px;
+  }
+  .submit-loading.show{ display:flex; }
+  .submit-loading p{ color:var(--text); font-size:0.9rem; margin-top:18px; min-height:22px; }
+  .submit-loading .phase-dots{ display:flex; gap:7px; margin-top:16px; }
+  .submit-loading .phase-dots span{ width:7px; height:7px; border-radius:50%; background:var(--line); transition:background .3s ease, transform .3s ease; }
+  .submit-loading .phase-dots span.done{ background:var(--teal); }
+  .submit-loading .phase-dots span.current{ background:var(--violet); transform:scale(1.3); }
   .summary-row{ display:flex; justify-content:space-between; gap:12px; padding:10px 0; border-bottom:1px solid var(--line); font-size:0.8rem; }
   .summary-row:last-child{ border-bottom:none; }
   .summary-row .k{ color:var(--subtext); flex-shrink:0; }
@@ -173,7 +229,13 @@
 <body>
 
 <div class="blobs"><span class="blob b1"></span><span class="blob b2"></span></div>
+<div class="tech-grid"></div>
 <div class="sweep" id="success-sweep"></div>
+<div class="submit-loading" id="submit-loading">
+  <div class="spin-big"></div>
+  <p id="submit-loading-text">Validando seus dados...</p>
+  <div class="phase-dots" id="submit-loading-dots"></div>
+</div>
 
 <div class="shell">
 
@@ -197,15 +259,10 @@
     <h1 class="page-title" id="page-title">Configure o assistente da sua barbearia</h1>
     <p class="page-sub" id="page-sub">Essas informações treinam a IA que vai atender seus clientes no WhatsApp. Você pode reabrir este mesmo link a qualquer momento pra editar.</p>
 
-    <div class="progress-labels">
-      <span data-label-step="1">Identidade</span>
-      <span data-label-step="2">Contatos</span>
-      <span data-label-step="3">Local &amp; diferenciais</span>
-    </div>
-    <div class="progress">
-      <div class="progress-step"><div class="fill" id="fill-1"></div></div>
-      <div class="progress-step"><div class="fill" id="fill-2"></div></div>
-      <div class="progress-step"><div class="fill" id="fill-3"></div></div>
+    <div class="deck-legend">
+      <span class="item"><span class="dot default"></span>A preencher</span>
+      <span class="item"><span class="dot active"></span>Em edição</span>
+      <span class="item"><span class="dot complete"></span>Completo</span>
     </div>
 
     <div class="draft-banner" id="draft-banner">Recuperamos um rascunho salvo automaticamente no seu navegador.</div>
@@ -218,9 +275,11 @@
         <input type="text" id="website_forms" name="website_forms" tabindex="-1" autocomplete="off">
       </div>
 
+      <div class="stage" id="stage">
+
       <!-- ===================== STEP 1 ===================== -->
-      <div class="step active" data-step="1">
-        <div class="step-title">Identidade &amp; bot</div>
+      <div class="step active state-active-editing" data-step="1">
+        <div class="step-title"><span class="drag-dots">⠿</span> Identidade &amp; bot <span class="state-chip"></span></div>
         <div class="step-hint">Como sua barbearia e o assistente vão aparecer nas conversas.</div>
 
         <div class="field" data-field="nome_barbearia">
@@ -307,8 +366,8 @@
       </div>
 
       <!-- ===================== STEP 2 ===================== -->
-      <div class="step" data-step="2">
-        <div class="step-title">Responsáveis &amp; contato</div>
+      <div class="step stacked state-default" data-step="2">
+        <div class="step-title"><span class="drag-dots">⠿</span> Responsáveis &amp; contato <span class="state-chip"></span></div>
         <div class="step-hint">Quem administra a barbearia e um contato de emergência.</div>
 
         <div id="responsaveis-container"></div>
@@ -348,8 +407,8 @@
       </div>
 
       <!-- ===================== STEP 3 ===================== -->
-      <div class="step" data-step="3">
-        <div class="step-title">Local &amp; diferenciais</div>
+      <div class="step stacked state-default" data-step="3">
+        <div class="step-title"><span class="drag-dots">⠿</span> Local &amp; diferenciais <span class="state-chip"></span></div>
         <div class="step-hint">O que a IA precisa saber sobre o espaço físico e o sistema.</div>
 
         <div class="field" data-field="cep">
@@ -485,6 +544,8 @@
         </div>
       </div>
 
+      </div>
+
     </form>
 
     <div id="success-screen">
@@ -515,7 +576,7 @@
   const LOAD_URL = 'https://n8n.malvora.com.br/webhook/barbearia-setup/load';
   const SAVE_URL = 'https://n8n.malvora.com.br/webhook/barbearia-setup/save';
   const WEBHOOK_SIGNATURE = '1R7s6TgGBIub5OQtEzOEwi-0KYhMgnqXTGE_Y1ax6no';
-  const REQUEST_TIMEOUT_MS = 10000;
+  const REQUEST_TIMEOUT_MS = 30000;
   const AMENITIES = [
     {value:'ar-condicionado', label:'Ar condicionado'},
     {value:'wifi', label:'Wi-Fi'},
@@ -709,27 +770,94 @@
     });
   });
 
-  // ---- Navegação ----
-  function updateProgress(){
-    [1,2,3].forEach(function(n){
-      document.getElementById('fill-' + n).style.width = (n <= state.currentStep) ? '100%' : '0%';
-      document.querySelector('[data-label-step="' + n + '"]').classList.toggle('active', n === state.currentStep);
+  // ---- Navegação por cartões flutuantes ----
+  const cardOffsets = {}; // guarda posicao arrastada de cada card, por numero do step
+
+  function setActiveCard(n){
+    form.querySelectorAll('.step').forEach(function(s){
+      const stepNum = Number(s.dataset.step);
+      const isActive = stepNum === n;
+      s.classList.toggle('active', isActive);
+      s.classList.toggle('stacked', !isActive);
+      if (isActive){
+        // Card ativo sempre volta pro slot central, pra nunca ficar escondido
+        s.style.transform = '';
+      } else if (cardOffsets[stepNum]){
+        const o = cardOffsets[stepNum];
+        s.style.transform = 'translate(calc(-50% + ' + o.x + 'px), ' + o.y + 'px) rotate(' + o.rot + 'deg)';
+      }
     });
-  }
-  function goToStep(n){
-    form.querySelectorAll('.step').forEach(function(s){ s.classList.toggle('active', Number(s.dataset.step) === n); });
     state.currentStep = n;
-    updateProgress();
+    refreshCardStates();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
-  function validateStep(n){
+
+  function goToStep(n){ setActiveCard(n); }
+
+  // ---- Arrastar os cartoes pelo titulo ----
+  form.querySelectorAll('.step-title').forEach(function(handle){
+    const card = handle.closest('.step');
+    let dragging = false, startX = 0, startY = 0, baseX = 0, baseY = 0;
+
+    function onDown(clientX, clientY){
+      dragging = true;
+      card.classList.add('dragging');
+      startX = clientX; startY = clientY;
+      const n = Number(card.dataset.step);
+      baseX = (cardOffsets[n] && cardOffsets[n].x) || 0;
+      baseY = (cardOffsets[n] && cardOffsets[n].y) || 0;
+    }
+    function onMove(clientX, clientY){
+      if (!dragging) return;
+      const n = Number(card.dataset.step);
+      let dx = baseX + (clientX - startX);
+      let dy = baseY + (clientY - startY);
+      dx = Math.max(-140, Math.min(140, dx));
+      dy = Math.max(-40, Math.min(180, dy));
+      card.style.transform = 'translate(calc(-50% + ' + dx + 'px), ' + dy + 'px)';
+      card._dragPending = { x: dx, y: dy };
+    }
+    function onUp(){
+      if (!dragging) return;
+      dragging = false;
+      card.classList.remove('dragging');
+      const n = Number(card.dataset.step);
+      if (card._dragPending && !card.classList.contains('active')){
+        const prevRot = (cardOffsets[n] && cardOffsets[n].rot) || 0;
+        cardOffsets[n] = { x: card._dragPending.x, y: card._dragPending.y, rot: prevRot };
+      }
+      card._dragPending = null;
+    }
+
+    handle.addEventListener('mousedown', function(e){ onDown(e.clientX, e.clientY); e.preventDefault(); });
+    document.addEventListener('mousemove', function(e){ onMove(e.clientX, e.clientY); });
+    document.addEventListener('mouseup', onUp);
+
+    handle.addEventListener('touchstart', function(e){ const t = e.touches[0]; onDown(t.clientX, t.clientY); }, {passive:true});
+    document.addEventListener('touchmove', function(e){ if (!dragging) return; const t = e.touches[0]; onMove(t.clientX, t.clientY); }, {passive:true});
+    document.addEventListener('touchend', onUp);
+  });
+
+  // Clicar em qualquer parte de um card inativo traz ele pra frente
+  form.querySelectorAll('.step').forEach(function(card){
+    card.addEventListener('click', function(e){
+      if (card.classList.contains('active')) return;
+      if (card._justDragged) return;
+      setActiveCard(Number(card.dataset.step));
+    });
+  });
+
+  // ---- Validacao (mode silencioso = so calcula, nao mostra erro na tela) ----
+  function validateStep(n, silent){
     let valid = true;
     const stepEl = form.querySelector('.step[data-step="' + n + '"]');
-    stepEl.querySelectorAll('.field').forEach(function(f){ f.classList.remove('invalid'); });
-    stepEl.querySelectorAll('.field-error').forEach(function(el){
-      if (el.dataset.default === undefined) el.dataset.default = el.textContent;
-      else el.textContent = el.dataset.default;
-    });
+    if (!silent){
+      stepEl.querySelectorAll('.field').forEach(function(f){ f.classList.remove('invalid'); });
+      stepEl.querySelectorAll('.field-error').forEach(function(el){
+        if (el.dataset.default === undefined) el.dataset.default = el.textContent;
+        else el.textContent = el.dataset.default;
+      });
+    }
     stepEl.querySelectorAll('[required]').forEach(function(input){
       let filled = true;
       if (input.type === 'radio'){
@@ -739,8 +867,7 @@
       }
       if (!filled){
         valid = false;
-        const fieldWrap = input.closest('.field');
-        if (fieldWrap) fieldWrap.classList.add('invalid');
+        if (!silent){ const fieldWrap = input.closest('.field'); if (fieldWrap) fieldWrap.classList.add('invalid'); }
       }
     });
     FORMAT_RULES.forEach(function(rule){
@@ -749,8 +876,7 @@
       const val = el.value.trim();
       if (val !== '' && !rule.regex.test(val)){
         valid = false;
-        const fieldWrap = el.closest('.field');
-        if (fieldWrap) fieldWrap.classList.add('invalid');
+        if (!silent){ const fieldWrap = el.closest('.field'); if (fieldWrap) fieldWrap.classList.add('invalid'); }
       }
     });
     const cpfCnpjField = document.getElementById('cpf_cnpj');
@@ -758,17 +884,15 @@
       const digits = cpfCnpjField.value.replace(/\D/g, '');
       if (digits.length !== 11 && digits.length !== 14){
         valid = false;
-        const fieldWrap = cpfCnpjField.closest('.field');
-        if (fieldWrap) fieldWrap.classList.add('invalid');
+        if (!silent){ const fieldWrap = cpfCnpjField.closest('.field'); if (fieldWrap) fieldWrap.classList.add('invalid'); }
       }
     }
     const qtdBarbeirosField = document.getElementById('quantidade_barbeiros');
     if (qtdBarbeirosField && stepEl.contains(qtdBarbeirosField)){
-      const n = parseInt(qtdBarbeirosField.value.replace(/\D/g, ''), 10);
-      if (!n || n < 1){
+      const nBarb = parseInt(qtdBarbeirosField.value.replace(/\D/g, ''), 10);
+      if (!nBarb || nBarb < 1){
         valid = false;
-        const fieldWrap = qtdBarbeirosField.closest('.field');
-        if (fieldWrap) fieldWrap.classList.add('invalid');
+        if (!silent){ const fieldWrap = qtdBarbeirosField.closest('.field'); if (fieldWrap) fieldWrap.classList.add('invalid'); }
       }
     }
     const emailField = document.getElementById('appbarber_usuario');
@@ -778,11 +902,13 @@
       const emailConfirmVal = emailConfirmField.value.trim();
       if (emailVal !== '' && emailConfirmVal !== '' && emailVal !== emailConfirmVal){
         valid = false;
-        const fieldWrap = emailConfirmField.closest('.field');
-        if (fieldWrap){
-          fieldWrap.classList.add('invalid');
-          const err = fieldWrap.querySelector('.field-error');
-          if (err) err.textContent = 'Os e-mails informados não são iguais.';
+        if (!silent){
+          const fieldWrap = emailConfirmField.closest('.field');
+          if (fieldWrap){
+            fieldWrap.classList.add('invalid');
+            const err = fieldWrap.querySelector('.field-error');
+            if (err) err.textContent = 'Os e-mails informados não são iguais.';
+          }
         }
       }
     }
@@ -793,30 +919,50 @@
         const emailInput = card.querySelector('[data-resp-email]');
 
         const nomeVal = nomeInput.value.trim();
-        if (nomeVal === '' || !REGEX.nomeCompleto.test(nomeVal)){ valid = false; nomeInput.style.borderColor = 'var(--danger)'; }
-        else { nomeInput.style.borderColor = ''; }
+        const nomeOk = nomeVal !== '' && REGEX.nomeCompleto.test(nomeVal);
+        if (!nomeOk) valid = false;
+        if (!silent) nomeInput.style.borderColor = nomeOk ? '' : 'var(--danger)';
 
         const telVal = telInput.value.trim();
-        if (telVal === '' || !REGEX.telefone.test(telVal)){ valid = false; telInput.style.borderColor = 'var(--danger)'; }
-        else { telInput.style.borderColor = ''; }
+        const telOk = telVal !== '' && REGEX.telefone.test(telVal);
+        if (!telOk) valid = false;
+        if (!silent) telInput.style.borderColor = telOk ? '' : 'var(--danger)';
 
         const emailVal = emailInput.value.trim();
-        if (emailInput.required && emailVal === ''){ valid = false; emailInput.style.borderColor = 'var(--danger)'; }
-        else if (emailVal !== '' && !REGEX.email.test(emailVal)){ valid = false; emailInput.style.borderColor = 'var(--danger)'; }
-        else { emailInput.style.borderColor = ''; }
+        let emailOk = true;
+        if (emailInput.required && emailVal === '') emailOk = false;
+        else if (emailVal !== '' && !REGEX.email.test(emailVal)) emailOk = false;
+        if (!emailOk) valid = false;
+        if (!silent) emailInput.style.borderColor = emailOk ? '' : 'var(--danger)';
       });
     }
     return valid;
   }
+
+  function isStepComplete(n){ return validateStep(n, true); }
+
+  function refreshCardStates(){
+    form.querySelectorAll('.step').forEach(function(s){
+      const n = Number(s.dataset.step);
+      const complete = isStepComplete(n);
+      s.classList.remove('state-default', 'state-active-editing', 'state-complete');
+      if (complete) s.classList.add('state-complete');
+      else if (n === state.currentStep) s.classList.add('state-active-editing');
+      else s.classList.add('state-default');
+    });
+  }
+
   form.addEventListener('click', function(e){
     if (e.target.matches('[data-next]')){
-      if (!validateStep(state.currentStep)) return;
+      if (!validateStep(state.currentStep)) { refreshCardStates(); return; }
       goToStep(state.currentStep + 1);
     }
     if (e.target.matches('[data-back]')){
       goToStep(state.currentStep - 1);
     }
   });
+  form.addEventListener('input', refreshCardStates);
+  form.addEventListener('change', refreshCardStates);
 
   // ---- Auto-save (draft) ----
   function collectFormState(){
@@ -1006,8 +1152,6 @@
         loadingScreen.style.display = 'none';
         mainContent.style.display = 'block';
         form.style.display = 'none';
-        document.querySelector('.progress').style.display = 'none';
-        document.querySelector('.progress-labels').style.display = 'none';
         document.getElementById('page-title').style.display = 'none';
         document.getElementById('page-sub').style.display = 'none';
         renderLockedSummary(result.data);
@@ -1029,7 +1173,7 @@
 
       loadingScreen.style.display = 'none';
       mainContent.style.display = 'block';
-      updateProgress();
+      refreshCardStates();
     }).catch(function(err){
       clearTimeout(timeoutId);
       if (err.name === 'AbortError'){
@@ -1052,6 +1196,35 @@
 
     btnSubmit.disabled = true;
     btnSubmit.innerHTML = '<span class="spinner"></span> Salvando...';
+
+    const LOADING_PHASES = [
+      'Validando seus dados...',
+      'Criando o seu assistente virtual...',
+      'Configurando as integrações...',
+      'Quase lá, finalizando tudo...'
+    ];
+    const loadingOverlay = document.getElementById('submit-loading');
+    const loadingText = document.getElementById('submit-loading-text');
+    const loadingDots = document.getElementById('submit-loading-dots');
+    loadingDots.innerHTML = LOADING_PHASES.map(function(){ return '<span></span>'; }).join('');
+    const dotEls = loadingDots.querySelectorAll('span');
+    let phaseIdx = 0;
+    function renderPhase(){
+      loadingText.textContent = LOADING_PHASES[phaseIdx];
+      dotEls.forEach(function(d, i){
+        d.classList.toggle('done', i < phaseIdx);
+        d.classList.toggle('current', i === phaseIdx);
+      });
+    }
+    renderPhase();
+    loadingOverlay.classList.add('show');
+    const phaseTimer = setInterval(function(){
+      if (phaseIdx < LOADING_PHASES.length - 1){ phaseIdx++; renderPhase(); }
+    }, 3500);
+    function stopLoadingPhases(){
+      clearInterval(phaseTimer);
+      loadingOverlay.classList.remove('show');
+    }
 
     const s = collectFormState();
     const payload = {
@@ -1108,6 +1281,7 @@
       clearTimeout(timeoutId);
 
       if (response.status === 400){
+        stopLoadingPhases();
         let msg = 'Alguns dados não passaram na validação. Confira o formulário e tente novamente.';
         try { const data = await response.json(); if (data.error) msg = data.error; } catch(_){}
         showAlert(msg);
@@ -1116,28 +1290,33 @@
         return;
       }
       if (response.status === 403){
+        stopLoadingPhases();
         showInvalid('Este link não é mais válido. Fale com a equipe Malvora pra receber um novo.');
         mainContent.style.display = 'none';
         return;
       }
       if (!response.ok) throw new Error('Erro na API: ' + response.status);
 
-      try { localStorage.removeItem(draftKey); } catch(e){}
-      form.style.display = 'none';
-      document.querySelector('.progress').style.display = 'none';
-      document.querySelector('.progress-labels').style.display = 'none';
-      document.getElementById('page-title').style.display = 'none';
-      document.getElementById('page-sub').style.display = 'none';
-      draftBanner.classList.remove('show');
-      successScreen.classList.add('show');
-      const sweepEl = document.getElementById('success-sweep');
-      if (sweepEl){
-        sweepEl.classList.remove('run');
-        void sweepEl.offsetWidth;
-        sweepEl.classList.add('run');
-      }
+      phaseIdx = LOADING_PHASES.length - 1;
+      renderPhase();
+      setTimeout(function(){
+        stopLoadingPhases();
+        try { localStorage.removeItem(draftKey); } catch(e){}
+        form.style.display = 'none';
+        document.getElementById('page-title').style.display = 'none';
+        document.getElementById('page-sub').style.display = 'none';
+        draftBanner.classList.remove('show');
+        successScreen.classList.add('show');
+        const sweepEl = document.getElementById('success-sweep');
+        if (sweepEl){
+          sweepEl.classList.remove('run');
+          void sweepEl.offsetWidth;
+          sweepEl.classList.add('run');
+        }
+      }, 500);
 
     } catch (err) {
+      stopLoadingPhases();
       clearTimeout(timeoutId);
       btnSubmit.disabled = false;
       btnSubmit.textContent = 'Tentar novamente';
