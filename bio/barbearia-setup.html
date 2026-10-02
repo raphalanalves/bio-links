@@ -10,7 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root{
-    --ink:#05060a; --surface:#0e1117; --surface-2:#171b24; --line: rgba(238,241,245,0.10);
+    --ink:#030409; --surface:#0e1117; --surface-2:#171b24; --line: rgba(238,241,245,0.10);
     --teal:#2ee6a6; --blue:#3fa0f0; --violet:#8b5cf6;
     --violet-soft: rgba(139,92,246,0.14); --teal-soft: rgba(46,230,166,0.14);
     --danger:#f36b6b; --text:#eef1f5; --subtext:#8891a0;
@@ -20,7 +20,7 @@
   html, body{ height:100%; overflow:hidden; }
   body{ background:var(--ink); color:var(--text); font-family:var(--font-body); position:relative; -webkit-font-smoothing:antialiased; }
   .blobs{ position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none; }
-  .blob{ position:absolute; width:50vmax; height:50vmax; border-radius:50%; filter:blur(100px); opacity:0.16; }
+  .blob{ position:absolute; width:50vmax; height:50vmax; border-radius:50%; filter:blur(100px); opacity:0.1; }
   .blob.b1{ background:var(--teal); top:-20%; left:-22%; animation:float1 30s ease-in-out infinite; }
   .blob.b2{ background:var(--violet); bottom:-24%; right:-20%; animation:float2 34s ease-in-out infinite; }
   @keyframes float1{ 0%,100%{transform:translate(0,0) scale(1);} 50%{transform:translate(5%,6%) scale(1.08);} }
@@ -30,7 +30,7 @@
     position:fixed; inset:0; z-index:1; pointer-events:none;
     display:flex; align-items:center; justify-content:center; overflow:hidden;
   }
-  .logo-bg svg{ width:min(130vw,1100px); height:auto; opacity:0.22; filter:blur(0.6px); }
+  .logo-bg svg{ width:min(130vw,1100px); height:auto; opacity:0.16; filter:blur(0.6px); }
   .logo-bg .node-ring{ fill:none; stroke-width:1.4; }
   .logo-bg .node-top .node-ring{ stroke:var(--teal); }
   .logo-bg .node-left .node-ring, .logo-bg .node-right .node-ring{ stroke:var(--teal); }
@@ -40,7 +40,7 @@
   .logo-bg .edge-base{ stroke:var(--teal); }
   .logo-bg .edge-arc{ stroke:var(--teal); opacity:0.7; }
 
-  .logo-bg .logo-spin{ animation:logoSpin 60s linear infinite; transform-origin:250px 270px; }
+  .logo-bg .logo-spin{ animation:logoSpin 80s linear infinite; transform-origin:250px 270px; }
   @keyframes logoSpin{ from{ transform:rotate(0deg); } to{ transform:rotate(360deg); } }
 
   .logo-bg .node-top{ animation:driftTop 11s ease-in-out infinite; transform-origin:250px 90px; }
@@ -93,7 +93,6 @@
   .deck-legend{ display:flex; justify-content:center; gap:18px; margin-bottom:18px; flex-wrap:wrap; position:relative; z-index:6; }
   .deck-legend .item{ display:flex; align-items:center; gap:6px; font-family:var(--font-mono); font-size:0.62rem; text-transform:uppercase; letter-spacing:.04em; color:var(--subtext); }
   .deck-legend .dot{ width:8px; height:8px; border-radius:50%; }
-  .deck-legend .dot.default{ background:var(--line); }
   .deck-legend .dot.active{ background:var(--violet); box-shadow:0 0 8px var(--violet); }
   .deck-legend .dot.complete{ background:var(--teal); box-shadow:0 0 8px var(--teal); }
 
@@ -121,16 +120,24 @@
   }
   .step.dragging{ transition:box-shadow .3s ease, border-color .3s ease, opacity .3s ease; cursor:grabbing; }
 
-  .step.state-default{ border-color:var(--line); }
-  .step.state-active-editing{ border-color:rgba(139,92,246,0.65); box-shadow:0 0 0 1px rgba(139,92,246,0.3), 0 20px 50px rgba(139,92,246,0.18); animation:pulseViolet 2.2s ease-in-out infinite; }
-  .step.state-complete{ border-color:rgba(46,230,166,0.6); box-shadow:0 0 0 1px rgba(46,230,166,0.28), 0 20px 50px rgba(46,230,166,0.16); }
+  .step.state-pending{ border-color:rgba(139,92,246,0.65); box-shadow:0 0 0 1px rgba(139,92,246,0.3), 0 20px 50px rgba(139,92,246,0.18); animation:pulseViolet 2.2s ease-in-out infinite; }
+  .step.state-complete{ border-color:rgba(46,230,166,0.6); box-shadow:0 0 0 1px rgba(46,230,166,0.28), 0 20px 50px rgba(46,230,166,0.16); animation:none; }
   @keyframes pulseViolet{ 0%,100%{ box-shadow:0 0 0 1px rgba(139,92,246,0.3), 0 20px 50px rgba(139,92,246,0.14);} 50%{ box-shadow:0 0 0 1px rgba(139,92,246,0.55), 0 20px 60px rgba(139,92,246,0.3);} }
 
   .step-title{ font-family:var(--font-display); font-weight:700; font-size:1.2rem; margin-bottom:4px; cursor:grab; user-select:none; display:flex; align-items:center; gap:8px; }
   .step-title:active{ cursor:grabbing; }
   .step-title .drag-dots{ color:var(--subtext); font-size:0.8rem; letter-spacing:2px; opacity:0.6; }
   .step-title .state-chip{ margin-left:auto; width:9px; height:9px; border-radius:50%; flex-shrink:0; background:var(--line); }
-  .step.state-active-editing .state-chip{ background:var(--violet); box-shadow:0 0 8px var(--violet); }
+  .card-close-btn{
+    display:none; align-items:center; justify-content:center;
+    width:30px; height:30px; border-radius:50%; margin-left:10px; flex-shrink:0;
+    background:var(--surface-2); border:1px solid var(--line); color:var(--text);
+    font-size:1rem; cursor:pointer; transition:background .2s ease, border-color .2s ease, transform .15s ease;
+  }
+  .step.active .card-close-btn{ display:flex; }
+  .card-close-btn:hover{ background:rgba(243,107,107,0.14); border-color:rgba(243,107,107,0.5); color:#ffb3b3; }
+  .card-close-btn:active{ transform:scale(.92); }
+  .step.state-pending .state-chip{ background:var(--violet); box-shadow:0 0 8px var(--violet); }
   .step.state-complete .state-chip{ background:var(--teal); box-shadow:0 0 8px var(--teal); }
   .step-hint{ color:var(--subtext); font-size:0.78rem; margin-bottom:18px; }
   .step.stacked .step-body{ display:none; }
@@ -192,6 +199,12 @@
   .responsavel-card{ background:var(--surface-2); border:1px solid var(--line); border-radius:12px; padding:14px 14px 6px; margin-bottom:12px; position:relative; }
   .responsavel-card .resp-title{ font-family:var(--font-mono); font-size:0.65rem; text-transform:uppercase; letter-spacing:.05em; color:var(--teal); margin-bottom:10px; }
   .responsavel-card .btn-remove{ position:absolute; top:12px; right:12px; background:none; border:none; color:var(--subtext); font-size:0.7rem; cursor:pointer; text-decoration:underline; }
+
+  #welcome-screen{ display:none; text-align:center; padding-top:24px; }
+  #welcome-screen.show{ display:block; }
+  #welcome-screen.fading{ animation:welcomeFadeOut .65s ease forwards; }
+  @keyframes welcomeFadeOut{ from{ opacity:1; transform:translateY(0); } to{ opacity:0; transform:translateY(-22px); } }
+  #btn-iniciar{ max-width:260px; margin:30px auto 0; }
 
   #loading-screen{ text-align:center; padding:80px 20px; }
   #loading-screen .spin-big{ width:36px; height:36px; border:3px solid var(--line); border-top-color:var(--teal); border-radius:50%; margin:0 auto 18px; animation:spin 0.9s linear infinite; }
@@ -320,11 +333,6 @@
 
 <div class="shell">
 
-  <div class="brand">
-    <div class="brand-mark">Malvora <em>Hub</em></div>
-    <div class="brand-eyebrow">Setup do assistente virtual</div>
-  </div>
-
   <div id="loading-screen">
     <div class="spin-big"></div>
     <p>Carregando o seu formulário...</p>
@@ -335,13 +343,19 @@
     <p id="invalid-message">Esse link não foi encontrado ou não é mais válido. Fale com a equipe Malvora pra receber um novo link de acesso.</p>
   </div>
 
-  <div id="main-content" style="display:none;">
-
+  <div id="welcome-screen">
+    <div class="brand">
+      <div class="brand-mark">Malvora <em>Hub</em></div>
+      <div class="brand-eyebrow">Setup do assistente virtual</div>
+    </div>
     <h1 class="page-title" id="page-title">Configure o assistente da sua barbearia</h1>
     <p class="page-sub" id="page-sub">Essas informações treinam a IA que vai atender seus clientes no WhatsApp. Você pode reabrir este mesmo link a qualquer momento pra editar.</p>
+    <button type="button" class="btn btn-primary" id="btn-iniciar">Iniciar configuração →</button>
+  </div>
+
+  <div id="main-content" style="display:none;">
 
     <div class="deck-legend">
-      <span class="item"><span class="dot default"></span>A preencher</span>
       <span class="item"><span class="dot active"></span>Em edição</span>
       <span class="item"><span class="dot complete"></span>Completo</span>
     </div>
@@ -359,8 +373,8 @@
       <div class="stage" id="stage">
 
       <!-- ===================== STEP 1 ===================== -->
-      <div class="step stacked state-default" data-step="1">
-        <div class="step-title"><span class="drag-dots">⠿</span> Identidade &amp; bot <span class="state-chip"></span></div>
+      <div class="step stacked state-pending" data-step="1">
+        <div class="step-title"><span class="drag-dots">⠿</span> Identidade &amp; bot <span class="state-chip"></span><button type="button" class="card-close-btn" aria-label="Minimizar cartão" title="Minimizar">✕</button></div>
         <div class="step-body">
         <div class="step-hint">Como sua barbearia e o assistente vão aparecer nas conversas.</div>
 
@@ -449,8 +463,8 @@
       </div>
 
       <!-- ===================== STEP 2 ===================== -->
-      <div class="step stacked state-default" data-step="2">
-        <div class="step-title"><span class="drag-dots">⠿</span> Responsáveis &amp; contato <span class="state-chip"></span></div>
+      <div class="step stacked state-pending" data-step="2">
+        <div class="step-title"><span class="drag-dots">⠿</span> Responsáveis &amp; contato <span class="state-chip"></span><button type="button" class="card-close-btn" aria-label="Minimizar cartão" title="Minimizar">✕</button></div>
         <div class="step-body">
         <div class="step-hint">Quem administra a barbearia e um contato de emergência.</div>
 
@@ -492,8 +506,8 @@
       </div>
 
       <!-- ===================== STEP 3 ===================== -->
-      <div class="step stacked state-default" data-step="3">
-        <div class="step-title"><span class="drag-dots">⠿</span> Local &amp; diferenciais <span class="state-chip"></span></div>
+      <div class="step stacked state-pending" data-step="3">
+        <div class="step-title"><span class="drag-dots">⠿</span> Local &amp; diferenciais <span class="state-chip"></span><button type="button" class="card-close-btn" aria-label="Minimizar cartão" title="Minimizar">✕</button></div>
         <div class="step-body">
         <div class="step-hint">O que a IA precisa saber sobre o espaço físico e o sistema.</div>
 
@@ -697,6 +711,7 @@
   const amenitiesGrid = document.getElementById('amenities-grid');
 
   const state = { currentStep: 1, idempotencyKey: null, responsavelCount: 0 };
+  let pendingFormData = null;
 
   const REGEX = {
     telefone: /^\(?\d{2}\)?\s?9?\d{4}-?\d{4}$/,
@@ -897,8 +912,41 @@
     card.style.top = p.y + 'px';
   }
 
+  function pushAside(card){
+    const n = Number(card.dataset.step);
+    const w = card.offsetWidth, h = card.offsetHeight;
+    const cx = (cardPos[n] ? cardPos[n].x : 0) + w / 2;
+    const cy = (cardPos[n] ? cardPos[n].y : 0) + h / 2;
+    const vcx = window.innerWidth / 2, vcy = window.innerHeight / 2;
+    let dirX = cx - vcx, dirY = cy - vcy;
+    if (Math.abs(dirX) < 20 && Math.abs(dirY) < 20){
+      // Praticamente no centro - escolhe um lado com base no numero do step, pra nao empilhar os dois no mesmo canto
+      dirX = (n % 2 === 0) ? -1 : 1;
+      dirY = -1;
+    }
+    const len = Math.hypot(dirX, dirY) || 1;
+    const ux = dirX / len, uy = dirY / len;
+    const pushDist = 240;
+    const targetX = (cardPos[n] ? cardPos[n].x : 0) + ux * pushDist;
+    const targetY = (cardPos[n] ? cardPos[n].y : 0) + uy * pushDist;
+    cardPos[n] = clampToViewport(targetX, targetY, w, h);
+    applyCardPosition(card);
+  }
+
   function setActiveCard(n){
     const defaults = defaultMenuPositions();
+    if (n === null){
+      form.querySelectorAll('.step').forEach(function(s){
+        const stepNum = Number(s.dataset.step);
+        s.classList.remove('active');
+        s.classList.add('stacked');
+        cardPos[stepNum] = defaults[stepNum];
+        applyCardPosition(s);
+      });
+      state.currentStep = null;
+      refreshCardStates();
+      return;
+    }
     form.querySelectorAll('.step').forEach(function(s){
       const stepNum = Number(s.dataset.step);
       const isActive = stepNum === n;
@@ -914,18 +962,10 @@
         });
       } else {
         if (!cardPos[stepNum]) cardPos[stepNum] = defaults[stepNum];
-        applyCardPosition(s);
+        pushAside(s);
       }
     });
     state.currentStep = n;
-    if (n === null){
-      // Ninguem aberto: todos voltam pra linha, posicoes padrao
-      form.querySelectorAll('.step').forEach(function(s){
-        const stepNum = Number(s.dataset.step);
-        cardPos[stepNum] = defaults[stepNum];
-        applyCardPosition(s);
-      });
-    }
     refreshCardStates();
   }
 
@@ -1006,9 +1046,8 @@
         if (Math.abs(vx) > 0.05 || Math.abs(vy) > 0.05) launchFling(n);
       }
       dragging = false;
-      if (!moved){
-        if (card.classList.contains('active')) setActiveCard(null);
-        else if (state.currentStep === null) setActiveCard(Number(card.dataset.step));
+      if (!moved && !card.classList.contains('active') && state.currentStep === null){
+        setActiveCard(Number(card.dataset.step));
       }
     }
 
@@ -1021,8 +1060,18 @@
     document.addEventListener('touchend', onUp);
   });
 
-  // Posiciona os 3 cards em linha - so depois que a pagina (e as fontes) realmente carregaram,
-  // pra nao medir a altura do cabecalho antes da hora e desalinhar tudo.
+  // Botao dedicado de minimizar
+  form.querySelectorAll('.card-close-btn').forEach(function(btn){
+    btn.addEventListener('click', function(e){
+      e.stopPropagation();
+      setActiveCard(null);
+    });
+    btn.addEventListener('mousedown', function(e){ e.stopPropagation(); });
+    btn.addEventListener('touchstart', function(e){ e.stopPropagation(); }, {passive:true});
+  });
+
+  // Posiciona os 3 cards em linha - so roda depois do clique em "Iniciar",
+  // quando o cabecalho grande ja sumiu e o main-content esta de fato visivel/medivel.
   function layoutInitialCards(){
     const defaults = defaultMenuPositions();
     form.querySelectorAll('.step').forEach(function(s){
@@ -1032,11 +1081,25 @@
     });
     setActiveCard(null);
   }
-  if (document.readyState === 'complete'){
-    layoutInitialCards();
-  } else {
-    window.addEventListener('load', layoutInitialCards);
-  }
+
+  document.getElementById('btn-iniciar').addEventListener('click', function(){
+    const welcomeEl = document.getElementById('welcome-screen');
+    welcomeEl.classList.add('fading');
+    setTimeout(function(){
+      welcomeEl.classList.remove('show', 'fading');
+      mainContent.style.display = 'block';
+
+      if (pendingFormData){
+        if (pendingFormData.draft){
+          applyDataToForm(pendingFormData.draft);
+          draftBanner.classList.add('show');
+        } else {
+          applyDataToForm(pendingFormData.serverData);
+        }
+      }
+      layoutInitialCards();
+    }, 650);
+  });
 
   // ---- Validacao (mode silencioso = so calcula, nao mostra erro na tela) ----
   function validateStep(n, silent){
@@ -1136,10 +1199,8 @@
     form.querySelectorAll('.step').forEach(function(s){
       const n = Number(s.dataset.step);
       const complete = isStepComplete(n);
-      s.classList.remove('state-default', 'state-active-editing', 'state-complete');
-      if (complete) s.classList.add('state-complete');
-      else if (n === state.currentStep) s.classList.add('state-active-editing');
-      else s.classList.add('state-default');
+      s.classList.remove('state-pending', 'state-complete');
+      s.classList.add(complete ? 'state-complete' : 'state-pending');
     });
   }
 
@@ -1353,18 +1414,14 @@
       let draft = null;
       try { draft = JSON.parse(localStorage.getItem(draftKey)); } catch(e){ draft = null; }
 
-      if (draft){
-        state.idempotencyKey = draft.idempotency_key || generateId();
-        applyDataToForm(draft);
-        draftBanner.classList.add('show');
-      } else {
-        state.idempotencyKey = generateId();
-        applyDataToForm(result.data);
-      }
+      if (draft) state.idempotencyKey = draft.idempotency_key || generateId();
+      else state.idempotencyKey = generateId();
+
+      // Guarda os dados pra aplicar so depois que o usuario clicar em Iniciar
+      pendingFormData = { draft: draft, serverData: result.data };
 
       loadingScreen.style.display = 'none';
-      mainContent.style.display = 'block';
-      refreshCardStates();
+      document.getElementById('welcome-screen').classList.add('show');
     }).catch(function(err){
       clearTimeout(timeoutId);
       if (err.name === 'AbortError'){
