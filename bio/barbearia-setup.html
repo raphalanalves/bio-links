@@ -152,10 +152,16 @@
   .field label{ display:block; font-size:0.8rem; font-weight:600; margin-bottom:8px; }
   .field label .opt{ font-weight:500; color:var(--subtext); font-size:0.7rem; }
   .req{ color:var(--teal); font-weight:700; margin-left:2px; }
-  .field input[type=text], .field input[type=email], .field input[type=tel], .field input[type=url], .field textarea{
+  .field input[type=text], .field input[type=email], .field input[type=tel], .field input[type=url], .field textarea, .field select{
     width:100%; background:var(--surface-2); border:1px solid var(--line); border-radius:10px; padding:11px 13px;
     color:var(--text); font-family:var(--font-body); font-size:0.86rem; transition:border-color .2s;
   }
+  .field select{
+    appearance:none; -webkit-appearance:none; -moz-appearance:none;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238891a0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+    background-repeat:no-repeat; background-position:right 13px center; background-size:16px; padding-right:38px;
+  }
+  .field select option{ background:var(--surface-2); color:var(--text); }
   .field textarea{ resize:vertical; min-height:70px; }
   .field input:focus, .field textarea:focus{ outline:none; border-color:var(--teal-soft); }
   .field-error{ color:var(--danger); font-size:0.7rem; margin-top:6px; display:none; }
@@ -191,8 +197,23 @@
   .btn .spinner{ display:inline-block; width:13px; height:13px; border:2px solid rgba(4,18,12,0.35); border-top-color:#04120c; border-radius:50%; animation:spin .7s linear infinite; margin-right:6px; vertical-align:-2px; }
   @keyframes spin{ to{ transform:rotate(360deg); } }
 
-  .alert{ display:none; background:rgba(243,107,107,0.1); border:1px solid rgba(243,107,107,0.35); color:#ffb3b3; font-size:0.78rem; padding:11px 13px; border-radius:10px; margin-bottom:16px; }
+  .alert{
+    display:none; position:fixed; left:50%; bottom:24px; transform:translateX(-50%) translateY(0);
+    z-index:30; background:rgba(28,10,10,0.92); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+    border:1px solid rgba(243,107,107,0.45); color:#ffb3b3; font-size:0.8rem; line-height:1.5;
+    padding:14px 44px 14px 16px; border-radius:14px; width:min(90vw, 380px);
+    box-shadow:0 20px 50px rgba(0,0,0,0.5); transition:transform .25s ease, opacity .25s ease;
+  }
   .alert.show{ display:block; }
+  .alert .alert-close{
+    position:absolute; top:8px; right:8px; width:24px; height:24px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,0.06);
+    border:none; color:#ffb3b3; font-size:0.85rem; cursor:pointer; line-height:1;
+  }
+  .alert .alert-close:hover{ background:rgba(255,255,255,0.14); }
+  .alert.minimized{ width:auto; padding:11px 14px; border-radius:999px; cursor:pointer; }
+  .alert.minimized .alert-text, .alert.minimized .alert-close{ display:none; }
+  .alert.minimized::after{ content:'⚠ Ver erro'; font-size:0.78rem; font-weight:600; }
   .draft-banner{ display:none; background:var(--violet-soft); border:1px solid rgba(139,92,246,0.35); color:#c9b8ff; font-size:0.74rem; padding:10px 13px; border-radius:10px; margin-bottom:16px; }
   .draft-banner.show{ display:block; }
 
@@ -222,7 +243,7 @@
   #success-screen h2{ font-family:var(--font-display); font-weight:700; font-size:1.5rem; margin-bottom:10px; }
   #success-screen p{ color:var(--subtext); font-size:0.86rem; line-height:1.6; max-width:380px; margin:0 auto; }
 
-  footer.page-footer{ text-align:center; margin-top:22px; }
+  footer.page-footer{ position:fixed; left:0; right:0; bottom:10px; text-align:center; z-index:6; pointer-events:none; }
   .copyright{ font-family:var(--font-mono); font-size:0.6rem; color:var(--subtext); }
 
   @media (max-width:420px){ .card-grid{ grid-template-columns:1fr; } .card-grid.three{ grid-template-columns:1fr; } }
@@ -268,6 +289,18 @@
   }
   .info-icon:hover .tip, .info-icon.open .tip{ display:block; }
   @media (max-width:420px){ .info-icon .tip{ width:180px; left:auto; right:-8px; transform:none; } .info-icon .tip::after{ left:auto; right:12px; transform:none; } }
+
+  #ready-to-submit{
+    display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%) scale(0.92);
+    z-index:20; background:rgba(14,17,23,0.92); backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
+    border:1px solid rgba(46,230,166,0.5); border-radius:20px; padding:28px 30px; text-align:center;
+    box-shadow:0 0 0 1px rgba(46,230,166,0.25), 0 30px 80px rgba(0,0,0,0.6);
+    width:min(90vw, 360px); opacity:0; transition:opacity .3s ease, transform .3s ease;
+  }
+  #ready-to-submit.show{ display:block; opacity:1; transform:translate(-50%,-50%) scale(1); }
+  #ready-to-submit p{ font-family:var(--font-display); font-weight:700; font-size:1.15rem; margin:0 0 4px; }
+  #ready-to-submit p.sub{ font-family:var(--font-body); font-weight:500; font-size:0.84rem; color:var(--subtext); margin-bottom:20px; }
+  #ready-to-submit .btn{ width:100%; }
 
   #locked-screen{ display:none; }
   #locked-screen.show{ display:block; }
@@ -361,7 +394,10 @@
     </div>
 
     <div class="draft-banner" id="draft-banner">Recuperamos um rascunho salvo automaticamente no seu navegador.</div>
-    <div class="alert" id="form-alert"></div>
+    <div class="alert" id="form-alert">
+      <span class="alert-text" id="form-alert-text"></span>
+      <button type="button" class="alert-close" id="form-alert-close" aria-label="Minimizar aviso" title="Minimizar">✕</button>
+    </div>
 
     <form id="setup-form" novalidate>
 
@@ -487,19 +523,13 @@
           <div class="field-error">Selecione o barbeiro líder.</div>
         </div>
 
-        <div class="field" data-field="contato_emergencia_nome" style="margin-top:18px;">
-          <label for="contato_emergencia_nome">Contato de emergência - nome <span class="opt">opcional</span></label>
-          <input type="text" id="contato_emergencia_nome">
-          <div class="field-error">Informe nome completo (nome e sobrenome).</div>
-        </div>
-        <div class="field" data-field="contato_emergencia_telefone">
+        <div class="field" data-field="contato_emergencia_telefone" style="margin-top:18px;">
           <label for="contato_emergencia_telefone">Contato de emergência - telefone <span class="opt">opcional</span></label>
           <input type="tel" id="contato_emergencia_telefone" placeholder="(11) 91234-5678">
           <div class="field-error">Informe um telefone válido, ex: (11) 91234-5678.</div>
         </div>
 
         <div class="nav-row">
-          <button type="button" class="btn btn-secondary" data-back>Voltar</button>
           <button type="button" class="btn btn-primary" data-next>Continuar</button>
         </div>
         </div>
@@ -639,12 +669,17 @@
         <p class="field-note" style="margin:14px 0 18px;">Os dados coletados neste formulário destinam-se exclusivamente à parametrização do seu assistente virtual e integrações do seu sistema, conforme previsto em contrato de prestação de serviços.</p>
 
         <div class="nav-row">
-          <button type="button" class="btn btn-secondary" data-back>Voltar</button>
-          <button type="submit" class="btn btn-primary" id="btn-submit">Salvar configuração</button>
+          <button type="button" class="btn btn-primary" data-next>Continuar</button>
         </div>
         </div>
       </div>
 
+      </div>
+
+      <div id="ready-to-submit">
+        <p>Seu formulário já está completo!</p>
+        <p class="sub">Deseja enviar agora?</p>
+        <button type="submit" class="btn btn-primary" id="btn-submit">Enviar configuração</button>
       </div>
 
     </form>
@@ -705,6 +740,7 @@
   const form = document.getElementById('setup-form');
   const successScreen = document.getElementById('success-screen');
   const alertBox = document.getElementById('form-alert');
+  const alertText = document.getElementById('form-alert-text');
   const draftBanner = document.getElementById('draft-banner');
   const btnSubmit = document.getElementById('btn-submit');
   const responsaveisContainer = document.getElementById('responsaveis-container');
@@ -726,7 +762,6 @@
     {id: 'instagram_link', regex: REGEX.url},
     {id: 'site_url', regex: REGEX.url},
     {id: 'link_google_maps', regex: REGEX.url},
-    {id: 'contato_emergencia_nome', regex: REGEX.nomeCompleto},
     {id: 'contato_emergencia_telefone', regex: REGEX.telefone}
   ];
 
@@ -886,12 +921,15 @@
     const n = 3, gap = 18;
     const totalW = TILE_W * n + gap * (n - 1);
     const fitsRow = window.innerWidth >= totalW + EDGE_PAD * 2;
-    const y0 = headerBottom();
+    const minY = headerBottom();
     if (fitsRow){
       const startX = Math.max(EDGE_PAD, (window.innerWidth - totalW) / 2);
+      const y0 = Math.max(minY, (window.innerHeight - TILE_H) / 2);
       return { 1: { x: startX, y: y0 }, 2: { x: startX + TILE_W + gap, y: y0 }, 3: { x: startX + (TILE_W + gap) * 2, y: y0 } };
     }
+    const totalH = TILE_H * n + gap * (n - 1);
     const colX = Math.max(EDGE_PAD, (window.innerWidth - TILE_W) / 2);
+    const y0 = Math.max(minY, (window.innerHeight - totalH) / 2);
     return { 1: { x: colX, y: y0 }, 2: { x: colX, y: y0 + TILE_H + gap }, 3: { x: colX, y: y0 + (TILE_H + gap) * 2 } };
   }
 
@@ -945,6 +983,7 @@
       });
       state.currentStep = null;
       refreshCardStates();
+      checkAllComplete();
       return;
     }
     form.querySelectorAll('.step').forEach(function(s){
@@ -967,6 +1006,7 @@
     });
     state.currentStep = n;
     refreshCardStates();
+    checkAllComplete();
   }
 
   function goToStep(n){ setActiveCard(n); }
@@ -1065,6 +1105,7 @@
     btn.addEventListener('click', function(e){
       e.stopPropagation();
       setActiveCard(null);
+      checkAllComplete();
     });
     btn.addEventListener('mousedown', function(e){ e.stopPropagation(); });
     btn.addEventListener('touchstart', function(e){ e.stopPropagation(); }, {passive:true});
@@ -1195,6 +1236,12 @@
 
   function isStepComplete(n){ return validateStep(n, true); }
 
+  function checkAllComplete(){
+    const allDone = [1, 2, 3].every(function(n){ return isStepComplete(n); });
+    const readyEl = document.getElementById('ready-to-submit');
+    readyEl.classList.toggle('show', allDone && state.currentStep === null);
+  }
+
   function refreshCardStates(){
     form.querySelectorAll('.step').forEach(function(s){
       const n = Number(s.dataset.step);
@@ -1207,10 +1254,8 @@
   form.addEventListener('click', function(e){
     if (e.target.matches('[data-next]')){
       if (!validateStep(state.currentStep)) { refreshCardStates(); return; }
-      goToStep(state.currentStep + 1);
-    }
-    if (e.target.matches('[data-back]')){
-      goToStep(state.currentStep - 1);
+      setActiveCard(null);
+      checkAllComplete();
     }
   });
   form.addEventListener('input', refreshCardStates);
@@ -1246,7 +1291,6 @@
       cpf_cnpj: val('cpf_cnpj'),
       quantidade_barbeiros: val('quantidade_barbeiros'),
       barbeiro_lider_nome: val('barbeiro_lider_nome'),
-      contato_emergencia_nome: val('contato_emergencia_nome'),
       contato_emergencia_telefone: val('contato_emergencia_telefone'),
       cep: val('cep'),
       logradouro: val('logradouro'),
@@ -1305,7 +1349,6 @@
       const el = form.querySelector('input[name="tom_de_voz"][value="' + data.tom_de_voz + '"]');
       if (el) el.checked = true;
     }
-    if (data.contato_emergencia_nome) document.getElementById('contato_emergencia_nome').value = data.contato_emergencia_nome;
     if (data.contato_emergencia_telefone) document.getElementById('contato_emergencia_telefone').value = data.contato_emergencia_telefone;
     if (data.endereco_completo) document.getElementById('endereco_completo').value = data.endereco_completo;
     if (data.link_google_maps) document.getElementById('link_google_maps').value = data.link_google_maps;
@@ -1404,6 +1447,7 @@
         loadingScreen.style.display = 'none';
         mainContent.style.display = 'block';
         form.style.display = 'none';
+        document.querySelector('.deck-legend').style.display = 'none';
         document.getElementById('page-title').style.display = 'none';
         document.getElementById('page-sub').style.display = 'none';
         renderLockedSummary(result.data);
@@ -1434,8 +1478,54 @@
   init();
 
   // ---- Envio ----
-  function showAlert(msg){ alertBox.textContent = msg; alertBox.classList.add('show'); }
-  function hideAlert(){ alertBox.classList.remove('show'); }
+  const FIELD_LABELS = {
+    'nome_barbearia': 'Nome da barbearia', 'nome_bot': 'Nome do assistente', 'cpf_cnpj': 'CPF ou CNPJ',
+    'tom_de_voz': 'Tom de voz', 'endereco_completo': 'Endereço', 'cep': 'CEP', 'logradouro': 'Rua',
+    'numero': 'Número', 'bairro': 'Bairro', 'cidade': 'Cidade', 'estado': 'Estado',
+    'quantidade_barbeiros': 'Quantidade de barbeiros', 'barbeiro_lider_nome': 'Barbeiro líder',
+    'appbarber_link': 'Link do App Barber', 'appbarber_usuario': 'E-mail do usuário do App Barber',
+    'appbarber_senha': 'Senha do App Barber', 'wifi_credenciais': 'Rede/senha do Wi-Fi',
+    'geladeira_produtos': 'Produtos da geladeira', 'jogos_especificar': 'Quais jogos',
+    'contato_emergencia_telefone': 'Telefone de emergência', 'onboarding_id': 'Link do formulário',
+    'idempotency_key': 'Identificador do envio'
+  };
+  function humanizeError(raw){
+    if (!raw) return 'Alguns dados não passaram na validação. Confira o formulário e tente novamente.';
+    const parts = raw.split(/\.\s+/).map(function(s){ return s.trim(); }).filter(Boolean);
+    const labels = [];
+    parts.forEach(function(p){
+      const respMatch = p.match(/^responsaveis\[\d+\]\.(nome|telefone|email)/);
+      if (respMatch){
+        const campo = respMatch[1] === 'nome' ? 'Nome' : (respMatch[1] === 'telefone' ? 'Telefone' : 'E-mail');
+        labels.push(campo + ' do responsável');
+        return;
+      }
+      let matched = null;
+      for (const key in FIELD_LABELS){
+        if (p.indexOf(key) === 0){ matched = FIELD_LABELS[key]; break; }
+      }
+      labels.push(matched || null);
+    });
+    const unique = [];
+    labels.forEach(function(l){ if (l && unique.indexOf(l) === -1) unique.push(l); });
+    if (unique.length === 0) return 'Alguns dados não passaram na validação. Confira o formulário e tente novamente.';
+    return 'Antes de enviar, confira: ' + unique.join(', ') + '.';
+  }
+
+  function showAlert(msg){
+    alertText.textContent = humanizeError(msg);
+    alertBox.classList.remove('minimized');
+    alertBox.classList.add('show');
+  }
+  function hideAlert(){ alertBox.classList.remove('show', 'minimized'); }
+
+  document.getElementById('form-alert-close').addEventListener('click', function(e){
+    e.stopPropagation();
+    alertBox.classList.add('minimized');
+  });
+  alertBox.addEventListener('click', function(){
+    if (alertBox.classList.contains('minimized')) alertBox.classList.remove('minimized');
+  });
 
   form.addEventListener('submit', async function(e){
     e.preventDefault();
@@ -1492,7 +1582,6 @@
       cpf_cnpj: s.cpf_cnpj,
       quantidade_barbeiros: s.quantidade_barbeiros,
       barbeiro_lider_nome: s.barbeiro_lider_nome,
-      contato_emergencia_nome: s.contato_emergencia_nome,
       contato_emergencia_telefone: s.contato_emergencia_telefone,
       cep: s.cep,
       logradouro: s.logradouro,
@@ -1551,6 +1640,7 @@
         stopLoadingPhases();
         try { localStorage.removeItem(draftKey); } catch(e){}
         form.style.display = 'none';
+        document.querySelector('.deck-legend').style.display = 'none';
         document.getElementById('page-title').style.display = 'none';
         document.getElementById('page-sub').style.display = 'none';
         draftBanner.classList.remove('show');
