@@ -17,7 +17,8 @@
     --font-display:'Cormorant Garamond', serif; --font-body:'Manrope', -apple-system, sans-serif; --font-mono:'JetBrains Mono', monospace;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
-  body{ background:var(--ink); color:var(--text); font-family:var(--font-body); min-height:100vh; position:relative; overflow-x:hidden; -webkit-font-smoothing:antialiased; padding:0 0 60px; }
+  html, body{ height:100%; overflow:hidden; }
+  body{ background:var(--ink); color:var(--text); font-family:var(--font-body); position:relative; -webkit-font-smoothing:antialiased; }
   .blobs{ position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none; }
   .blob{ position:absolute; width:50vmax; height:50vmax; border-radius:50%; filter:blur(100px); opacity:0.16; }
   .blob.b1{ background:var(--teal); top:-20%; left:-22%; animation:float1 30s ease-in-out infinite; }
@@ -80,7 +81,7 @@
   }
   a{ color:var(--teal); }
   :focus-visible{ outline:2px solid var(--teal); outline-offset:3px; border-radius:4px; }
-  .shell{ position:relative; z-index:1; max-width:640px; margin:0 auto; padding:44px 20px 0; }
+  .shell{ position:relative; z-index:1; max-width:640px; margin:0 auto; padding:44px 20px 60px; max-height:100vh; overflow-y:auto; }
   .shell.wide{ max-width:760px; }
   .brand{ text-align:center; margin-bottom:22px; position:relative; z-index:6; }
   .brand-mark{ font-family:var(--font-display); font-weight:700; font-size:1.5rem; }
@@ -132,8 +133,10 @@
   .step.state-active-editing .state-chip{ background:var(--violet); box-shadow:0 0 8px var(--violet); }
   .step.state-complete .state-chip{ background:var(--teal); box-shadow:0 0 8px var(--teal); }
   .step-hint{ color:var(--subtext); font-size:0.78rem; margin-bottom:18px; }
-  .step.stacked .step-hint, .step.stacked .field, .step.stacked .nav-row{ display:none; }
-  .step.stacked{ display:flex; align-items:center; justify-content:center; text-align:center; }
+  .step.stacked .step-body{ display:none; }
+  .step.stacked{ display:flex; align-items:center; justify-content:center; text-align:center; cursor:pointer; }
+  .step.active .step-title{ cursor:pointer; }
+  .step.active .step-title:active{ cursor:pointer; }
   .step.stacked .step-title{ flex-direction:column; font-size:1rem; line-height:1.3; gap:10px; }
   .step.stacked .step-title .drag-dots{ order:2; }
   .step.stacked .step-title .state-chip{ margin-left:0; width:10px; height:10px; }
@@ -356,8 +359,9 @@
       <div class="stage" id="stage">
 
       <!-- ===================== STEP 1 ===================== -->
-      <div class="step active state-active-editing" data-step="1">
+      <div class="step stacked state-default" data-step="1">
         <div class="step-title"><span class="drag-dots">⠿</span> Identidade &amp; bot <span class="state-chip"></span></div>
+        <div class="step-body">
         <div class="step-hint">Como sua barbearia e o assistente vão aparecer nas conversas.</div>
 
         <div class="field" data-field="nome_barbearia">
@@ -441,11 +445,13 @@
         <div class="nav-row">
           <button type="button" class="btn btn-primary" data-next>Continuar</button>
         </div>
+        </div>
       </div>
 
       <!-- ===================== STEP 2 ===================== -->
       <div class="step stacked state-default" data-step="2">
         <div class="step-title"><span class="drag-dots">⠿</span> Responsáveis &amp; contato <span class="state-chip"></span></div>
+        <div class="step-body">
         <div class="step-hint">Quem administra a barbearia e um contato de emergência.</div>
 
         <div id="responsaveis-container"></div>
@@ -482,11 +488,13 @@
           <button type="button" class="btn btn-secondary" data-back>Voltar</button>
           <button type="button" class="btn btn-primary" data-next>Continuar</button>
         </div>
+        </div>
       </div>
 
       <!-- ===================== STEP 3 ===================== -->
       <div class="step stacked state-default" data-step="3">
         <div class="step-title"><span class="drag-dots">⠿</span> Local &amp; diferenciais <span class="state-chip"></span></div>
+        <div class="step-body">
         <div class="step-hint">O que a IA precisa saber sobre o espaço físico e o sistema.</div>
 
         <div class="field" data-field="cep">
@@ -619,6 +627,7 @@
         <div class="nav-row">
           <button type="button" class="btn btn-secondary" data-back>Voltar</button>
           <button type="submit" class="btn btn-primary" id="btn-submit">Salvar configuração</button>
+        </div>
         </div>
       </div>
 
@@ -909,6 +918,14 @@
       }
     });
     state.currentStep = n;
+    if (n === null){
+      // Ninguem aberto: todos voltam pra linha, posicoes padrao
+      form.querySelectorAll('.step').forEach(function(s){
+        const stepNum = Number(s.dataset.step);
+        cardPos[stepNum] = defaults[stepNum];
+        applyCardPosition(s);
+      });
+    }
     refreshCardStates();
   }
 
@@ -924,35 +941,75 @@
     });
   });
 
-  // ---- Arrastar os cartões pelo título — livre por toda a tela, em qualquer dispositivo ----
+  // ---- Arrastar/abrir/fechar pelo título do cartão ----
+  // So e possivel ARRASTAR quando TODOS os cartoes estao fechados (state.currentStep === null).
+  // Clicar (sem arrastar) num cartao fechado abre ele; clicar no titulo do cartao aberto fecha ele.
   form.querySelectorAll('.step-title').forEach(function(handle){
     const card = handle.closest('.step');
-    let dragging = false, startX = 0, startY = 0, baseX = 0, baseY = 0, moved = false;
+    let tracking = false, dragging = false, moved = false;
+    let startX = 0, startY = 0, baseX = 0, baseY = 0;
+    let lastX = 0, lastY = 0, lastT = 0, vx = 0, vy = 0;
+    let flingFrame = null;
+
+    function stopFling(){ if (flingFrame) { cancelAnimationFrame(flingFrame); flingFrame = null; } }
 
     function onDown(clientX, clientY){
-      dragging = true; moved = false;
-      card.classList.add('dragging');
+      stopFling();
+      tracking = true; moved = false;
       startX = clientX; startY = clientY;
+      lastX = clientX; lastY = clientY; lastT = performance.now();
+      vx = 0; vy = 0;
       const n = Number(card.dataset.step);
       baseX = (cardPos[n] && cardPos[n].x) || 0;
       baseY = (cardPos[n] && cardPos[n].y) || 0;
+      dragging = (state.currentStep === null);
+      if (dragging) card.classList.add('dragging');
     }
     function onMove(clientX, clientY){
+      if (!tracking) return;
+      if (Math.abs(clientX - startX) > 4 || Math.abs(clientY - startY) > 4) moved = true;
       if (!dragging) return;
-      moved = true;
       const n = Number(card.dataset.step);
       const w = card.offsetWidth, h = card.offsetHeight;
       const raw = { x: baseX + (clientX - startX), y: baseY + (clientY - startY) };
       const pos = clampToViewport(raw.x, raw.y, w, h);
       cardPos[n] = pos;
       applyCardPosition(card);
+      const now = performance.now();
+      const dt = now - lastT;
+      if (dt > 0){ vx = (clientX - lastX) / dt; vy = (clientY - lastY) / dt; }
+      lastX = clientX; lastY = clientY; lastT = now;
+    }
+    function launchFling(n){
+      const FRICTION = 0.94, STOP_V = 0.02, STEP_MS = 16;
+      function frame(){
+        vx *= FRICTION; vy *= FRICTION;
+        if (Math.abs(vx) < STOP_V && Math.abs(vy) < STOP_V){ flingFrame = null; return; }
+        const w = card.offsetWidth, h = card.offsetHeight;
+        const next = { x: cardPos[n].x + vx * STEP_MS, y: cardPos[n].y + vy * STEP_MS };
+        const atEdgeX = next.x <= 16 || next.x >= window.innerWidth - w - 16;
+        const atEdgeY = next.y <= 16 || next.y >= window.innerHeight - h - 16;
+        if (atEdgeX) vx *= -0.4;
+        if (atEdgeY) vy *= -0.4;
+        cardPos[n] = clampToViewport(next.x, next.y, w, h);
+        applyCardPosition(card);
+        flingFrame = requestAnimationFrame(frame);
+      }
+      flingFrame = requestAnimationFrame(frame);
     }
     function onUp(){
-      if (!dragging) return;
+      if (!tracking) return;
+      tracking = false;
+      if (dragging){
+        card.classList.remove('dragging');
+        const n = Number(card.dataset.step);
+        if (Math.abs(vx) > 0.05 || Math.abs(vy) > 0.05) launchFling(n);
+      }
       dragging = false;
-      card.classList.remove('dragging');
-      card._justDragged = moved;
-      if (moved) setTimeout(function(){ card._justDragged = false; }, 50);
+      if (!moved){
+        if (card.classList.contains('active')) setActiveCard(null);
+        else if (state.currentStep === null) setActiveCard(Number(card.dataset.step));
+      }
     }
 
     handle.addEventListener('mousedown', function(e){ onDown(e.clientX, e.clientY); e.preventDefault(); });
@@ -960,29 +1017,26 @@
     document.addEventListener('mouseup', onUp);
 
     handle.addEventListener('touchstart', function(e){ const t = e.touches[0]; onDown(t.clientX, t.clientY); }, {passive:true});
-    document.addEventListener('touchmove', function(e){ if (!dragging) return; const t = e.touches[0]; onMove(t.clientX, t.clientY); }, {passive:true});
+    document.addEventListener('touchmove', function(e){ if (!tracking) return; const t = e.touches[0]; onMove(t.clientX, t.clientY); }, {passive:true});
     document.addEventListener('touchend', onUp);
   });
 
-  // Clicar em qualquer parte de um card inativo traz ele pra frente
-  form.querySelectorAll('.step').forEach(function(card){
-    card.addEventListener('click', function(e){
-      if (card.classList.contains('active')) return;
-      if (card._justDragged) return;
-      setActiveCard(Number(card.dataset.step));
-    });
-  });
-
-  // Posiciona os 3 cards em linha assim que a pagina carrega, e ativa o primeiro
-  (function initialPositions(){
+  // Posiciona os 3 cards em linha - so depois que a pagina (e as fontes) realmente carregaram,
+  // pra nao medir a altura do cabecalho antes da hora e desalinhar tudo.
+  function layoutInitialCards(){
     const defaults = defaultMenuPositions();
     form.querySelectorAll('.step').forEach(function(s){
       const n = Number(s.dataset.step);
       cardPos[n] = defaults[n];
       applyCardPosition(s);
     });
-    setActiveCard(1);
-  })();
+    setActiveCard(null);
+  }
+  if (document.readyState === 'complete'){
+    layoutInitialCards();
+  } else {
+    window.addEventListener('load', layoutInitialCards);
+  }
 
   // ---- Validacao (mode silencioso = so calcula, nao mostra erro na tela) ----
   function validateStep(n, silent){
