@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0A0A0F">
+<title>Planos e preços — Malvora</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* Tokens — troque pelos hex oficiais da Malvora se forem diferentes */
+  :root {
+    --void: #0A0A0F;
+    --obsidian: #12121A;
+    --edge: #23232F;
+    --emerald: #19D59B;
+    --emerald-dim: rgba(25, 213, 155, .14);
+    --violet: #8B5CF6;
+    --violet-dim: rgba(139, 92, 246, .16);
+    --ink: #ECECF3;
+    --muted: #9A9AAE;
+    --display: "Syne", "Manrope", system-ui, sans-serif;
+    --body: "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  *, *::before, *::after { box-sizing: inherit; }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  body {
+    margin: 0;
+    background: var(--void);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 1rem;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; }
+  :focus-visible { outline: 2px solid var(--emerald); outline-offset: 3px; border-radius: 6px; }
+
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 1.25rem; }
+
+  /* ---------- Abertura ---------- */
+  .intro {
+    position: relative;
+    padding: 5.5rem 0 3rem;
+    overflow: hidden;
+  }
+  .intro svg.triad {
+    position: absolute; right: -60px; top: 20px;
+    width: min(420px, 60vw); opacity: .5; pointer-events: none;
+  }
+  .intro h1 {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: clamp(2.2rem, 5.2vw, 3.9rem);
+    line-height: 1.05;
+    letter-spacing: -.02em;
+    margin: 0 0 1.25rem;
+    max-width: 15ch;
+  }
+  .intro p { color: var(--muted); max-width: 58ch; font-size: 1.1rem; margin: 0; }
+
+  /* ---------- Seletor de caminho ---------- */
+  .paths {
+    display: inline-flex; gap: .25rem; padding: .3rem;
+    background: var(--obsidian); border: 1px solid var(--edge); border-radius: 999px;
+    margin: 2.5rem 0 2.75rem; flex-wrap: wrap;
+  }
+  .paths button {
+    font: 600 .95rem var(--body); color: var(--muted);
+    background: none; border: 0; border-radius: 999px;
+    padding: .65rem 1.2rem; cursor: pointer;
+  }
+  .paths button[aria-selected="true"] { background: var(--ink); color: var(--void); }
+
+  .panel[hidden] { display: none; }
+
+  /* ---------- Barbearia: pergunta que escolhe o plano ---------- */
+  .ask {
+    display: grid; grid-template-columns: 1fr auto; gap: 1.5rem; align-items: center;
+    border-top: 1px solid var(--edge); border-bottom: 1px solid var(--edge);
+    padding: 1.5rem 0; margin-bottom: 2rem;
+  }
+  .ask label { font-family: var(--display); font-weight: 700; font-size: 1.35rem; }
+  .ask small { display: block; color: var(--muted); font: 500 .95rem var(--body); margin-top: .2rem; }
+  .stepper { display: flex; align-items: center; gap: .5rem; }
+  .stepper button {
+    width: 48px; height: 48px; border-radius: 50%;
+    border: 1px solid var(--edge); background: var(--obsidian); color: var(--ink);
+    font-size: 1.4rem; cursor: pointer;
+  }
+  .stepper button:hover { border-color: var(--emerald); }
+  .stepper output {
+    font-family: var(--display); font-weight: 800; font-size: 2.4rem;
+    min-width: 2.5ch; text-align: center; color: var(--emerald);
+  }
+
+  .tiers {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    border: 1px solid var(--edge); border-radius: 22px; overflow: hidden;
+  }
+  .tier {
+    padding: 2rem 1.75rem 2.25rem;
+    background: var(--void);
+    position: relative;
+    transition: background .25s ease;
+  }
+  .tier + .tier { border-left: 1px solid var(--edge); }
+  .tier.match { background: linear-gradient(180deg, var(--emerald-dim), transparent 70%); }
+  .tier.match::before {
+    content: ""; position: absolute; inset: 0 0 auto 0; height: 3px; background: var(--emerald);
+  }
+  .tier h3 { font-family: var(--display); font-size: 1.15rem; margin: 0; }
+  .tier .fit { color: var(--muted); font-size: .92rem; margin: .15rem 0 1.4rem; }
+  .tag {
+    display: inline-block; font-size: .8rem; font-weight: 700;
+    color: var(--void); background: var(--emerald);
+    padding: .2rem .65rem; border-radius: 999px; margin-bottom: .8rem;
+    visibility: hidden;
+  }
+  .tier.match .tag { visibility: visible; }
+  .price { display: flex; align-items: baseline; gap: .35rem; }
+  .price .cur { font-weight: 600; color: var(--muted); }
+  .price .val { font-family: var(--display); font-weight: 800; font-size: 3rem; line-height: 1; letter-spacing: -.02em; }
+  .price .per { color: var(--muted); }
+  .reframe { margin: .7rem 0 1.4rem; font-size: .93rem; color: var(--ink); }
+  .reframe span { color: var(--emerald); font-weight: 700; }
+  .btn {
+    display: block; text-align: center; text-decoration: none;
+    font-weight: 700; padding: .9rem 1rem; border-radius: 12px;
+    border: 1px solid var(--edge); color: var(--ink);
+  }
+  .btn:hover { border-color: var(--ink); }
+  .tier.match .btn, .btn.solid { background: var(--emerald); border-color: var(--emerald); color: var(--void); }
+
+  .included {
+    display: grid; grid-template-columns: 1.1fr 1fr; gap: 2.5rem;
+    margin-top: 3rem;
+  }
+  .included h4, .calc h4 { font-family: var(--display); font-size: 1.3rem; margin: 0 0 1rem; }
+  .included ul { list-style: none; margin: 0; padding: 0; columns: 2; column-gap: 1.5rem; }
+  .included li { padding: .45rem 0 .45rem 1.6rem; position: relative; break-inside: avoid; }
+  .included li::before {
+    content: ""; position: absolute; left: 0; top: .95rem;
+    width: 9px; height: 9px; border-radius: 50%;
+    border: 2px solid var(--emerald);
+  }
+  .included li.soon { color: var(--muted); }
+  .included li.soon::before { border-color: var(--violet); }
+
+  /* ---------- Calculadora de custo do horário vago ---------- */
+  .calc {
+    background: var(--obsidian); border: 1px solid var(--edge);
+    border-radius: 22px; padding: 1.75rem;
+  }
+  .calc p { color: var(--muted); margin: 0 0 1.25rem; font-size: .95rem; }
+  .field { margin-bottom: 1.1rem; }
+  .field label { display: flex; justify-content: space-between; font-weight: 600; font-size: .95rem; margin-bottom: .4rem; }
+  .field label b { color: var(--emerald); }
+  input[type=range] { width: 100%; accent-color: var(--emerald); }
+  .verdict {
+    border-top: 1px solid var(--edge); padding-top: 1.1rem; margin-top: 1.3rem;
+  }
+  .verdict .loss { font-family: var(--display); font-weight: 800; font-size: 2rem; line-height: 1.1; }
+  .verdict .loss small { display: block; font: 500 .9rem var(--body); color: var(--muted); }
+  .verdict .payback { margin: .9rem 0 0; color: var(--ink); font-size: .97rem; }
+  .verdict .payback b { color: var(--emerald); }
+
+  /* ---------- Outros segmentos: monte seu plano ---------- */
+  .builder { display: grid; grid-template-columns: 1.4fr 1fr; gap: 2rem; align-items: start; }
+  .modules { display: grid; grid-template-columns: repeat(2, 1fr); gap: .75rem; }
+  .mod {
+    text-align: left; font: inherit; color: var(--ink); cursor: pointer;
+    background: var(--void); border: 1px solid var(--edge); border-radius: 16px;
+    padding: 1.1rem 1.15rem;
+  }
+  .mod strong { display: block; font-size: 1.02rem; }
+  .mod span { color: var(--muted); font-size: .9rem; }
+  .mod[aria-pressed="true"] { border-color: var(--emerald); background: var(--emerald-dim); }
+  .mod.base { cursor: default; border-style: dashed; }
+  .mod:disabled { opacity: .55; cursor: not-allowed; }
+  .mod:disabled strong::after {
+    content: "em breve"; margin-left: .5rem; font-size: .75rem; font-weight: 700;
+    color: var(--violet); background: var(--violet-dim); padding: .1rem .5rem; border-radius: 999px;
+  }
+  .summary {
+    position: sticky; top: calc(1rem + env(safe-area-inset-top, 0px));
+    background: var(--obsidian); border: 1px solid var(--edge); border-radius: 22px; padding: 1.75rem;
+  }
+  .summary h4 { font-family: var(--display); margin: 0 0 .25rem; font-size: 1.2rem; }
+  .summary .from { color: var(--muted); margin: 0 0 1rem; font-size: .95rem; }
+  .summary ol { margin: 0 0 1.25rem; padding-left: 1.2rem; }
+  .summary li { padding: .15rem 0; }
+  .summary .hint { color: var(--muted); font-size: .88rem; margin: .8rem 0 0; }
+
+  /* ---------- Sob medida ---------- */
+  .bespoke { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border-top: 1px solid var(--edge); }
+  .bespoke article { padding: 1.75rem 1.5rem 1.75rem 0; }
+  .bespoke article + article { padding-left: 1.5rem; border-left: 1px solid var(--edge); }
+  .bespoke h3 { font-family: var(--display); font-size: 1.2rem; margin: 0 0 .5rem; }
+  .bespoke p { color: var(--muted); margin: 0; font-size: .97rem; }
+  .bespoke-cta { margin-top: 1.5rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
+  .bespoke-cta .btn { display: inline-block; padding-inline: 1.5rem; }
+  .bespoke-cta span { color: var(--muted); font-size: .95rem; }
+
+  /* ---------- Garantias ---------- */
+  .assure {
+    margin: 4.5rem 0 0; padding: 2.5rem 0;
+    border-top: 1px solid var(--edge);
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem;
+  }
+  .assure div strong { display: block; font-family: var(--display); font-size: 1.05rem; margin-bottom: .2rem; }
+  .assure div span { color: var(--muted); font-size: .93rem; }
+
+  .faq { padding: 1rem 0 5rem; max-width: 760px; }
+  .faq h2 { font-family: var(--display); font-size: 1.7rem; margin: 0 0 1rem; }
+  details { border-bottom: 1px solid var(--edge); }
+  summary { cursor: pointer; padding: 1.1rem 0; font-weight: 600; list-style: none; display: flex; justify-content: space-between; gap: 1rem; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: "+"; color: var(--emerald); font-size: 1.3rem; line-height: 1; }
+  details[open] summary::after { content: "–"; }
+  details p { color: var(--muted); margin: 0 0 1.2rem; }
+
+  /* ---------- Responsivo ---------- */
+  @media (max-width: 900px) {
+    .tiers { grid-template-columns: 1fr; }
+    .tier + .tier { border-left: 0; border-top: 1px solid var(--edge); }
+    .tier { order: 2; }
+    .tier.match { order: 1; }
+    .included, .builder { grid-template-columns: 1fr; }
+    .summary { position: static; }
+    .bespoke { grid-template-columns: 1fr; }
+    .bespoke article, .bespoke article + article { padding: 1.4rem 0; border-left: 0; }
+    .bespoke article + article { border-top: 1px solid var(--edge); }
+    .assure { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 560px) {
+    .ask { grid-template-columns: 1fr; }
+    .included ul { columns: 1; }
+    .modules { grid-template-columns: 1fr; }
+    .assure { grid-template-columns: 1fr; }
+    .paths { display: flex; }
+    .paths button { flex: 1; padding-inline: .6rem; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<main>
+  <section class="intro wrap" aria-labelledby="titulo">
+    <svg class="triad" viewBox="0 0 400 360" aria-hidden="true">
+      <defs>
+        <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#19D59B"/><stop offset="1" stop-color="#8B5CF6"/>
+        </linearGradient>
+      </defs>
+      <polygon points="200,20 380,330 20,330" fill="none" stroke="url(#g)" stroke-width="1.5"/>
+      <polygon points="200,120 300,290 100,290" fill="none" stroke="url(#g)" stroke-width="1" opacity=".5"/>
+      <circle cx="200" cy="20" r="9" fill="#0A0A0F" stroke="#19D59B" stroke-width="2"/>
+      <circle cx="380" cy="330" r="9" fill="#0A0A0F" stroke="#8B5CF6" stroke-width="2"/>
+      <circle cx="20" cy="330" r="9" fill="#0A0A0F" stroke="#19D59B" stroke-width="2"/>
+    </svg>
+    <h1 id="titulo">Quanto custa uma operação que não para?</h1>
+    <p>Preço claro, sem taxa de adesão e com teste gratuito antes de contratar. Escolha o caminho que descreve o seu negócio.</p>
+
+    <div class="paths" role="tablist" aria-label="Tipo de negócio">
+      <button role="tab" aria-selected="true" aria-controls="p-barber" id="t-barber">Barbearia</button>
+      <button role="tab" aria-selected="false" aria-controls="p-mod" id="t-mod">Outros segmentos</button>
+      <button role="tab" aria-selected="false" aria-controls="p-custom" id="t-custom">Projeto sob medida</button>
+    </div>
+
+    <!-- ===== Barbearia ===== -->
+    <div class="panel" id="p-barber" role="tabpanel" aria-labelledby="t-barber">
+      <div class="ask">
+        <label for="barbers">Quantos barbeiros atendem na sua barbearia?
+          <small>A gente indica o plano certo para o tamanho da sua equipe.</small>
+        </label>
+        <div class="stepper">
+          <button type="button" data-step="-1" aria-label="Menos um barbeiro">−</button>
+          <output id="barbers" aria-live="polite">2</output>
+          <button type="button" data-step="1" aria-label="Mais um barbeiro">+</button>
+        </div>
+      </div>
+
+      <div class="tiers">
+        <article class="tier" data-min="1" data-max="2" data-price="250">
+          <span class="tag">Indicado para você</span>
+          <h3>Essencial</h3>
+          <p class="fit">Até 2 barbeiros</p>
+          <div class="price"><span class="cur">R$</span><span class="val">250</span><span class="per">/mês</span></div>
+          <p class="reframe">Cerca de <span>R$ 8 por dia</span> para nunca mais perder um agendamento.</p>
+          <a class="btn" href="#" data-plan="Essencial (até 2 barbeiros)">Testar grátis</a>
+        </article>
+        <article class="tier" data-min="3" data-max="6" data-price="420">
+          <span class="tag">Indicado para você</span>
+          <h3>Equipe</h3>
+          <p class="fit">De 3 a 6 barbeiros</p>
+          <div class="price"><span class="cur">R$</span><span class="val">420</span><span class="per">/mês</span></div>
+          <p class="reframe">A partir de <span>R$ 70 por barbeiro</span> por mês.</p>
+          <a class="btn" href="#" data-plan="Equipe (3 a 6 barbeiros)">Testar grátis</a>
+        </article>
+        <article class="tier" data-min="7" data-max="10" data-price="690">
+          <span class="tag">Indicado para você</span>
+          <h3>Casa cheia</h3>
+          <p class="fit">De 7 a 10 barbeiros</p>
+          <div class="price"><span class="cur">R$</span><span class="val">690</span><span class="per">/mês</span></div>
+          <p class="reframe">A partir de <span>R$ 69 por barbeiro</span> por mês.</p>
+          <a class="btn" href="#" data-plan="Casa cheia (7 a 10 barbeiros)">Testar grátis</a>
+        </article>
+      </div>
+      <p id="beyond" class="fit" hidden style="margin-top:1rem;color:var(--muted)">
+        Mais de 10 barbeiros ou mais de uma unidade? <a href="#" data-plan="Rede (mais de 10 barbeiros)" class="beyond-link" style="color:var(--emerald)">Fale com o Lucas</a> e montamos um plano para a sua rede.
+      </p>
+
+      <div class="included">
+        <div>
+          <h4>Tudo isso em qualquer plano</h4>
+          <ul>
+            <li>Atendimento automático no WhatsApp da barbearia</li>
+            <li>Agendamento direto pela conversa</li>
+            <li>Integração com AppBarber</li>
+            <li>Gestão de pagamentos</li>
+            <li>Lembretes para reduzir faltas</li>
+            <li>Clube de fidelidade</li>
+            <li>Relatórios da operação</li>
+            <li class="soon">Gestão avançada (em breve)</li>
+          </ul>
+        </div>
+
+        <div class="calc" aria-labelledby="calc-t">
+          <h4 id="calc-t">Quanto um horário vago custa para você?</h4>
+          <p>Use os números da sua barbearia. Nada é enviado, a conta é feita aqui na tela.</p>
+          <div class="field">
+            <label for="ticket">Valor médio do atendimento <b id="ticket-v">R$ 50</b></label>
+            <input type="range" id="ticket" min="20" max="200" step="5" value="50">
+          </div>
+          <div class="field">
+            <label for="gaps">Faltas ou horários vagos por semana <b id="gaps-v">4</b></label>
+            <input type="range" id="gaps" min="0" max="30" step="1" value="4">
+          </div>
+          <div class="verdict" aria-live="polite">
+            <div class="loss"><span id="loss">R$ 860</span><small>deixam de entrar no caixa todo mês</small></div>
+            <p class="payback" id="payback"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== Outros segmentos ===== -->
+    <div class="panel" id="p-mod" role="tabpanel" aria-labelledby="t-mod" hidden>
+      <div class="builder">
+        <div>
+          <div class="modules">
+            <button type="button" class="mod base" aria-pressed="true" tabindex="-1">
+              <strong>Atendimento no WhatsApp</strong><span>Incluído em todo plano. Responde clientes 24h.</span>
+            </button>
+            <button type="button" class="mod" aria-pressed="false" data-mod="Agendamento">
+              <strong>Agendamento</strong><span>O cliente marca horário sem precisar de ninguém.</span>
+            </button>
+            <button type="button" class="mod" aria-pressed="false" data-mod="Pagamento">
+              <strong>Pagamento</strong><span>Cobrança e confirmação dentro da conversa.</span>
+            </button>
+            <button type="button" class="mod" aria-pressed="false" data-mod="Lembrete">
+              <strong>Lembrete</strong><span>Avisos automáticos que reduzem faltas.</span>
+            </button>
+            <button type="button" class="mod" aria-pressed="false" data-mod="Clube de fidelidade">
+              <strong>Clube de fidelidade</strong><span>Recorrência e benefícios para quem volta.</span>
+            </button>
+            <button type="button" class="mod" aria-pressed="false" data-mod="Relatório">
+              <strong>Relatório</strong><span>Os números da operação sem planilha.</span>
+            </button>
+            <button type="button" class="mod" disabled>
+              <strong>Gestão avançada</strong><span>Visão completa do negócio em um só lugar.</span>
+            </button>
+          </div>
+        </div>
+        <aside class="summary" aria-live="polite">
+          <h4>Seu plano</h4>
+          <p class="from">Plano Essencial a partir de R$ 250/mês, sem taxa de adesão.</p>
+          <ol id="picked"><li>Atendimento no WhatsApp</li></ol>
+          <a class="btn solid" href="#" id="mod-cta">Receber proposta no WhatsApp</a>
+          <p class="hint">O valor final depende dos módulos e do tamanho da equipe. Você testa grátis antes de decidir.</p>
+        </aside>
+      </div>
+    </div>
+
+    <!-- ===== Sob medida ===== -->
+    <div class="panel" id="p-custom" role="tabpanel" aria-labelledby="t-custom" hidden>
+      <div class="bespoke">
+        <article>
+          <h3>Consultoria estratégica</h3>
+          <p>Mapeamos a operação, encontramos os gargalos e entregamos um plano de ação com ROI estimado.</p>
+        </article>
+        <article>
+          <h3>Implementação de IA</h3>
+          <p>Agentes treinados nos dados da sua empresa para atendimento, vendas, triagem e suporte interno.</p>
+        </article>
+        <article>
+          <h3>Automação de processos</h3>
+          <p>Rotinas financeiras, onboarding, integrações e relatórios rodando sem intervenção manual.</p>
+        </article>
+      </div>
+      <div class="bespoke-cta">
+        <a class="btn solid" href="https://bio.malvora.com.br/formularios">Pedir diagnóstico gratuito</a>
+        <span>Cada projeto começa por um diagnóstico. O orçamento vem depois, com escopo fechado.</span>
+      </div>
+    </div>
+
+    <div class="assure">
+      <div><strong>Teste antes de pagar</strong><span>Simule um atendimento real com o test drive gratuito.</span></div>
+      <div><strong>Sem taxa de adesão</strong><span>Você paga só a mensalidade do plano.</span></div>
+      <div><strong>1ª parcela em até 3x</strong><span>Sem juros, no cartão de crédito.</span></div>
+      <div><strong>Gente de verdade</strong><span>Suporte humano com resposta em até 1 dia útil.</span></div>
+    </div>
+  </section>
+
+  <section class="faq wrap" aria-labelledby="faq-t">
+    <h2 id="faq-t">Antes de decidir</h2>
+    <details>
+      <summary>Preciso trocar meu número de WhatsApp?</summary>
+      <p>Não. A automação roda no número que seus clientes já conhecem. Depois da contratação, você conecta o WhatsApp lendo um QR code.</p>
+    </details>
+    <details>
+      <summary>Como funciona o test drive?</summary>
+      <p>Você conversa com um assistente que simula o atendimento de um negócio como o seu, do primeiro contato até a confirmação do agendamento. É gratuito e sem compromisso.</p>
+    </details>
+    <details>
+      <summary>Como é feita a cobrança?</summary>
+      <p>A primeira parcela pode ser dividida em até 3x sem juros. As mensalidades seguintes são cobradas automaticamente no cartão de crédito.</p>
+    </details>
+    <details>
+      <summary>Minha equipe cresceu. O que acontece?</summary>
+      <p>Você muda de plano quando precisar. O valor acompanha o tamanho da sua operação.</p>
+    </details>
+  </section>
+</main>
+
+<script>
+(function () {
+  var WA = "https://wa.me/5511915074051?text=";
+  var fmt = function (n) { return "R$ " + Math.round(n).toLocaleString("pt-BR"); };
+
+  /* Abas */
+  var tabs = document.querySelectorAll('[role="tab"]');
+  tabs.forEach(function (tab) {
+    tab.addEventListener("click", function () {
+      tabs.forEach(function (t) {
+        var on = t === tab;
+        t.setAttribute("aria-selected", on);
+        document.getElementById(t.getAttribute("aria-controls")).hidden = !on;
+      });
+    });
+  });
+
+  /* Barbearia: nº de barbeiros escolhe o plano (efeito padrão) */
+  var count = 2, MAX = 11;
+  var out = document.getElementById("barbers");
+  var tiers = document.querySelectorAll(".tier");
+  var beyond = document.getElementById("beyond");
+  var currentPrice = 250;
+
+  function syncTiers() {
+    out.textContent = count >= MAX ? "10+" : count;
+    currentPrice = null;
+    tiers.forEach(function (t) {
+      var m = count >= +t.dataset.min && count <= +t.dataset.max;
+      t.classList.toggle("match", m);
+      if (m) currentPrice = +t.dataset.price;
+    });
+    beyond.hidden = count < MAX;
+    syncCalc();
+  }
+  document.querySelectorAll("[data-step]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      count = Math.min(MAX, Math.max(1, count + +b.dataset.step));
+      syncTiers();
+    });
+  });
+
+  /* Links de WhatsApp já com o plano escrito */
+  document.querySelectorAll("[data-plan]").forEach(function (a) {
+    a.href = WA + encodeURIComponent("Olá! Quero fazer o test drive da Malvora para minha barbearia. Plano de interesse: " + a.dataset.plan + ".");
+    a.target = "_blank"; a.rel = "noopener";
+  });
+
+  /* Calculadora: custo do horário vago (aversão à perda, com os números do próprio cliente) */
+  var ticket = document.getElementById("ticket"), gaps = document.getElementById("gaps");
+  function syncCalc() {
+    var t = +ticket.value, g = +gaps.value;
+    var loss = t * g * 4.3;
+    document.getElementById("ticket-v").textContent = fmt(t);
+    document.getElementById("gaps-v").textContent = g;
+    document.getElementById("loss").textContent = fmt(loss);
+    var pb = document.getElementById("payback");
+    if (!currentPrice) {
+      pb.innerHTML = "Para redes com mais de 10 barbeiros, o Lucas monta a conta junto com você.";
+    } else if (g === 0) {
+      pb.innerHTML = "Sem horários vagos? Ótimo. Aí o ganho está no tempo que sua equipe deixa de gastar respondendo mensagens.";
+    } else {
+      var need = Math.ceil(currentPrice / t);
+      pb.innerHTML = "Recuperando <b>" + need + " atendimento" + (need > 1 ? "s" : "") + " por mês</b>, o plano indicado para você já se paga.";
+    }
+  }
+  ticket.addEventListener("input", syncCalc);
+  gaps.addEventListener("input", syncCalc);
+
+  /* Outros segmentos: monte seu plano */
+  var picked = document.getElementById("picked");
+  var modCta = document.getElementById("mod-cta");
+  function syncMods() {
+    var sel = ["Atendimento no WhatsApp"];
+    document.querySelectorAll(".mod[data-mod]").forEach(function (m) {
+      if (m.getAttribute("aria-pressed") === "true") sel.push(m.dataset.mod);
+    });
+    picked.innerHTML = sel.map(function (s) { return "<li>" + s + "</li>"; }).join("");
+    modCta.href = WA + encodeURIComponent("Olá! Quero uma proposta da Malvora com os módulos: " + sel.join(", ") + ".");
+    modCta.target = "_blank"; modCta.rel = "noopener";
+  }
+  document.querySelectorAll(".mod[data-mod]").forEach(function (m) {
+    m.addEventListener("click", function () {
+      m.setAttribute("aria-pressed", m.getAttribute("aria-pressed") !== "true");
+      syncMods();
+    });
+  });
+
+  syncTiers();
+  syncMods();
+})();
+</script>
+</body>
+</html>
