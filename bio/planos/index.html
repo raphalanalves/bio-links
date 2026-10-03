@@ -7,21 +7,22 @@
 <title>Planos e preços — Malvora</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Manrope:wght@400;500;600;700&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
 <style>
   /* Tokens — troque pelos hex oficiais da Malvora se forem diferentes */
   :root {
     --void: #0A0A0F;
     --obsidian: #12121A;
     --edge: #23232F;
-    --emerald: #19D59B;
-    --emerald-dim: rgba(25, 213, 155, .14);
+    --emerald: #00D4AA;
+    --emerald-dim: rgba(0, 212, 170, .13);
     --violet: #8B5CF6;
     --violet-dim: rgba(139, 92, 246, .16);
-    --ink: #ECECF3;
+    --ink: #F0EFF4;
     --muted: #9A9AAE;
     --display: "Syne", "Manrope", system-ui, sans-serif;
     --body: "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --serif: "Instrument Serif", Georgia, "Times New Roman", serif;
     box-sizing: border-box;
     padding-top: env(safe-area-inset-top, 0px);
     padding-bottom: env(safe-area-inset-bottom, 0px);
@@ -30,7 +31,9 @@
   html { scroll-padding-top: env(safe-area-inset-top, 0px); }
   body {
     margin: 0;
-    background: var(--void);
+    background-color: var(--void);
+    background-image: radial-gradient(rgba(240, 239, 244, .05) 1px, transparent 1px);
+    background-size: 28px 28px;
     color: var(--ink);
     font-family: var(--body);
     font-size: 1rem;
@@ -45,13 +48,15 @@
   /* ---------- Abertura ---------- */
   .intro {
     position: relative;
-    padding: 5.5rem 0 3rem;
+    padding-top: 5.5rem;
+    padding-bottom: 3rem;
     overflow: hidden;
   }
   .intro svg.triad {
     position: absolute; right: -60px; top: 20px;
     width: min(420px, 60vw); opacity: .5; pointer-events: none;
   }
+  .intro h1, .intro p, .paths { position: relative; z-index: 1; }
   .intro h1 {
     font-family: var(--display);
     font-weight: 800;
@@ -61,6 +66,7 @@
     margin: 0 0 1.25rem;
     max-width: 15ch;
   }
+  .intro h1 em { font-family: var(--serif); font-style: italic; font-weight: 400; color: var(--emerald); letter-spacing: 0; }
   .intro p { color: var(--muted); max-width: 58ch; font-size: 1.1rem; margin: 0; }
 
   /* ---------- Seletor de caminho ---------- */
@@ -215,7 +221,8 @@
   .assure div strong { display: block; font-family: var(--display); font-size: 1.05rem; margin-bottom: .2rem; }
   .assure div span { color: var(--muted); font-size: .93rem; }
 
-  .faq { padding: 1rem 0 5rem; max-width: 760px; }
+  .faq { padding-top: 1rem; padding-bottom: 5rem; }
+  .faq > * { max-width: 760px; }
   .faq h2 { font-family: var(--display); font-size: 1.7rem; margin: 0 0 1rem; }
   details { border-bottom: 1px solid var(--edge); }
   summary { cursor: pointer; padding: 1.1rem 0; font-weight: 600; list-style: none; display: flex; justify-content: space-between; gap: 1rem; }
@@ -225,48 +232,128 @@
   details p { color: var(--muted); margin: 0 0 1.2rem; }
 
   /* ---------- Responsivo ---------- */
-  @media (max-width: 900px) {
-    .tiers { grid-template-columns: 1fr; }
-    .tier + .tier { border-left: 0; border-top: 1px solid var(--edge); }
-    .tier { order: 2; }
-    .tier.match { order: 1; }
-    .included, .builder { grid-template-columns: 1fr; }
+  /* Tablet: 3 planos lado a lado, conteúdo de apoio empilhado */
+  @media (max-width: 1023px) {
+    .intro { padding-top: 4rem; }
+    .intro svg.triad { width: 300px; right: -90px; top: -10px; opacity: .3; }
+    .tier { padding: 1.6rem 1.25rem 1.75rem; }
+    .price .val { font-size: 2.4rem; }
+    .reframe { font-size: .88rem; min-height: 2.8em; }
+    .included { grid-template-columns: 1fr; gap: 2rem; }
+    .builder { grid-template-columns: 1fr; }
     .summary { position: static; }
+    .assure { grid-template-columns: 1fr 1fr; gap: 1.5rem 2rem; }
+  }
+
+  /* Celular */
+  @media (max-width: 699px) {
+    .intro { padding-top: 3rem; padding-bottom: 2rem; }
+    .intro svg.triad { width: 200px; right: -80px; top: -30px; opacity: .22; }
+    .intro p { font-size: 1rem; }
+
+    .paths { display: grid; grid-template-columns: repeat(3, 1fr); width: 100%; border-radius: 16px; margin: 2rem 0; }
+    .paths button { padding: .7rem .4rem; font-size: .86rem; line-height: 1.25; border-radius: 12px; min-height: 48px; }
+
+    .ask { grid-template-columns: 1fr; gap: .9rem; padding: 1.25rem 0; }
+    .stepper { justify-self: start; }
+    .ask label { font-size: 1.1rem; }
+    .ask small { font-size: .85rem; }
+    .stepper output { font-size: 2rem; }
+    .stepper button { width: 44px; height: 44px; }
+
+    /* Plano indicado aberto em cima; os outros viram linhas compactas */
+    .tiers { display: flex; flex-direction: column; }
+    .tier { order: 2; }
+    .tier.match { order: 1; padding: 1.5rem 1.25rem; }
+    .tier + .tier { border-left: 0; border-top: 1px solid var(--edge); }
+    .tier.match + .tier, .tier:first-child { border-top: 0; }
+    .tier:not(.match) {
+      display: grid; grid-template-columns: 1fr auto; align-items: center;
+      grid-template-areas: "name price" "fit price" "btn btn";
+      column-gap: 1rem; padding: 1.1rem 1.25rem; border-top: 1px solid var(--edge);
+    }
+    .tier:not(.match) .tag, .tier:not(.match) .reframe { display: none; }
+    .tier:not(.match) h3 { grid-area: name; }
+    .tier:not(.match) .fit { grid-area: fit; margin: 0; }
+    .tier:not(.match) .price { grid-area: price; }
+    .tier:not(.match) .price .val { font-size: 1.7rem; }
+    .tier:not(.match) .price .cur, .tier:not(.match) .price .per { font-size: .85rem; }
+    .tier:not(.match) .btn { grid-area: btn; margin-top: .85rem; padding: .7rem; font-size: .92rem; }
+    .reframe { min-height: 0; }
+
+    .included ul { columns: 1; }
+    .calc { padding: 1.4rem 1.25rem; }
+    .verdict .loss { font-size: 1.7rem; }
+
+    .modules { grid-template-columns: 1fr; }
+    .summary { padding: 1.4rem 1.25rem; }
+
     .bespoke { grid-template-columns: 1fr; }
     .bespoke article, .bespoke article + article { padding: 1.4rem 0; border-left: 0; }
     .bespoke article + article { border-top: 1px solid var(--edge); }
-    .assure { grid-template-columns: 1fr 1fr; }
+    .bespoke-cta .btn { display: block; width: 100%; }
+
+    .assure { grid-template-columns: 1fr; gap: 1.1rem; margin-top: 3rem; }
+    .faq h2 { font-size: 1.45rem; }
   }
-  @media (max-width: 560px) {
-    .ask { grid-template-columns: 1fr; }
-    .included ul { columns: 1; }
-    .modules { grid-template-columns: 1fr; }
-    .assure { grid-template-columns: 1fr; }
-    .paths { display: flex; }
-    .paths button { flex: 1; padding-inline: .6rem; }
+
+  /* Tablet: projetos sob medida em 1 coluna quando não cabem 3 */
+  @media (min-width: 700px) and (max-width: 860px) {
+    .bespoke { grid-template-columns: 1fr; }
+    .bespoke article, .bespoke article + article { padding: 1.4rem 0; border-left: 0; }
+    .bespoke article + article { border-top: 1px solid var(--edge); }
   }
+
+  /* ---------- Cursor (só em mouse/trackpad) ---------- */
+  .cursor-dot, .cursor-ring { display: none; }
+  @media (hover: hover) and (pointer: fine) {
+    html.has-cursor, html.has-cursor * { cursor: none !important; }
+    .cursor-dot, .cursor-ring {
+      display: block; position: fixed; top: 0; left: 0; z-index: 9999;
+      pointer-events: none; border-radius: 50%;
+      opacity: 0; transition: opacity .2s ease;
+    }
+    html.cursor-on .cursor-dot, html.cursor-on .cursor-ring { opacity: 1; }
+    .cursor-dot {
+      width: 8px; height: 8px; margin: -4px 0 0 -4px;
+      background: var(--emerald);
+    }
+    .cursor-ring {
+      width: 44px; height: 44px; margin: -22px 0 0 -22px;
+      border: 1px solid rgba(0, 212, 170, .45);
+      transition: opacity .2s ease, width .25s ease, height .25s ease, margin .25s ease, background-color .25s ease, border-color .25s ease;
+    }
+    .cursor-ring.is-hover {
+      width: 64px; height: 64px; margin: -32px 0 0 -32px;
+      background: rgba(0, 212, 170, .08); border-color: var(--emerald);
+    }
+    .cursor-ring.is-down { width: 34px; height: 34px; margin: -17px 0 0 -17px; }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     * { transition: none !important; }
   }
 </style>
 </head>
 <body>
+<div class="cursor-ring" aria-hidden="true"></div>
+<div class="cursor-dot" aria-hidden="true"></div>
 
 <main>
   <section class="intro wrap" aria-labelledby="titulo">
     <svg class="triad" viewBox="0 0 400 360" aria-hidden="true">
       <defs>
         <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stop-color="#19D59B"/><stop offset="1" stop-color="#8B5CF6"/>
+          <stop offset="0" stop-color="#00D4AA"/><stop offset="1" stop-color="#8B5CF6"/>
         </linearGradient>
       </defs>
       <polygon points="200,20 380,330 20,330" fill="none" stroke="url(#g)" stroke-width="1.5"/>
       <polygon points="200,120 300,290 100,290" fill="none" stroke="url(#g)" stroke-width="1" opacity=".5"/>
-      <circle cx="200" cy="20" r="9" fill="#0A0A0F" stroke="#19D59B" stroke-width="2"/>
+      <circle cx="200" cy="20" r="9" fill="#0A0A0F" stroke="#00D4AA" stroke-width="2"/>
       <circle cx="380" cy="330" r="9" fill="#0A0A0F" stroke="#8B5CF6" stroke-width="2"/>
-      <circle cx="20" cy="330" r="9" fill="#0A0A0F" stroke="#19D59B" stroke-width="2"/>
+      <circle cx="20" cy="330" r="9" fill="#0A0A0F" stroke="#00D4AA" stroke-width="2"/>
     </svg>
-    <h1 id="titulo">Quanto custa uma operação que não para?</h1>
+    <h1 id="titulo">Quanto custa uma operação <em>que não para?</em></h1>
     <p>Preço claro, sem taxa de adesão e com teste gratuito antes de contratar. Escolha o caminho que descreve o seu negócio.</p>
 
     <div class="paths" role="tablist" aria-label="Tipo de negócio">
@@ -295,7 +382,7 @@
           <p class="fit">Até 2 barbeiros</p>
           <div class="price"><span class="cur">R$</span><span class="val">250</span><span class="per">/mês</span></div>
           <p class="reframe">Cerca de <span>R$ 8 por dia</span> para nunca mais perder um agendamento.</p>
-          <a class="btn" href="#" data-plan="Essencial (até 2 barbeiros)">Testar grátis</a>
+          <a class="btn" href="#" data-plan>Testar grátis</a>
         </article>
         <article class="tier" data-min="3" data-max="6" data-price="420">
           <span class="tag">Indicado para você</span>
@@ -303,7 +390,7 @@
           <p class="fit">De 3 a 6 barbeiros</p>
           <div class="price"><span class="cur">R$</span><span class="val">420</span><span class="per">/mês</span></div>
           <p class="reframe">A partir de <span>R$ 70 por barbeiro</span> por mês.</p>
-          <a class="btn" href="#" data-plan="Equipe (3 a 6 barbeiros)">Testar grátis</a>
+          <a class="btn" href="#" data-plan>Testar grátis</a>
         </article>
         <article class="tier" data-min="7" data-max="10" data-price="690">
           <span class="tag">Indicado para você</span>
@@ -311,11 +398,11 @@
           <p class="fit">De 7 a 10 barbeiros</p>
           <div class="price"><span class="cur">R$</span><span class="val">690</span><span class="per">/mês</span></div>
           <p class="reframe">A partir de <span>R$ 69 por barbeiro</span> por mês.</p>
-          <a class="btn" href="#" data-plan="Casa cheia (7 a 10 barbeiros)">Testar grátis</a>
+          <a class="btn" href="#" data-plan>Testar grátis</a>
         </article>
       </div>
       <p id="beyond" class="fit" hidden style="margin-top:1rem;color:var(--muted)">
-        Mais de 10 barbeiros ou mais de uma unidade? <a href="#" data-plan="Rede (mais de 10 barbeiros)" class="beyond-link" style="color:var(--emerald)">Fale com o Lucas</a> e montamos um plano para a sua rede.
+        Mais de 10 barbeiros ou mais de uma unidade? <a href="#" id="rede-cta" style="color:var(--emerald)">Fale com a gente</a> e montamos um plano para a sua rede.
       </p>
 
       <div class="included">
@@ -407,8 +494,8 @@
         </article>
       </div>
       <div class="bespoke-cta">
-        <a class="btn solid" href="https://bio.malvora.com.br/formularios">Pedir diagnóstico gratuito</a>
-        <span>Cada projeto começa por um diagnóstico. O orçamento vem depois, com escopo fechado.</span>
+        <a class="btn solid" href="#" id="custom-cta">Pedir diagnóstico gratuito</a>
+        <span>Cada projeto começa por um diagnóstico. O orçamento vem depois, com escopo fechado. Prefere escrever com calma? <a href="https://bio.malvora.com.br/formularios" style="color:var(--emerald)">Use o formulário</a>.</span>
       </div>
     </div>
 
@@ -443,8 +530,16 @@
 
 <script>
 (function () {
-  var WA = "https://wa.me/5511915074051?text=";
+  /* Número da Malu (atendimento comercial da Malvora) */
+  var MALU = "5511915074051";
+  var ORIGEM = "Vim pela página de planos do site da Malvora.";
   var fmt = function (n) { return "R$ " + Math.round(n).toLocaleString("pt-BR"); };
+
+  function link(el, msg) {
+    el.href = "https://wa.me/" + MALU + "?text=" + encodeURIComponent(msg);
+    el.target = "_blank";
+    el.rel = "noopener";
+  }
 
   /* Abas */
   var tabs = document.querySelectorAll('[role="tab"]');
@@ -464,6 +559,35 @@
   var tiers = document.querySelectorAll(".tier");
   var beyond = document.getElementById("beyond");
   var currentPrice = 250;
+  var ticket = document.getElementById("ticket"), gaps = document.getElementById("gaps");
+  var calcUsada = false;
+
+  function equipeTxt() {
+    if (count >= MAX) return "mais de 10 barbeiros";
+    return count + (count === 1 ? " barbeiro" : " barbeiros");
+  }
+  function calcTxt() {
+    if (!calcUsada) return "";
+    var g = +gaps.value, t = +ticket.value;
+    if (g === 0) return "";
+    return " Fiz a conta no site: tenho cerca de " + g + (g === 1 ? " horário vago" : " horários vagos") +
+      " por semana, com atendimento médio de " + fmt(t) + ".";
+  }
+
+  /* Mensagens que a Malu recebe: plano, equipe e números do cliente */
+  function syncLinks() {
+    tiers.forEach(function (t) {
+      var nome = t.querySelector("h3").textContent.trim();
+      var faixa = t.querySelector(".fit").textContent.trim().toLowerCase();
+      var msg = "Olá, Malu! " + ORIGEM +
+        " Tenho uma barbearia com " + equipeTxt() + " e quero cotar o plano " + nome +
+        " (" + faixa + ", R$ " + t.dataset.price + "/mês)." + calcTxt() +
+        " Quero entender como funciona e fazer o test drive.";
+      link(t.querySelector("[data-plan]"), msg);
+    });
+    link(document.getElementById("rede-cta"),
+      "Olá, Malu! " + ORIGEM + " Tenho uma barbearia com mais de 10 barbeiros (ou mais de uma unidade) e quero cotar um plano para a minha rede." + calcTxt());
+  }
 
   function syncTiers() {
     out.textContent = count >= MAX ? "10+" : count;
@@ -483,14 +607,7 @@
     });
   });
 
-  /* Links de WhatsApp já com o plano escrito */
-  document.querySelectorAll("[data-plan]").forEach(function (a) {
-    a.href = WA + encodeURIComponent("Olá! Quero fazer o test drive da Malvora para minha barbearia. Plano de interesse: " + a.dataset.plan + ".");
-    a.target = "_blank"; a.rel = "noopener";
-  });
-
   /* Calculadora: custo do horário vago (aversão à perda, com os números do próprio cliente) */
-  var ticket = document.getElementById("ticket"), gaps = document.getElementById("gaps");
   function syncCalc() {
     var t = +ticket.value, g = +gaps.value;
     var loss = t * g * 4.3;
@@ -499,16 +616,18 @@
     document.getElementById("loss").textContent = fmt(loss);
     var pb = document.getElementById("payback");
     if (!currentPrice) {
-      pb.innerHTML = "Para redes com mais de 10 barbeiros, o Lucas monta a conta junto com você.";
+      pb.innerHTML = "Para redes com mais de 10 barbeiros, a gente monta essa conta junto com você.";
     } else if (g === 0) {
       pb.innerHTML = "Sem horários vagos? Ótimo. Aí o ganho está no tempo que sua equipe deixa de gastar respondendo mensagens.";
     } else {
       var need = Math.ceil(currentPrice / t);
       pb.innerHTML = "Recuperando <b>" + need + " atendimento" + (need > 1 ? "s" : "") + " por mês</b>, o plano indicado para você já se paga.";
     }
+    syncLinks();
   }
-  ticket.addEventListener("input", syncCalc);
-  gaps.addEventListener("input", syncCalc);
+  [ticket, gaps].forEach(function (el) {
+    el.addEventListener("input", function () { calcUsada = true; syncCalc(); });
+  });
 
   /* Outros segmentos: monte seu plano */
   var picked = document.getElementById("picked");
@@ -519,8 +638,13 @@
       if (m.getAttribute("aria-pressed") === "true") sel.push(m.dataset.mod);
     });
     picked.innerHTML = sel.map(function (s) { return "<li>" + s + "</li>"; }).join("");
-    modCta.href = WA + encodeURIComponent("Olá! Quero uma proposta da Malvora com os módulos: " + sel.join(", ") + ".");
-    modCta.target = "_blank"; modCta.rel = "noopener";
+    var extras = sel.slice(1);
+    var msg = "Olá, Malu! " + ORIGEM + " Meu negócio não é barbearia e quero cotar o plano Essencial" +
+      (extras.length
+        ? " com os módulos: " + sel.join(", ") + "."
+        : ". Ainda não sei quais módulos preciso e quero ajuda para escolher.") +
+      " Quero entender como funciona e fazer o test drive.";
+    link(modCta, msg);
   }
   document.querySelectorAll(".mod[data-mod]").forEach(function (m) {
     m.addEventListener("click", function () {
@@ -529,8 +653,50 @@
     });
   });
 
+  /* Sob medida */
+  link(document.getElementById("custom-cta"),
+    "Olá, Malu! " + ORIGEM + " Tenho interesse em um projeto sob medida (consultoria, IA ou automação de processos) e quero agendar o diagnóstico gratuito.");
+
   syncTiers();
   syncMods();
+})();
+</script>
+<script>
+/* Cursor da Malvora: o ponto acompanha o mouse na hora, o anel chega depois */
+(function () {
+  if (!matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+  var dot = document.querySelector(".cursor-dot");
+  var ring = document.querySelector(".cursor-ring");
+  var root = document.documentElement;
+  var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var EASE = 0.14;               /* quanto menor, mais o anel "atrasa" */
+  var mx = -100, my = -100, rx = -100, ry = -100;
+
+  root.classList.add("has-cursor");
+
+  addEventListener("mousemove", function (e) {
+    mx = e.clientX; my = e.clientY;
+    dot.style.transform = "translate3d(" + mx + "px," + my + "px,0)";
+    if (!root.classList.contains("cursor-on")) {
+      rx = mx; ry = my;
+      root.classList.add("cursor-on");
+    }
+  });
+  document.addEventListener("mouseleave", function () { root.classList.remove("cursor-on"); });
+  addEventListener("mousedown", function () { ring.classList.add("is-down"); });
+  addEventListener("mouseup", function () { ring.classList.remove("is-down"); });
+
+  var HOVER = "a, button, summary, input, label, [role=tab]";
+  document.addEventListener("mouseover", function (e) {
+    ring.classList.toggle("is-hover", !!e.target.closest(HOVER));
+  });
+
+  (function loop() {
+    if (reduce) { rx = mx; ry = my; }
+    else { rx += (mx - rx) * EASE; ry += (my - ry) * EASE; }
+    ring.style.transform = "translate3d(" + rx + "px," + ry + "px,0)";
+    requestAnimationFrame(loop);
+  })();
 })();
 </script>
 </body>
