@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#05060a">
+<title>Malvora Hub | Em breve: 01/11/2026</title>
+<meta name="description" content="A Malvora Hub chega em 01/11/2026: IA no WhatsApp, agenda, cobrança e portal para 29 tipos de negócio. Quem fechar em novembro paga 50% menos.">
+<meta property="og:title" content="Malvora Hub · Em breve, 01/11">
+<meta property="og:description" content="IA que atende, agenda e cobra 24h. Lançamento com 50% off para quem fechar em novembro.">
+<meta property="og:url" content="https://bio.malvora.com.br/em-breve">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#05060a;
+    --surface:#0e1117;
+    --surface-2:#171b24;
+    --line: rgba(238,241,245,0.09);
+    --teal:#2ee6a6;
+    --blue:#3fa0f0;
+    --violet:#8b5cf6;
+    --teal-soft: rgba(46,230,166,0.14);
+    --text:#eef1f5;
+    --subtext:#8891a0;
+    --font-display:'Cormorant Garamond', serif;
+    --font-body:'Manrope', -apple-system, sans-serif;
+    --font-mono:'JetBrains Mono', monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--ink); color:var(--text); font-family:var(--font-body);
+    overflow-x:hidden; -webkit-font-smoothing:antialiased;
+  }
+  a{ color:inherit; }
+  :focus-visible{ outline:2px solid var(--teal); outline-offset:3px; border-radius:4px; }
+
+  .blobs{ position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none; }
+  .blob{ position:absolute; width:46vmax; height:46vmax; border-radius:50%; filter:blur(90px); opacity:0.22; }
+  .blob.b1{ background:var(--teal); top:-18%; left:-20%; animation:float1 22s ease-in-out infinite; }
+  .blob.b2{ background:var(--blue); bottom:-22%; right:-18%; animation:float2 26s ease-in-out infinite; }
+  .blob.b3{ background:var(--violet); top:35%; left:55%; width:34vmax; height:34vmax; animation:float1 30s ease-in-out infinite reverse; }
+  @keyframes float1{ 50%{ transform:translate(6%,8%) scale(1.12); } }
+  @keyframes float2{ 50%{ transform:translate(-7%,-6%) scale(1.1); } }
+
+  .container{ position:relative; z-index:1; max-width:560px; margin:0 auto; padding:48px 16px 40px; }
+
+  /* ---------- HERO ---------- */
+  .hero{ text-align:center; margin-bottom:34px; }
+  .sigil{ width:96px; height:96px; margin:0 auto 20px; animation:spin 46s linear infinite; }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+  .eyebrow{
+    font-family:var(--font-mono); font-size:0.7rem; letter-spacing:0.16em; text-transform:uppercase;
+    color:var(--teal); margin-bottom:12px;
+  }
+  h1{ font-family:var(--font-display); font-weight:700; font-size:2.5rem; line-height:1.12; }
+  h1 em, h2 em, .grad{
+    font-style:italic;
+    background-image:linear-gradient(100deg, var(--teal), var(--blue) 60%, var(--violet));
+    background-clip:text; -webkit-background-clip:text; color:transparent;
+  }
+  .lead{ color:var(--subtext); font-size:0.97rem; line-height:1.6; max-width:420px; margin:14px auto 0; }
+
+  /* ---------- COUNTDOWN ---------- */
+  .countdown{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin:28px 0 10px; }
+  .unit{
+    background:var(--surface); border:1px solid var(--line); border-radius:16px;
+    padding:16px 4px 12px; text-align:center; position:relative; overflow:hidden;
+  }
+  .unit::before{
+    content:''; position:absolute; inset:0 0 auto 0; height:2px;
+    background:linear-gradient(90deg, var(--teal), var(--blue), var(--violet));
+  }
+  .num{
+    font-family:var(--font-mono); font-weight:500; font-size:2.3rem; line-height:1;
+    font-variant-numeric:tabular-nums;
+  }
+  .num.tick{ animation:tick .45s ease; }
+  @keyframes tick{ from{ opacity:.35; transform:translateY(-4px);} to{ opacity:1; transform:none;} }
+  .lbl{ font-family:var(--font-mono); font-size:0.62rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--subtext); margin-top:8px; }
+  .date-note{ text-align:center; font-family:var(--font-mono); font-size:0.72rem; color:var(--subtext); }
+  .live{ display:none; text-align:center; margin:28px 0 10px; }
+  .launched .countdown, .launched .date-note{ display:none; }
+  .launched .live{ display:block; }
+  .live strong{ font-family:var(--font-display); font-size:2rem; }
+
+  /* ---------- OFFER ---------- */
+  .offer{
+    margin:30px 0 34px; padding:22px 20px; border-radius:18px; text-align:center;
+    background:linear-gradient(var(--surface), var(--surface)) padding-box,
+               linear-gradient(120deg, var(--teal), var(--blue), var(--violet)) border-box;
+    border:1px solid transparent;
+  }
+  .offer .big{ font-family:var(--font-display); font-weight:700; font-size:3.2rem; line-height:1; }
+  .offer p{ color:var(--subtext); font-size:0.9rem; line-height:1.55; margin-top:8px; }
+  .offer p b{ color:var(--text); }
+  .cta{
+    display:inline-flex; align-items:center; gap:8px; margin-top:16px;
+    padding:13px 22px; border-radius:999px; text-decoration:none; font-weight:800; font-size:0.92rem;
+    color:#04120c; background:linear-gradient(135deg, var(--teal), var(--blue));
+    box-shadow:0 8px 28px rgba(46,230,166,0.25); transition:transform .2s ease;
+  }
+  .cta:hover{ transform:translateY(-2px); }
+  .cta.ghost{ background:none; color:var(--text); border:1px solid var(--line); box-shadow:none; font-weight:700; }
+  .fine{ font-size:0.72rem !important; margin-top:12px !important; }
+
+  /* ---------- SECTIONS ---------- */
+  .section-label{
+    font-family:var(--font-mono); font-size:0.66rem; letter-spacing:0.14em; text-transform:uppercase;
+    color:var(--subtext); display:flex; align-items:center; gap:10px; margin:0 0 14px;
+  }
+  .section-label::after{ content:''; flex:1; height:1px; background:var(--line); }
+  h2{ font-family:var(--font-display); font-weight:700; font-size:1.75rem; line-height:1.18; margin-bottom:16px; }
+  section{ margin-bottom:38px; opacity:0; transform:translateY(14px); transition:opacity .7s ease, transform .7s ease; }
+  section.in{ opacity:1; transform:none; }
+
+  .cards{ display:grid; grid-template-columns:1fr; gap:10px; }
+  @media (min-width:520px){ .cards{ grid-template-columns:1fr 1fr; } }
+  .card{ background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:15px 16px; }
+  .card h3{ font-size:0.92rem; font-weight:800; margin-bottom:5px; display:flex; align-items:center; gap:8px; }
+  .card p{ color:var(--subtext); font-size:0.82rem; line-height:1.5; }
+  .dot{ width:7px; height:7px; border-radius:50%; background:var(--teal); box-shadow:0 0 8px var(--teal); flex:none; }
+  .card.v .dot{ background:var(--violet); box-shadow:0 0 8px var(--violet); }
+  .card.b .dot{ background:var(--blue); box-shadow:0 0 8px var(--blue); }
+  .tag{
+    font-family:var(--font-mono); font-size:0.58rem; letter-spacing:0.08em; text-transform:uppercase;
+    padding:2px 7px; border-radius:20px; border:1px solid rgba(139,92,246,0.4); color:#b9a2fb; margin-left:auto;
+  }
+
+  .plans{ display:grid; grid-template-columns:1fr; gap:10px; }
+  @media (min-width:520px){ .plans{ grid-template-columns:repeat(3,1fr); } }
+  .plan{ background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:15px 14px; }
+  .plan.rec{ border-color:rgba(46,230,166,0.45); }
+  .plan h3{ font-family:var(--font-display); font-size:1.35rem; margin-bottom:8px; }
+  .plan ul{ list-style:none; }
+  .plan li{ color:var(--subtext); font-size:0.8rem; line-height:1.45; padding-left:14px; position:relative; margin-bottom:5px; }
+  .plan li::before{ content:'›'; position:absolute; left:0; color:var(--teal); }
+
+  .pills{ display:flex; flex-wrap:wrap; gap:7px; }
+  .pill{
+    font-size:0.76rem; padding:6px 11px; border-radius:20px; border:1px solid var(--line);
+    color:var(--text); background:rgba(14,17,23,0.7);
+  }
+  .pill.on{ border-color:rgba(46,230,166,0.4); }
+
+  .steps{ counter-reset:s; display:grid; gap:10px; }
+  .step{ display:flex; gap:14px; align-items:flex-start; background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:14px 16px; }
+  .step::before{
+    counter-increment:s; content:counter(s); font-family:var(--font-mono); font-size:0.8rem; flex:none;
+    width:26px; height:26px; border-radius:50%; display:grid; place-items:center; border:1px solid var(--teal-soft); color:var(--teal);
+  }
+  .step b{ display:block; font-size:0.9rem; margin-bottom:2px; }
+  .step span{ color:var(--subtext); font-size:0.82rem; line-height:1.45; }
+
+  .vision{ text-align:center; padding:26px 18px; border-radius:18px; border:1px dashed var(--line); }
+  .vision p{ color:var(--subtext); font-size:0.9rem; line-height:1.6; margin-top:8px; }
+
+  footer{ text-align:center; color:var(--subtext); font-size:0.75rem; padding-top:10px; }
+  footer nav{ display:flex; justify-content:center; gap:16px; margin-bottom:10px; flex-wrap:wrap; }
+  footer a{ text-decoration:none; color:var(--text); }
+
+  @media (max-width:380px){
+    h1{ font-size:2.1rem; }
+    .num{ font-size:1.8rem; }
+    .countdown{ gap:6px; }
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{ animation:none !important; transition:none !important; }
+    section{ opacity:1; transform:none; }
+  }
+</style>
+</head>
+<body>
+<div class="blobs" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+
+<main class="container" id="top">
+
+  <header class="hero">
+    <svg class="sigil" viewBox="0 0 148 148" aria-hidden="true">
+      <defs>
+        <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#2ee6a6"/><stop offset="55%" stop-color="#3fa0f0"/><stop offset="100%" stop-color="#8b5cf6"/>
+        </linearGradient>
+      </defs>
+      <circle cx="74" cy="74" r="70" fill="none" stroke="rgba(46,230,166,0.28)" stroke-width="1" stroke-dasharray="1 7" stroke-linecap="round"/>
+      <polygon points="74,14 128,110 20,110" fill="none" stroke="url(#g)" stroke-width="1.6"/>
+      <circle cx="74" cy="14" r="4" fill="#2ee6a6"/><circle cx="128" cy="110" r="4" fill="#3fa0f0"/><circle cx="20" cy="110" r="4" fill="#8b5cf6"/>
+    </svg>
+    <p class="eyebrow">Malvora Hub · Lançamento oficial</p>
+    <h1>Em breve, o seu negócio <em>no automático</em>.</h1>
+    <p class="lead">IA que atende no WhatsApp, agenda, cobra e mostra os números num portal. 24 horas por dia, para 29 tipos de negócio.</p>
+  </header>
+
+  <div id="timer" aria-live="polite">
+    <div class="countdown" role="timer" aria-label="Contagem regressiva para o lançamento">
+      <div class="unit"><div class="num" data-u="d">00</div><div class="lbl">dias</div></div>
+      <div class="unit"><div class="num" data-u="h">00</div><div class="lbl">horas</div></div>
+      <div class="unit"><div class="num" data-u="m">00</div><div class="lbl">min</div></div>
+      <div class="unit"><div class="num" data-u="s">00</div><div class="lbl">seg</div></div>
+    </div>
+    <p class="date-note">01 · 11 · 2026 — 00h00 (horário de Brasília)</p>
+    <div class="live"><strong class="grad">Chegou.</strong><p class="lead">A Malvora está no ar. Garanta os 50% de lançamento.</p></div>
+  </div>
+
+  <div class="offer">
+    <div class="big grad">50% off</div>
+    <p><b>Oferta de lançamento</b> para quem fechar com a Malvora <b>em novembro de 2026</b>.</p>
+    <a class="cta" href="https://wa.me/5511915074051?text=Ol%C3%A1!%20Quero%20garantir%20os%2050%25%20de%20lan%C3%A7amento%20da%20Malvora." target="_blank" rel="noopener">Quero garantir meus 50% →</a>
+    <p class="fine">Entre na lista pelo WhatsApp e seja avisado no minuto do lançamento.</p>
+  </div>
+
+  <section>
+    <p class="section-label">O que vamos lançar</p>
+    <h2>Uma operação inteira <em>que trabalha sozinha</em>.</h2>
+    <div class="cards">
+      <div class="card"><h3><span class="dot"></span>IA no WhatsApp</h3><p>Responde, tira dúvidas e vende a qualquer hora, com o número que você já usa.</p></div>
+      <div class="card"><h3><span class="dot"></span>Agenda automática</h3><p>A IA marca, remarca e cancela, com lembretes que reduzem as faltas.</p></div>
+      <div class="card"><h3><span class="dot"></span>Cobrança na conversa</h3><p>Pix, boleto e cartão enviados pela IA e confirmados sozinhos.</p></div>
+      <div class="card"><h3><span class="dot"></span>Portal de gestão</h3><p>Conversas, clientes, agenda e financeiro num só lugar. Você entra na conversa quando quiser.</p></div>
+      <div class="card b"><h3><span class="dot"></span>Clientes que voltam</h3><p>Pesquisa de satisfação, lista de quem sumiu e campanhas para trazer de volta.</p></div>
+      <div class="card b"><h3><span class="dot"></span>Relatórios automáticos</h3><p>Resumo do dia, da semana ou do mês no WhatsApp e no e-mail, com exportação para Excel.</p></div>
+      <div class="card b"><h3><span class="dot"></span>Desempenho com IA</h3><p>Funil de conversão, clientes quentes, motivos de quem não fechou e horários vazios.</p></div>
+      <div class="card b"><h3><span class="dot"></span>Produtos e entrega</h3><p>Catálogo, estoque, locação e frete. A IA calcula, registra o pedido e cobra.</p></div>
+      <div class="card v"><h3><span class="dot"></span>SAC e chamados</h3><p>Atendimento com prazos (SLA) e relatório de cumprimento.</p></div>
+      <div class="card v"><h3><span class="dot"></span>Copiloto da equipe</h3><p>A sua equipe consulta e opera o negócio pelo WhatsApp, conversando com a IA.</p></div>
+      <div class="card v"><h3><span class="dot"></span>Propostas e contratos</h3><p>Demandas, propostas, contratos com assinatura digital e pasta no Google Drive.</p></div>
+      <div class="card v"><h3><span class="dot"></span>Consultoria sob medida</h3><p>IA e automação para operações maiores, a partir de um diagnóstico gratuito.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <p class="section-label">Planos</p>
+    <h2>Três formas de <em>começar</em>.</h2>
+    <div class="plans">
+      <div class="plan"><h3>Essencial</h3><ul><li>Atendimento e agenda no automático</li><li>Lembretes que reduzem faltas</li><li>Portal com conversas e clientes</li></ul></div>
+      <div class="plan rec"><h3>Crescimento</h3><ul><li>Tudo do Essencial</li><li>Clientes que sumiram voltando</li><li>Cobrança e confirmação automáticas</li></ul></div>
+      <div class="plan"><h3>Completo</h3><ul><li>Tudo do Crescimento</li><li>Relatórios no WhatsApp e no e-mail</li><li>A IA analisando o seu negócio</li></ul></div>
+    </div>
+  </section>
+
+  <section>
+    <p class="section-label">Para quem</p>
+    <h2>Pronta para <em>29 tipos</em> de negócio.</h2>
+    <div class="pills">
+      <span class="pill on">Barbearia</span><span class="pill">Salão de beleza</span><span class="pill">Estética</span>
+      <span class="pill">Clínica médica</span><span class="pill">Odontologia</span><span class="pill">Terapias e bem-estar</span>
+      <span class="pill">Estúdio de tatuagem</span><span class="pill">Pet shop e veterinária</span><span class="pill">Academia</span>
+      <span class="pill">Escola e cursos</span><span class="pill">Restaurante e delivery</span><span class="pill">Ótica</span>
+      <span class="pill">Cosméticos</span><span class="pill">Moda e vestuário</span><span class="pill">Papelaria</span>
+      <span class="pill">Imobiliária</span><span class="pill">Venda de veículos</span><span class="pill">Corretora de seguros</span>
+      <span class="pill">Advocacia</span><span class="pill">Contabilidade</span><span class="pill">Hotelaria e pousadas</span>
+      <span class="pill">Turismo</span><span class="pill">Eventos</span><span class="pill">Oficina mecânica</span>
+      <span class="pill">Coworking</span><span class="pill">Criadores de conteúdo</span><span class="pill">Infoprodutos</span>
+      <span class="pill">Serviços domésticos</span><span class="pill">E o seu negócio</span>
+    </div>
+  </section>
+
+  <section>
+    <p class="section-label">Integrações</p>
+    <h2>Conectada ao que <em>você já usa</em>.</h2>
+    <div class="cards">
+      <div class="card"><h3><span class="dot"></span>WhatsApp</h3><p>Conexão por QR Code, sem trocar de número.</p></div>
+      <div class="card"><h3><span class="dot"></span>Google Agenda e Outlook</h3><p>A agenda de cada profissional sincronizada.</p></div>
+      <div class="card"><h3><span class="dot"></span>Asaas e Mercado Pago</h3><p>Pix, boleto e cartão com baixa automática.</p></div>
+      <div class="card"><h3><span class="dot"></span>AppBarber</h3><p>Para barbearias que já usam o sistema.</p></div>
+      <div class="card"><h3><span class="dot"></span>Google Drive e ZapSign</h3><p>Documentos organizados e contratos assinados digitalmente.</p></div>
+      <div class="card"><h3><span class="dot"></span>E-mail e Excel</h3><p>Avisos, relatórios e planilhas para importar e exportar.</p></div>
+      <div class="card v"><h3><span class="dot"></span>Instagram Direct <span class="tag">chegando</span></h3><p>A IA atendendo também o Direct.</p></div>
+      <div class="card v"><h3><span class="dot"></span>WhatsApp oficial (Meta) <span class="tag">chegando</span></h3><p>Conexão pela API oficial da Meta.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <p class="section-label">Como funciona</p>
+    <h2>Três passos e a IA <em>já está atendendo</em>.</h2>
+    <div class="steps">
+      <div class="step"><div><b>Conecte o WhatsApp</b><span>Leia um QR Code no portal. Cerca de 2 minutos.</span></div></div>
+      <div class="step"><div><b>Ensine o seu negócio</b><span>Serviços, preços e horários, com um passo a passo guiado. Cerca de 15 minutos.</span></div></div>
+      <div class="step"><div><b>Acompanhe pelo portal</b><span>A IA atende e agenda. Você entra na conversa quando quiser.</span></div></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="vision">
+      <p class="eyebrow">2026 é o marco. 2027 é a escala.</p>
+      <h2 style="margin-bottom:0">“A magia é apenas <em>tecnologia</em> que ainda não foi sistematizada.”</h2>
+      <p>Seja um dos primeiros. Quem entra agora cresce com a Malvora e trava os 50% de lançamento.</p>
+      <a class="cta" href="https://wa.me/5511915074051?text=Ol%C3%A1!%20Quero%20entrar%20na%20lista%20de%20lan%C3%A7amento%20da%20Malvora." target="_blank" rel="noopener">Entrar na lista de lançamento →</a>
+    </div>
+  </section>
+
+  <footer>
+    <nav>
+      <a href="https://www.instagram.com/malvora_hub" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://malvora.com.br/" target="_blank" rel="noopener">Site</a>
+      <a href="/">Bio</a>
+      <a href="/politica-de-privacidade">Privacidade</a>
+    </nav>
+    © 2026 Malvora · Sistemas inteligentes para sua operação
+  </footer>
+</main>
+
+<script>
+  (function(){
+    // 01/11/2026 00:00 no horário de Brasília (UTC-3, sem horário de verão)
+    var alvo = Date.UTC(2026, 10, 1, 3, 0, 0);
+    var nums = {};
+    document.querySelectorAll('.num').forEach(function(el){ nums[el.dataset.u] = el; });
+    var timer = document.getElementById('timer');
+
+    function pinta(u, v){
+      var t = String(v).padStart(2, '0');
+      if (nums[u].textContent !== t){
+        nums[u].textContent = t;
+        nums[u].classList.remove('tick'); void nums[u].offsetWidth; nums[u].classList.add('tick');
+      }
+    }
+    function atualiza(){
+      var falta = Math.max(0, Math.floor((alvo - Date.now()) / 1000));
+      if (falta === 0){ timer.classList.add('launched'); return false; }
+      pinta('d', Math.floor(falta / 86400));
+      pinta('h', Math.floor(falta % 86400 / 3600));
+      pinta('m', Math.floor(falta % 3600 / 60));
+      pinta('s', falta % 60);
+      return true;
+    }
+    if (atualiza()){
+      var id = setInterval(function(){ if (!atualiza()) clearInterval(id); }, 1000);
+    }
+
+    var io = 'IntersectionObserver' in window && new IntersectionObserver(function(es){
+      es.forEach(function(e){ if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('section').forEach(function(s){ io ? io.observe(s) : s.classList.add('in'); });
+  })();
+</script>
+</body>
+</html>
