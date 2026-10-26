@@ -53,7 +53,7 @@ button[disabled]{opacity:.5;cursor:default}
 </main>
 <script>
 (function(){
- var VIP_URL='https://n8n.malvora.com.br/webhook/lista-vip'; // webhook do n8n (lista VIP): GET devolve {restantes}, POST grava e devolve {ok,restantes} ou {cheio:true}
+ var VIP_URL='https://n8n.malvora.com.br/webhook/malvora-lista-vip'; // webhook do n8n (lista VIP): GET devolve {restantes}, POST grava e devolve {ok,restantes} ou {cheio:true}
  var L=new Date('2026-11-10T00:00:00-03:00').getTime(),A=new Date('2026-11-01T00:00:00-03:00').getTime(),p=function(n){return String(n).padStart(2,'0')},$=function(i){return document.getElementById(i)};
  function t(){var r=Math.max(0,L-Date.now()),d=Math.floor(r/864e5);r-=d*864e5;var h=Math.floor(r/36e5);r-=h*36e5;var m=Math.floor(r/6e4),s=Math.floor((r-m*6e4)/1e3);
   ['d','h','m','s'].forEach(function(k,i){$(k).textContent=p([d,h,m,s][i])});}
