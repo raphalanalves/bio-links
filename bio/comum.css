@@ -1,0 +1,36 @@
+/* Tokens e tipografia iguais aos do portal (portal.malvora.com.br/static/site.css). */
+@font-face{font-family:"Manrope";font-weight:700;font-display:swap;src:url("/fontes/manrope-latin-700-normal.woff2") format("woff2")}
+@font-face{font-family:"Manrope";font-weight:800;font-display:swap;src:url("/fontes/manrope-latin-800-normal.woff2") format("woff2")}
+@font-face{font-family:"Inter";font-weight:400;font-display:swap;src:url("/fontes/inter-latin-400-normal.woff2") format("woff2")}
+@font-face{font-family:"Inter";font-weight:600;font-display:swap;src:url("/fontes/inter-latin-600-normal.woff2") format("woff2")}
+@font-face{font-family:"DM Mono";font-weight:500;font-display:swap;src:url("/fontes/dm-mono-latin-500-normal.woff2") format("woff2")}
+:root{color-scheme:dark;--void:#0A0A0F;--navy:#10101B;--navy2:#151524;--line:#24243A;--line2:#33334F;--fg:#F0F0F5;--body:#A3A3BC;--muted:#8A8AA6;
+ --emerald:#00D4AA;--emerald-ink:#04231C;--violet:#8B7BF2;
+ --f-display:"Manrope","Inter",system-ui,sans-serif;--f-body:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;--f-mono:"DM Mono",ui-monospace,Menlo,monospace}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--void);color:var(--fg);font:400 1rem/1.55 var(--f-body);-webkit-font-smoothing:antialiased;
+ padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.22;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:48px 48px;-webkit-mask-image:radial-gradient(ellipse at 50% 0%,#000,transparent 70%);mask-image:radial-gradient(ellipse at 50% 0%,#000,transparent 70%)}
+main{position:relative;z-index:1;max-width:540px;margin:0 auto;padding-block:36px 56px;display:flex;flex-direction:column;gap:28px}
+h1,h2{font-family:var(--f-display);font-weight:800;letter-spacing:-.02em;line-height:1.08;margin:0;text-wrap:balance}
+h1{font-size:clamp(2rem,1.5rem + 2.4vw,2.6rem)} h2{font-size:1.25rem}
+.em{color:var(--emerald)}
+.lede{color:var(--body);margin:10px 0 0}
+.label{font:500 .75rem/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.brand{display:flex;align-items:center;gap:10px;font:800 1rem var(--f-display);letter-spacing:.28em}
+.brand svg{width:34px;height:34px}
+.card{background:var(--navy);border:1px solid var(--line);border-radius:16px;padding:20px}
+.btn{display:flex;align-items:center;justify-content:space-between;gap:12px;text-decoration:none;color:var(--fg);background:var(--navy);border:1px solid var(--line);border-radius:12px;padding:16px 18px;font-weight:600;transition:border-color .15s}
+.btn:hover,.btn:focus-visible{border-color:var(--emerald);outline:none}
+.btn.pri{background:var(--emerald);color:var(--emerald-ink);border-color:var(--emerald)}
+.btn small{font:500 .75rem var(--f-mono);color:inherit;opacity:.7}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips span{border:1px solid var(--line2);border-radius:999px;padding:5px 11px;font-size:.8125rem;color:var(--body)}
+.foot{font-size:.8125rem;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 14px}
+.foot a{color:var(--muted)}
+.clock{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.u{background:var(--navy2);border:1px solid var(--line);border-radius:12px;padding:12px 4px 8px;text-align:center}
+.u b{display:block;font:800 clamp(1.8rem,1.2rem + 3vw,2.6rem)/1 var(--f-display);font-variant-numeric:tabular-nums}
+.u span{font:500 .6875rem var(--f-mono);letter-spacing:.1em;color:var(--muted);text-transform:uppercase}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+[hidden]{display:none!important}

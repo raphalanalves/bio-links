@@ -1,0 +1,9 @@
+Fontes incluídas (arquivos .woff2, subconjunto "latin", via Fontsource 5.3.0):
+
+- Manrope      — SIL Open Font License 1.1 — https://github.com/sharanda/manrope (títulos e números; Fontsource 5.2.8)
+- Syne         — SIL Open Font License 1.1 — https://github.com/lunte/Syne (só o nome da marca)
+- Inter        — SIL Open Font License 1.1 — https://github.com/rsms/inter
+- DM Mono      — SIL Open Font License 1.1 — https://github.com/googlefonts/dm-mono
+
+Hospedadas no próprio portal (sem Google Fonts): a CSP continua 'self' e o navegador do
+cliente não faz requisições a terceiros. Texto completo da licença: https://openfontlicense.org

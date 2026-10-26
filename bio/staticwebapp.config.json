@@ -1,0 +1,19 @@
+{
+  "routes": [
+    { "route": "/dra*", "redirect": "/", "statusCode": 302 },
+    { "route": "/toxina-botulinica.html*", "redirect": "/", "statusCode": 302 },
+    { "route": "/harmonizacao-facial.html*", "redirect": "/", "statusCode": 302 },
+    { "route": "/bioestimulador-colageno.html*", "redirect": "/", "statusCode": 302 },
+    { "route": "/tratamentos.html*", "redirect": "/", "statusCode": 302 },
+    { "route": "/contato.html*", "redirect": "/", "statusCode": 302 },
+    { "route": "/sobre.html*", "redirect": "/", "statusCode": 302 },
+    { "route": "/planos*", "redirect": "/", "statusCode": 302 },
+    { "route": "/formularios*", "redirect": "/", "statusCode": 302 },
+    { "route": "/avalia*", "redirect": "/", "statusCode": 302 },
+    { "route": "/barbearia-setup.html", "redirect": "/", "statusCode": 302 },
+    { "route": "/arquivo.txt", "redirect": "/", "statusCode": 302 },
+    { "route": "/*.png", "redirect": "/", "statusCode": 302 },
+    { "route": "/*.jpg", "redirect": "/", "statusCode": 302 }
+  ],
+  "responseOverrides": { "404": { "redirect": "/", "statusCode": 302 } }
+}
