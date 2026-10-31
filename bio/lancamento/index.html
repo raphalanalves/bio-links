@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Lista VIP · Malvora</title><meta name="description" content="10 vagas com 50% off no lançamento da Malvora, em 10/11/2026.">
+<title>Lista VIP · Malvora</title><meta name="description" content="10 vagas com metade do preço nos 3 primeiros meses no lançamento da Malvora, em 10/11/2026.">
 <meta name="robots" content="noindex"><link rel="icon" href="/marca.svg" type="image/svg+xml"><link rel="stylesheet" href="/comum.css">
 <style>
 form{display:flex;flex-direction:column;gap:10px}
@@ -20,23 +20,16 @@ button[disabled]{opacity:.5;cursor:default}
  <section>
   <span class="label">Lançamento · 10.11.2026 · 00h</span>
   <h1 style="margin-top:10px">10 empresas vão entrar <span class="em">antes de todo mundo.</span></h1>
-  <p class="lede">Quem garantir a vaga recebe o acesso em 09/11 à noite e 50% off na assinatura.</p>
+  <p class="lede">Quem entra na lista recebe o acesso em 09/11 à noite e paga metade do preço nos 3 primeiros meses.</p>
  </section>
  <div class="clock" role="timer" aria-label="Contagem para o lançamento"><div class="u"><b id="d">00</b><span>dias</span></div><div class="u"><b id="h">00</b><span>horas</span></div><div class="u"><b id="m">00</b><span>min</span></div><div class="u"><b id="s">00</b><span>seg</span></div></div>
  <section class="card" style="display:flex;flex-direction:column;gap:14px">
-  <div class="big">50% OFF</div>
+  <div><div class="big">50% OFF</div><span class="label">nos 3 primeiros meses</span></div>
   <div><span class="label" id="vagasTxt">10 vagas</span><div class="vagas" id="vagas"></div></div>
   <p id="fechado" hidden style="margin:0;color:var(--body)">A lista abre em <b style="color:var(--fg)">01/11</b>. Ative o lembrete no nosso Instagram.</p>
-  <form id="f" novalidate>
-   <label for="nome">Seu nome</label><input id="nome" autocomplete="name" required>
-   <label for="empresa">Empresa</label><input id="empresa" autocomplete="organization" required>
-   <label for="zap">WhatsApp com DDD</label><input id="zap" inputmode="tel" autocomplete="tel" required placeholder="(11) 90000-0000">
-   <label for="seg">Tipo de negócio</label>
-   <select id="seg"><option>Barbearia ou salão</option><option>Clínica, estética ou odontologia</option><option>Pet shop</option><option>Loja ou venda direta</option><option>Imobiliária ou veículos</option><option>Advocacia ou contabilidade</option><option>Outro</option></select>
-   <label style="display:flex;gap:10px;align-items:flex-start"><input id="lgpd" type="checkbox" style="width:auto;margin-top:4px" required> <span>Autorizo a Malvora a falar comigo pelo WhatsApp sobre o lançamento. <a href="/politica-de-privacidade/" style="color:var(--body)">Privacidade</a></span></label>
-   <button id="btn" type="submit">Garantir minha vaga</button>
-   <p id="msg" aria-live="polite" style="margin:0;font-size:.875rem;color:var(--muted)">A confirmação chega no seu WhatsApp.</p>
-  </form>
+  <a id="btn" class="btn pri" href="https://wa.me/5511915074051?text=Quero%20entrar%20na%20lista%20VIP%20da%20Malvora" rel="noopener"><span style="display:flex;align-items:center;gap:12px"><img src="/marcas/whatsapp.png" alt="" width="26" height="26" style="border-radius:7px">Quero entrar na lista VIP</span><small>FALAR COM A MALU</small></a>
+  <p style="margin:0;font-size:.875rem;color:var(--muted)">A Malu, nossa assistente, faz o seu cadastro no WhatsApp em 2 minutos e te passa o seu número na fila.</p>
+  <p style="margin:0;font-size:.875rem;color:var(--body)">Se as 10 vagas acabarem, você entra na lista de espera: em 09/11 sorteamos até 2 vagas extras, e quem estiver na espera ganha 20% de desconto no primeiro mês.</p>
  </section>
  <section class="card">
   <h2 style="margin-bottom:6px">O que chega em 10/11</h2>
@@ -45,32 +38,19 @@ button[disabled]{opacity:.5;cursor:default}
   <div class="row"><div><b>Cobrança e contratos</b><p>Pix e cartão na conversa; contrato para assinar pelo celular.</p></div></div>
   <div class="row"><div><b>Portal com a análise</b><p>Conversas, clientes, desempenho e o que a IA fez, num lugar só.</p></div></div>
  </section>
- <section style="display:flex;flex-direction:column;gap:10px">
-  <span class="label">Segurança e integrações</span>
-  <div class="chips"><span>LGPD</span><span>Login com Google e Microsoft</span><span>Dados separados por empresa</span><span>WhatsApp</span><span>Asaas</span><span>Mercado Pago</span><span>ZapSign</span><span>Autentique</span><span>Google Agenda</span><span>Outlook</span><span>Google Drive</span><span>AppBarber</span></div>
- </section>
  <div class="foot"><a href="/">Voltar</a><a href="/politica-de-privacidade/">Política de privacidade</a><span>© 2026 Malvora</span></div>
 </main>
 <script>
 (function(){
- var VIP_URL='https://n8n.malvora.com.br/webhook/malvora-lista-vip'; // webhook do n8n (lista VIP): GET devolve {restantes}, POST grava e devolve {ok,restantes} ou {cheio:true}
+ var VIP_URL='https://n8n.malvora.com.br/webhook/malvora-lista-vip'; // GET devolve {restantes}
  var L=new Date('2026-11-10T00:00:00-03:00').getTime(),A=new Date('2026-11-01T00:00:00-03:00').getTime(),p=function(n){return String(n).padStart(2,'0')},$=function(i){return document.getElementById(i)};
  function t(){var r=Math.max(0,L-Date.now()),d=Math.floor(r/864e5);r-=d*864e5;var h=Math.floor(r/36e5);r-=h*36e5;var m=Math.floor(r/6e4),s=Math.floor((r-m*6e4)/1e3);
   ['d','h','m','s'].forEach(function(k,i){$(k).textContent=p([d,h,m,s][i])});}
  t();setInterval(t,1000);
- function vagas(n){$('vagasTxt').textContent=n>0?(n+(n===1?' vaga restante':' vagas restantes')+' de 10'):'Vagas esgotadas';
-  $('vagas').innerHTML=Array.from({length:10},function(_,i){return '<i class="'+(i<10-n?'on':'')+'"></i>'}).join('');
-  if(n<=0){$('btn').disabled=true;$('btn').textContent='Vagas esgotadas';}}
- vagas(10);
- var aberto=Date.now()>=A; if(!aberto){$('f').hidden=true;$('fechado').hidden=false;}
- if(VIP_URL&&aberto) fetch(VIP_URL).then(function(r){return r.json()}).then(function(j){if(typeof j.restantes==='number')vagas(j.restantes)}).catch(function(){});
- $('f').addEventListener('submit',function(e){e.preventDefault();var m=$('msg'),z=$('zap').value.replace(/\D/g,'');
-  if(!$('nome').value.trim()||!$('empresa').value.trim()||z.length<10||!$('lgpd').checked){m.className='err';m.textContent='Preencha nome, empresa, WhatsApp com DDD e marque a autorização.';return;}
-  if(!VIP_URL){m.className='ok';m.textContent='Prévia: o cadastro ainda não está ligado.';return;}
-  $('btn').disabled=true;
-  fetch(VIP_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nome:$('nome').value.trim(),empresa:$('empresa').value.trim(),whatsapp:z,segmento:$('seg').value,origem:location.search})})
-  .then(function(r){return r.json()}).then(function(j){if(j.cheio){vagas(0);m.className='err';m.textContent='As 10 vagas já foram preenchidas.';return;}
-   if(typeof j.restantes==='number')vagas(j.restantes);m.className='ok';m.textContent='Vaga garantida! A confirmação chega no seu WhatsApp.';$('f').querySelectorAll('input,select').forEach(function(x){x.disabled=true});})
-  .catch(function(){$('btn').disabled=false;m.className='err';m.textContent='Não conseguimos registrar agora. Tente de novo em instantes.';});});
+ function vagas(n){var f=10-n;$('vagasTxt').textContent=n>0?(f+' de 10 vagas preenchidas'):'Vagas preenchidas · lista de espera aberta';
+  $('vagas').innerHTML=Array.from({length:10},function(_,i){return '<i class="'+(i<f?'on':'')+'"></i>'}).join('');}
+ vagas(8);
+ var aberto=Date.now()>=A; if(!aberto){$('btn').hidden=true;$('fechado').hidden=false;}
+ fetch(VIP_URL).then(function(r){return r.json()}).then(function(j){if(typeof j.restantes==='number')vagas(j.restantes)}).catch(function(){});
 })();
 </script></body></html>

@@ -1,36 +1,99 @@
 <!doctype html>
 <html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Malvora Hub</title><meta name="description" content="IA no WhatsApp que atende, agenda e cobra. Lançamento em 10/11/2026.">
+<meta name="theme-color" content="#0A0A0F">
 <link rel="icon" href="/marca.svg" type="image/svg+xml"><link rel="preload" href="/fontes/manrope-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/comum.css"></head><body>
+<link rel="stylesheet" href="/comum.css">
+<style>
+/* Página da bio: a logo no centro, as integrações em órbita, um cronômetro e os links. */
+main{gap:22px;padding-block:28px 48px;text-align:center}
+.brand{justify-content:center}
+.orbita{position:relative;width:min(100%,380px);aspect-ratio:1;margin:4px auto 0}
+.orbita .nucleo{position:absolute;inset:31%;display:grid;place-items:center;border-radius:50%;
+ background:radial-gradient(circle,rgba(0,212,170,.16),rgba(139,123,242,.06) 55%,transparent 72%)}
+.orbita .nucleo img{width:82%;filter:drop-shadow(0 0 18px rgba(0,212,170,.45));animation:respira 4s ease-in-out infinite}
+.anel{position:absolute;border-radius:50%;border:1px dashed var(--line2)}
+.anel.a1{inset:17%;animation:gira 38s linear infinite}
+.anel.a2{inset:2%;animation:gira 58s linear infinite reverse;border-style:solid;border-color:var(--line)}
+.anel .item{position:absolute;left:50%;top:50%;width:0;height:0}
+.anel .item span{position:absolute;width:44px;height:44px;margin:-22px;border-radius:12px;overflow:hidden;display:block;
+ box-shadow:0 0 0 1px rgba(255,255,255,.08),0 6px 18px rgba(0,0,0,.45);background:var(--navy2)}
+.anel .item img{width:100%;height:100%;display:block;transition:opacity .45s,transform .45s}
+.anel .item img.troca{opacity:0;transform:scale(.6)}
+.anel.a1 .item span{animation:gira 38s linear infinite reverse}
+.anel.a1 .item span{width:48px;height:48px;margin:-24px}
+@keyframes gira{to{transform:rotate(360deg)}}
+@keyframes respira{50%{transform:scale(1.04);filter:drop-shadow(0 0 28px rgba(0,212,170,.6))}}
+.tag{font:500 .75rem/1 var(--f-mono);letter-spacing:.16em;text-transform:uppercase;color:var(--emerald)}
+h1{font-size:clamp(1.7rem,1.3rem + 2vw,2.2rem)}
+.crono{display:flex;justify-content:center;align-items:flex-start;gap:4px;font-variant-numeric:tabular-nums}
+.crono div{min-width:64px}
+.crono b{display:block;font:500 clamp(2.3rem,1.6rem + 4vw,3.2rem)/1 var(--f-mono);letter-spacing:-.02em;
+ background:linear-gradient(180deg,#fff,#B9BCD0);-webkit-background-clip:text;background-clip:text;color:transparent}
+.crono i{font:500 clamp(2rem,1.5rem + 3vw,2.8rem)/1 var(--f-mono);font-style:normal;color:var(--line2);padding-top:2px;animation:pisca 1s steps(2) infinite}
+.crono span{display:block;margin-top:8px;font:500 .625rem var(--f-mono);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+@keyframes pisca{50%{opacity:.25}}
+.links{display:flex;flex-direction:column;gap:10px;text-align:left}
+.btn .ico{display:flex;align-items:center;gap:12px}
+.btn .ico img{width:26px;height:26px;border-radius:7px}
+.nota{color:var(--body);margin:0;font-size:.9375rem}
+.foot{justify-content:center}
+@media (prefers-reduced-motion:reduce){.anel,.anel .item span,.nucleo img,.crono i{animation:none!important}}
+</style></head><body>
 <main>
- <div class="brand"><img src="/marca.svg" alt="" width="34" height="34">MALVORA</div>
- <section>
-  <h1>Sua empresa atende, agenda e cobra <span class="em">sozinha.</span></h1>
-  <p class="lede">A IA da Malvora responde no WhatsApp com o nome da sua empresa, marca na agenda e manda o Pix. 24 horas por dia.</p>
- </section>
- <section class="card" style="display:flex;flex-direction:column;gap:14px">
-  <span class="label">Lançamento · 10.11.2026 · 00h</span>
-  <div class="clock" role="timer" aria-label="Contagem para o lançamento"><div class="u"><b id="d">00</b><span>dias</span></div><div class="u"><b id="h">00</b><span>horas</span></div><div class="u"><b id="m">00</b><span>min</span></div><div class="u"><b id="s">00</b><span>seg</span></div></div>
-  <p id="vipTxt" style="margin:0;color:var(--body)">A lista VIP abre em <b style="color:var(--fg)">01/11</b>: só 10 empresas, com 50% off.</p>
-  <a id="vipBtn" class="btn pri" href="/lancamento/" hidden>Garantir uma das 10 vagas <small>LISTA VIP</small></a>
-  <a id="portalBtn" class="btn pri" href="https://portal.malvora.com.br/" hidden>Conhecer o portal <small>JÁ DISPONÍVEL</small></a>
- </section>
- <nav style="display:flex;flex-direction:column;gap:10px" aria-label="Links">
-  <a class="btn" href="https://wa.me/5511915074051" rel="noopener">Falar com o time no WhatsApp <small>→</small></a>
-  <a class="btn" href="https://www.instagram.com/malvora_hub" rel="noopener">Instagram @malvora_hub <small>→</small></a>
- </nav>
+ <div class="brand"><img src="/marca.svg" alt="" width="30" height="30">MALVORA</div>
+
+ <div class="orbita" aria-hidden="true">
+  <div class="anel a2"></div>
+  <div class="anel a1" id="a1"></div>
+  <div class="nucleo"><img src="/marcas/malvora.png" alt=""></div>
+ </div>
+
  <section style="display:flex;flex-direction:column;gap:10px">
-  <span class="label">Segurança e integrações</span>
-  <div class="chips"><span>LGPD</span><span>Login com Google e Microsoft</span><span>Dados separados por empresa</span><span>Pix e cartão: Asaas e Mercado Pago</span><span>Contratos: ZapSign e Autentique</span><span>Google Agenda e Outlook</span></div>
+  <span class="tag">Lançamento · 10.11 · 00h</span>
+  <h1>Seu WhatsApp atende, agenda e cobra <span class="em">sozinho.</span></h1>
  </section>
- <div class="foot"><a href="/politica-de-privacidade/">Política de privacidade</a><span>© 2026 Malvora · A nova alquimia digital</span></div>
+
+ <div class="crono" role="timer" aria-label="Contagem para o lançamento em 10 de novembro">
+  <div><b id="d">00</b><span>dias</span></div><i>:</i>
+  <div><b id="h">00</b><span>horas</span></div><i>:</i>
+  <div><b id="m">00</b><span>min</span></div><i>:</i>
+  <div><b id="s">00</b><span>seg</span></div>
+ </div>
+
+ <p id="vipTxt" class="nota">A lista VIP abre em <b style="color:var(--fg)">01/11</b>: só 10 empresas, com metade do preço nos 3 primeiros meses.</p>
+
+ <nav class="links" aria-label="Links">
+  <a id="vipBtn" class="btn pri" href="https://wa.me/5511915074051?text=Quero%20entrar%20na%20lista%20VIP%20da%20Malvora" rel="noopener" hidden><span class="ico">Quero entrar na lista VIP</span><small id="vagasBtn">8 VAGAS</small></a>
+  <a id="vipInfo" class="nota" href="/lancamento/" hidden style="text-decoration:none"><span id="vagasTxt">2 de 10 vagas preenchidas</span> · como funciona →</a>
+  <a id="portalBtn" class="btn pri" href="https://portal.malvora.com.br/" hidden><span class="ico">Testar grátis</span><small>JÁ DISPONÍVEL</small></a>
+  <a class="btn" href="https://wa.me/5511915074051" rel="noopener"><span class="ico"><img src="/marcas/whatsapp.png" alt="">Falar com o time no WhatsApp</span><small>→</small></a>
+  <a class="btn" href="https://www.instagram.com/malvora_hub" rel="noopener"><span class="ico"><img src="/marcas/instagram.png" alt="">Instagram @malvora_hub</span><small>→</small></a>
+ </nav>
+
+ <div class="foot"><a href="/politica-de-privacidade/">Política de privacidade</a><span>LGPD · dados separados por empresa</span><span>© 2026 Malvora</span></div>
 </main>
 <script>
-(function(){var L=new Date('2026-11-10T00:00:00-03:00').getTime(),V=new Date('2026-11-01T00:00:00-03:00').getTime(),p=function(n){return String(n).padStart(2,'0')};
-function t(){var n=Date.now(),r=Math.max(0,L-n),d=Math.floor(r/864e5);r-=d*864e5;var h=Math.floor(r/36e5);r-=h*36e5;var m=Math.floor(r/6e4),s=Math.floor((r-m*6e4)/1e3);
- ['d','h','m','s'].forEach(function(k,i){document.getElementById(k).textContent=p([d,h,m,s][i])});
- var vip=n>=V&&n<L,lan=n>=L;document.getElementById('vipBtn').hidden=!vip;document.getElementById('portalBtn').hidden=!lan;
- document.getElementById('vipTxt').hidden=vip||lan;}
-t();setInterval(t,1000);})();
+(function(){
+ // 6 lugares na órbita; a cada 2,4 s um logo some e entra outro, para a tela não ficar cheia
+ var TODOS=['whatsapp','instagram','googlecalendar','outlook','asaas','zapsign','google-meet','microsoft-teams','googledrive','mercadopago','appbarber','autentique','google','microsoft','googlemaps','waze'],
+     VIS=TODOS.slice(0,6),FILA=TODOS.slice(6),vez=0;
+ function anel(){var el=document.getElementById('a1'),n=VIS.length,r=el.offsetWidth/2;
+  el.innerHTML=VIS.map(function(m,i){var a=i/n*2*Math.PI-Math.PI/2;
+   return '<div class="item" style="transform:translate('+(Math.cos(a)*r).toFixed(1)+'px,'+(Math.sin(a)*r).toFixed(1)+'px)"><span><img src="/marcas/'+m+'.png" alt=""></span></div>';}).join('');}
+ anel(); addEventListener('resize',anel);
+ TODOS.forEach(function(m){var i=new Image();i.src='/marcas/'+m+'.png';});
+ if(!matchMedia('(prefers-reduced-motion: reduce)').matches) setInterval(function(){
+  var i=(vez++*5)%6,img=document.querySelectorAll('#a1 img')[i];if(!img)return;
+  FILA.push(VIS[i]);VIS[i]=FILA.shift();img.classList.add('troca');
+  setTimeout(function(){img.src='/marcas/'+VIS[i]+'.png';img.onload=function(){img.classList.remove('troca')};},450);},2400);
+ var L=new Date('2026-11-10T00:00:00-03:00').getTime(),V=new Date('2026-11-01T00:00:00-03:00').getTime(),p=function(n){return String(n).padStart(2,'0')};
+ function t(){var n=Date.now(),r=Math.max(0,L-n),d=Math.floor(r/864e5);r-=d*864e5;var h=Math.floor(r/36e5);r-=h*36e5;var m=Math.floor(r/6e4),s=Math.floor((r-m*6e4)/1e3);
+  ['d','h','m','s'].forEach(function(k,i){document.getElementById(k).textContent=p([d,h,m,s][i])});
+  var vip=n>=V&&n<L,lan=n>=L;document.getElementById('vipBtn').hidden=!vip;document.getElementById('portalBtn').hidden=!lan;
+  document.getElementById('vipTxt').hidden=vip||lan;document.getElementById('vipInfo').hidden=!vip;}
+ t();setInterval(t,1000);
+ fetch('https://n8n.malvora.com.br/webhook/malvora-lista-vip').then(function(r){return r.json()}).then(function(j){if(typeof j.restantes!=='number')return;var f=10-j.restantes;
+  document.getElementById('vagasTxt').textContent=j.restantes>0?f+' de 10 vagas preenchidas':'Vagas preenchidas · lista de espera aberta';document.getElementById('vagasBtn').textContent=j.restantes>0?j.restantes+' VAGAS':'LISTA DE ESPERA';}).catch(function(){});
+})();
 </script></body></html>
