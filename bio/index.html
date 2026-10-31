@@ -13,14 +13,13 @@ main{gap:22px;padding-block:28px 48px;text-align:center}
  background:radial-gradient(circle,rgba(0,212,170,.16),rgba(139,123,242,.06) 55%,transparent 72%)}
 .orbita .nucleo img{width:82%;filter:drop-shadow(0 0 18px rgba(0,212,170,.45));animation:respira 4s ease-in-out infinite}
 .anel{position:absolute;border-radius:50%;border:1px dashed var(--line2)}
-.anel.a1{inset:17%;animation:gira 38s linear infinite}
+.anel.a1{inset:17%}
 .anel.a2{inset:2%;animation:gira 58s linear infinite reverse;border-style:solid;border-color:var(--line)}
-.anel .item{position:absolute;left:50%;top:50%;width:0;height:0}
+.anel .item{position:absolute;left:50%;top:50%;width:0;height:0;will-change:transform}
 .anel .item span{position:absolute;width:44px;height:44px;margin:-22px;border-radius:12px;overflow:hidden;display:block;
  box-shadow:0 0 0 1px rgba(255,255,255,.08),0 6px 18px rgba(0,0,0,.45);background:var(--navy2)}
 .anel .item img{width:100%;height:100%;display:block;transition:opacity .45s,transform .45s}
 .anel .item img.troca{opacity:0;transform:scale(.6)}
-.anel.a1 .item span{animation:gira 38s linear infinite reverse}
 .anel.a1 .item span{width:48px;height:48px;margin:-24px}
 @keyframes gira{to{transform:rotate(360deg)}}
 @keyframes respira{50%{transform:scale(1.04);filter:drop-shadow(0 0 28px rgba(0,212,170,.6))}}
@@ -78,13 +77,18 @@ h1{font-size:clamp(1.7rem,1.3rem + 2vw,2.2rem)}
  // 6 lugares na órbita; a cada 2,4 s um logo some e entra outro, para a tela não ficar cheia
  var TODOS=['whatsapp','instagram','googlecalendar','outlook','asaas','zapsign','google-meet','microsoft-teams','googledrive','mercadopago','appbarber','autentique','google','microsoft','googlemaps','waze'],
      VIS=TODOS.slice(0,6),FILA=TODOS.slice(6),vez=0;
- function anel(){var el=document.getElementById('a1'),n=VIS.length,r=el.offsetWidth/2;
-  el.innerHTML=VIS.map(function(m,i){var a=i/n*2*Math.PI-Math.PI/2;
-   return '<div class="item" style="transform:translate('+(Math.cos(a)*r).toFixed(1)+'px,'+(Math.sin(a)*r).toFixed(1)+'px)"><span><img src="/marcas/'+m+'.png" alt=""></span></div>';}).join('');}
+ // posição de cada logo calculada a cada quadro: a órbita gira, os logos ficam sempre em pé
+ var reduz=matchMedia('(prefers-reduced-motion: reduce)').matches,raio=0,itens=[],t0=performance.now();
+ function anel(){var el=document.getElementById('a1');raio=el.offsetWidth/2;
+  el.innerHTML=VIS.map(function(m){return '<div class="item"><span><img src="/marcas/'+m+'.png" alt=""></span></div>';}).join('');
+  itens=[].slice.call(el.querySelectorAll('.item'));pos(performance.now());}
+ function pos(agora){var g=reduz?0:(agora-t0)/38000*2*Math.PI,n=itens.length;
+  itens.forEach(function(it,i){var a=i/n*2*Math.PI-Math.PI/2+g;it.style.transform='translate3d('+(Math.cos(a)*raio).toFixed(1)+'px,'+(Math.sin(a)*raio).toFixed(1)+'px,0)';});}
+ function quadro(agora){pos(agora);requestAnimationFrame(quadro);} if(!reduz) requestAnimationFrame(quadro);
  anel(); addEventListener('resize',anel);
  TODOS.forEach(function(m){var i=new Image();i.src='/marcas/'+m+'.png';});
  if(!matchMedia('(prefers-reduced-motion: reduce)').matches) setInterval(function(){
-  var i=(vez++*5)%6,img=document.querySelectorAll('#a1 img')[i];if(!img)return;
+  var i=(vez++*5)%6,img=itens[i]&&itens[i].querySelector('img');if(!img)return;
   FILA.push(VIS[i]);VIS[i]=FILA.shift();img.classList.add('troca');
   setTimeout(function(){img.src='/marcas/'+VIS[i]+'.png';img.onload=function(){img.classList.remove('troca')};},450);},2400);
  var L=new Date('2026-11-10T00:00:00-03:00').getTime(),V=new Date('2026-11-01T00:00:00-03:00').getTime(),p=function(n){return String(n).padStart(2,'0')};
