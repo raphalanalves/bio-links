@@ -64,7 +64,8 @@ h1{font-size:clamp(1.7rem,1.3rem + 2vw,2.2rem)}
  <p id="vipTxt" class="nota">A lista VIP abre em <b style="color:var(--fg)">01/11</b>: só 10 empresas, com metade do preço nos 3 primeiros meses.</p>
 
  <nav class="links" aria-label="Links">
-  <a id="vipBtn" class="btn pri" href="/lancamento/" hidden><span class="ico">Entrar na lista VIP</span><small>10 VAGAS</small></a>
+  <a id="vipBtn" class="btn pri" href="https://wa.me/5511915074051?text=Quero%20entrar%20na%20lista%20VIP%20da%20Malvora" rel="noopener" hidden><span class="ico">Quero entrar na lista VIP</span><small id="vagasBtn">8 VAGAS</small></a>
+  <a id="vipInfo" class="nota" href="/lancamento/" hidden style="text-decoration:none"><span id="vagasTxt">2 de 10 vagas preenchidas</span> · como funciona →</a>
   <a id="portalBtn" class="btn pri" href="https://portal.malvora.com.br/" hidden><span class="ico">Testar grátis</span><small>JÁ DISPONÍVEL</small></a>
   <a class="btn" href="https://wa.me/5511915074051" rel="noopener"><span class="ico"><img src="/marcas/whatsapp.png" alt="">Falar com o time no WhatsApp</span><small>→</small></a>
   <a class="btn" href="https://www.instagram.com/malvora_hub" rel="noopener"><span class="ico"><img src="/marcas/instagram.png" alt="">Instagram @malvora_hub</span><small>→</small></a>
@@ -90,6 +91,9 @@ h1{font-size:clamp(1.7rem,1.3rem + 2vw,2.2rem)}
  function t(){var n=Date.now(),r=Math.max(0,L-n),d=Math.floor(r/864e5);r-=d*864e5;var h=Math.floor(r/36e5);r-=h*36e5;var m=Math.floor(r/6e4),s=Math.floor((r-m*6e4)/1e3);
   ['d','h','m','s'].forEach(function(k,i){document.getElementById(k).textContent=p([d,h,m,s][i])});
   var vip=n>=V&&n<L,lan=n>=L;document.getElementById('vipBtn').hidden=!vip;document.getElementById('portalBtn').hidden=!lan;
-  document.getElementById('vipTxt').hidden=vip||lan;}
- t();setInterval(t,1000);})();
+  document.getElementById('vipTxt').hidden=vip||lan;document.getElementById('vipInfo').hidden=!vip;}
+ t();setInterval(t,1000);
+ fetch('https://n8n.malvora.com.br/webhook/malvora-lista-vip').then(function(r){return r.json()}).then(function(j){if(typeof j.restantes!=='number')return;var f=10-j.restantes;
+  document.getElementById('vagasTxt').textContent=j.restantes>0?f+' de 10 vagas preenchidas':'Vagas preenchidas · lista de espera aberta';document.getElementById('vagasBtn').textContent=j.restantes>0?j.restantes+' VAGAS':'LISTA DE ESPERA';}).catch(function(){});
+})();
 </script></body></html>
