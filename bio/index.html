@@ -18,9 +18,10 @@ main{gap:22px;padding-block:28px 48px;text-align:center}
 .anel .item{position:absolute;left:50%;top:50%;width:0;height:0}
 .anel .item span{position:absolute;width:44px;height:44px;margin:-22px;border-radius:12px;overflow:hidden;display:block;
  box-shadow:0 0 0 1px rgba(255,255,255,.08),0 6px 18px rgba(0,0,0,.45);background:var(--navy2)}
-.anel .item img{width:100%;height:100%;display:block}
+.anel .item img{width:100%;height:100%;display:block;transition:opacity .45s,transform .45s}
+.anel .item img.troca{opacity:0;transform:scale(.6)}
 .anel.a1 .item span{animation:gira 38s linear infinite reverse}
-.anel.a2 .item span{animation:gira 58s linear infinite;width:40px;height:40px;margin:-20px}
+.anel.a1 .item span{width:48px;height:48px;margin:-24px}
 @keyframes gira{to{transform:rotate(360deg)}}
 @keyframes respira{50%{transform:scale(1.04);filter:drop-shadow(0 0 28px rgba(0,212,170,.6))}}
 .tag{font:500 .75rem/1 var(--f-mono);letter-spacing:.16em;text-transform:uppercase;color:var(--emerald)}
@@ -43,7 +44,7 @@ h1{font-size:clamp(1.7rem,1.3rem + 2vw,2.2rem)}
  <div class="brand"><img src="/marca.svg" alt="" width="30" height="30">MALVORA</div>
 
  <div class="orbita" aria-hidden="true">
-  <div class="anel a2" id="a2"></div>
+  <div class="anel a2"></div>
   <div class="anel a1" id="a1"></div>
   <div class="nucleo"><img src="/marcas/malvora.png" alt=""></div>
  </div>
@@ -73,12 +74,18 @@ h1{font-size:clamp(1.7rem,1.3rem + 2vw,2.2rem)}
 </main>
 <script>
 (function(){
- var A1=['whatsapp','instagram','googlecalendar','asaas','zapsign','outlook'],
-     A2=['mercadopago','googledrive','appbarber','autentique','googlemaps','waze'];
- function anel(id,lista){var el=document.getElementById(id),n=lista.length,r=el.offsetWidth/2;
-  el.innerHTML=lista.map(function(m,i){var a=i/n*2*Math.PI-Math.PI/2;
-   return '<div class="item" style="transform:translate('+(Math.cos(a)*r).toFixed(1)+'px,'+(Math.sin(a)*r).toFixed(1)+'px)"><span><img src="/marcas/'+m+'.png" alt="" loading="lazy"></span></div>';}).join('');}
- function monta(){anel('a1',A1);anel('a2',A2);} monta(); addEventListener('resize',monta);
+ // 6 lugares na órbita; a cada 2,4 s um logo some e entra outro, para a tela não ficar cheia
+ var TODOS=['whatsapp','instagram','googlecalendar','outlook','asaas','zapsign','google-meet','microsoft-teams','googledrive','mercadopago','appbarber','autentique','google','microsoft','googlemaps','waze'],
+     VIS=TODOS.slice(0,6),FILA=TODOS.slice(6),vez=0;
+ function anel(){var el=document.getElementById('a1'),n=VIS.length,r=el.offsetWidth/2;
+  el.innerHTML=VIS.map(function(m,i){var a=i/n*2*Math.PI-Math.PI/2;
+   return '<div class="item" style="transform:translate('+(Math.cos(a)*r).toFixed(1)+'px,'+(Math.sin(a)*r).toFixed(1)+'px)"><span><img src="/marcas/'+m+'.png" alt=""></span></div>';}).join('');}
+ anel(); addEventListener('resize',anel);
+ TODOS.forEach(function(m){var i=new Image();i.src='/marcas/'+m+'.png';});
+ if(!matchMedia('(prefers-reduced-motion: reduce)').matches) setInterval(function(){
+  var i=(vez++*5)%6,img=document.querySelectorAll('#a1 img')[i];if(!img)return;
+  FILA.push(VIS[i]);VIS[i]=FILA.shift();img.classList.add('troca');
+  setTimeout(function(){img.src='/marcas/'+VIS[i]+'.png';img.onload=function(){img.classList.remove('troca')};},450);},2400);
  var L=new Date('2026-11-10T00:00:00-03:00').getTime(),V=new Date('2026-11-01T00:00:00-03:00').getTime(),p=function(n){return String(n).padStart(2,'0')};
  function t(){var n=Date.now(),r=Math.max(0,L-n),d=Math.floor(r/864e5);r-=d*864e5;var h=Math.floor(r/36e5);r-=h*36e5;var m=Math.floor(r/6e4),s=Math.floor((r-m*6e4)/1e3);
   ['d','h','m','s'].forEach(function(k,i){document.getElementById(k).textContent=p([d,h,m,s][i])});
