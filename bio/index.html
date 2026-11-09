@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Malvora Hub</title><meta name="description" content="IA que atende, agenda e cobra pela sua empresa. Lançamento em 10/11/2026.">
+<title>Malvora Hub</title><meta name="description" content="IA no WhatsApp que atende, agenda e cobra pela sua empresa. Converse com a Malu.">
 <meta name="theme-color" content="#0A0A0F">
 <link rel="icon" href="/marca.svg" type="image/svg+xml"><link rel="preload" href="/fontes/manrope-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/comum.css">
@@ -35,6 +35,7 @@ h1{font-size:clamp(1.7rem,1.3rem + 2vw,2.2rem)}
 .links{display:flex;flex-direction:column;gap:10px;text-align:left}
 .btn .ico{display:flex;align-items:center;gap:12px}
 .btn .ico img{width:26px;height:26px;border-radius:7px}
+.li{width:26px;height:26px;border-radius:7px;display:grid;place-items:center;background:#0A66C2;color:#fff;font:800 .9rem/1 var(--f-sans,sans-serif)}
 .nota{color:var(--body);margin:0;font-size:.9375rem}
 .foot{justify-content:center}
 @media (prefers-reduced-motion:reduce){.anel,.anel .item span,.nucleo img,.crono i{animation:none!important}}
@@ -60,13 +61,14 @@ h1{font-size:clamp(1.7rem,1.3rem + 2vw,2.2rem)}
   <div><b id="s">00</b><span>seg</span></div>
  </div>
 
- <p id="vipTxt" class="nota">A lista VIP abre em <b style="color:var(--fg)">01/11</b>: só 10 empresas, com metade do preço nos 3 primeiros meses.</p>
+ <p class="nota">A Malvora coloca uma IA no WhatsApp da sua empresa: ela responde na hora, agenda, lembra e cobra, e você acompanha tudo pelo portal.</p>
+ <p id="vipTxt" class="nota"><b style="color:var(--fg)">Lista VIP encerrada.</b> Obrigado a quem entrou! O teste grátis abre à meia-noite.</p>
 
  <nav class="links" aria-label="Links">
-  <a id="vipBtn" class="btn pri" href="https://wa.me/5511915074051?text=Quero%20entrar%20na%20lista%20VIP%20da%20Malvora" rel="noopener" hidden><span class="ico">Quero entrar na lista VIP</span><small id="vagasBtn">8 VAGAS</small></a>
-  <a id="vipInfo" class="nota" href="/lancamento/" hidden style="text-decoration:none"><span id="vagasTxt">2 de 10 vagas preenchidas</span> · como funciona →</a>
-  <a id="portalBtn" class="btn pri" href="https://portal.malvora.com.br/" hidden><span class="ico">Testar grátis</span><small>JÁ DISPONÍVEL</small></a>
-  <a class="btn" href="https://wa.me/5511915074051" rel="noopener"><span class="ico"><img src="/marcas/whatsapp.png" alt="">Falar com o time no WhatsApp</span><small>→</small></a>
+  <a class="btn pri" href="https://wa.me/5511915074051?text=Oi%2C%20Malu!%20Quero%20conhecer%20a%20Malvora" rel="noopener"><span class="ico"><img src="/marcas/whatsapp.png" alt="">Converse com a Malu</span><small>WHATSAPP</small></a>
+  <a id="portalBtn" class="btn" href="https://portal.malvora.com.br/assinar" hidden><span class="ico">Testar grátis, sem cartão</span><small>PORTAL</small></a>
+  <a id="siteBtn" class="btn" href="https://portal.malvora.com.br/" hidden><span class="ico">Conheça a Malvora</span><small>→</small></a>
+  <a class="btn" href="https://www.linkedin.com/company/malvora-hub/" rel="noopener"><span class="ico"><span class="li" aria-hidden="true">in</span>LinkedIn</span><small>→</small></a>
   <a class="btn" href="https://www.instagram.com/malvora_hub" rel="noopener"><span class="ico"><img src="/marcas/instagram.png" alt="">Instagram @malvora_hub</span><small>→</small></a>
  </nav>
 
@@ -94,10 +96,9 @@ h1{font-size:clamp(1.7rem,1.3rem + 2vw,2.2rem)}
  var L=new Date('2026-11-10T00:00:00-03:00').getTime(),V=new Date('2026-11-01T00:00:00-03:00').getTime(),p=function(n){return String(n).padStart(2,'0')};
  function t(){var n=Date.now(),r=Math.max(0,L-n),d=Math.floor(r/864e5);r-=d*864e5;var h=Math.floor(r/36e5);r-=h*36e5;var m=Math.floor(r/6e4),s=Math.floor((r-m*6e4)/1e3);
   ['d','h','m','s'].forEach(function(k,i){document.getElementById(k).textContent=p([d,h,m,s][i])});
-  var vip=n>=V&&n<L,lan=n>=L;document.getElementById('vipBtn').hidden=!vip;document.getElementById('portalBtn').hidden=!lan;
-  document.getElementById('vipTxt').hidden=vip||lan;document.getElementById('vipInfo').hidden=!vip;}
+  var lan=n>=L;['portalBtn','siteBtn'].forEach(function(k){document.getElementById(k).hidden=!lan});
+  document.getElementById('vipTxt').hidden=lan;document.querySelector('.crono').hidden=lan;
+  document.querySelector('.tag').textContent=lan?'Já disponível':'Lançamento · 10.11 · 00h';}
  t();setInterval(t,1000);
- fetch('https://n8n.malvora.com.br/webhook/malvora-lista-vip').then(function(r){return r.json()}).then(function(j){if(typeof j.restantes!=='number')return;var f=10-j.restantes;
-  document.getElementById('vagasTxt').textContent=j.restantes>0?f+' de 10 vagas preenchidas':'Vagas preenchidas · lista de espera aberta';document.getElementById('vagasBtn').textContent=j.restantes>0?j.restantes+' VAGAS':'LISTA DE ESPERA';}).catch(function(){});
 })();
 </script></body></html>
