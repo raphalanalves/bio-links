@@ -7,6 +7,11 @@
       }
     },
     {
+      "route": "/lancamento*",
+      "redirect": "/",
+      "statusCode": 302
+    },
+    {
       "route": "/dra*",
       "redirect": "/",
       "statusCode": 302
